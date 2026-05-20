@@ -189,7 +189,22 @@
     letter-spacing: -0.02em;
     margin-bottom: 6px;
   }
-  .tool-desc { color: var(--muted); font-size: 14px; }
+  .tool-desc { color: var(--muted); font-size: 14px; margin-bottom: 0; }
+  .tool-explainer {
+    margin-top: 14px;
+    padding: 16px 18px;
+    background: var(--accent-light);
+    border: 1px solid #C5D3F8;
+    border-radius: var(--radius);
+    font-size: 13px;
+    line-height: 1.7;
+    color: #2A3A6B;
+  }
+  .tool-explainer strong { color: var(--accent); font-weight: 600; }
+  .tool-explainer .explainer-title {
+    font-weight: 600; font-size: 13px; color: var(--accent);
+    margin-bottom: 6px; display: flex; align-items: center; gap: 6px;
+  }
 
   /* STEPS */
   .steps { display: flex; flex-direction: column; gap: 1.25rem; }
@@ -456,7 +471,11 @@
   <div class="tool-panel active" id="panel-linkedin">
     <div class="tool-header">
       <div class="tool-title">LinkedIn Audit</div>
-      <div class="tool-desc">Paste your LinkedIn profile and the job you want. Get an honest critique and a rewritten version that actually works.</div>
+      <div class="tool-desc">Get an honest, direct critique of your LinkedIn profile — the kind a good recruiter gives behind closed doors.</div>
+    <div class="tool-explainer">
+      <div class="explainer-title">💡 Why this matters</div>
+      Most LinkedIn profiles are written like a resume — they tell recruiters where you've been, not what you do for a buyer. Recruiters spend about 6 seconds on a profile before moving on. If your headline is just a job title, if your About section opens with "I am a results-driven professional," or if your experience bullets don't have numbers — you're invisible. This tool audits every section, rewrites the weak parts, and tells you exactly which keywords are missing for the role you're targeting.
+    </div>
     </div>
     <div class="steps">
       <div class="step">
@@ -506,7 +525,11 @@
   <div class="tool-panel" id="panel-resume">
     <div class="tool-header">
       <div class="tool-title">Resume Tailor</div>
-      <div class="tool-desc">Paste your resume and a job description. Get a version of your resume translated into the language of that specific role — without making anything up.</div>
+      <div class="tool-desc">Get a version of your resume translated into the language of the role you want — without inflating or inventing anything.</div>
+    <div class="tool-explainer">
+      <div class="explainer-title">💡 Why this matters</div>
+      Sending the same resume to every job is one of the most common reasons qualified people don't get callbacks. Recruiters read dozens of resumes a day — they need to immediately see their job description reflected back at them. If a posting says "revenue cycle management" and your resume says "billing operations," a recruiter's eye skips right over it. This tool takes your real experience and retranslates it into the exact vocabulary of the role, without making anything up. Your experience is real — this just makes sure it reads that way to the right person.
+    </div>
     </div>
     <div class="steps">
       <div class="step">
@@ -556,7 +579,11 @@
   <div class="tool-panel" id="panel-cover">
     <div class="tool-header">
       <div class="tool-title">Cover Letter</div>
-      <div class="tool-desc">Paste your resume and the job. Get a cover letter that sounds like you wrote it — specific, confident, under 350 words.</div>
+      <div class="tool-desc">Get a cover letter that sounds like a person wrote it — not a bot. Specific, confident, under 350 words.</div>
+    <div class="tool-explainer">
+      <div class="explainer-title">💡 Why this matters</div>
+      Most cover letters open with "I am writing to express my interest in..." — and a recruiter's eyes glaze over before they reach the second sentence. A good cover letter does one thing: makes a recruiter think "this person actually gets what we need." That means opening with a real observation about the role, connecting your most relevant accomplishment to their specific problem, and closing with confidence instead of a plea. This tool writes that letter using your actual background — no filler phrases, no em dashes, no AI tells.
+    </div>
     </div>
     <div class="steps">
       <div class="step">
@@ -606,7 +633,11 @@
   <div class="tool-panel" id="panel-interview">
     <div class="tool-header">
       <div class="tool-title">Interview Prep</div>
-      <div class="tool-desc">Paste your resume and the job. Get 10 likely interview questions with coached answers based on your actual experience.</div>
+      <div class="tool-desc">Get the 10 questions you're most likely to face — with coached answers built from your actual experience, not generic templates.</div>
+    <div class="tool-explainer">
+      <div class="explainer-title">💡 Why this matters</div>
+      Most people prep for interviews by reviewing their resume and hoping for the best. That's how you end up stumbling through "tell me about a time you failed" with a rambling non-answer. Interviewers are largely predictable — they ask behavioral questions tied to the job requirements, role-specific questions about how you'd approach their problems, and curveball questions when they have a concern about your background. This tool maps those questions to your actual experience, writes out the answer framework using your real numbers and wins, and flags the objections before they catch you off guard.
+    </div>
     </div>
     <div class="steps">
       <div class="step">
@@ -656,7 +687,14 @@
   <div class="tool-panel" id="panel-ats">
     <div class="tool-header">
       <div class="tool-title">ATS Scanner</div>
-      <div class="tool-desc">Find every reason you're being filtered out before a human sees your resume. Get a match score, keyword gaps, formatting issues, and a prioritized fix checklist.</div>
+      <div class="tool-desc">Find out why you're not getting callbacks — even when you're qualified for the role.</div>
+    <div class="tool-explainer">
+      <div class="explainer-title">💡 What is ATS and why does it matter?</div>
+      Most companies use software called an ATS — Applicant Tracking System — to filter resumes before a human ever sees them. When you apply online and never hear back, it's usually not because a recruiter looked at your resume and passed. It's because software scanned it first and filtered you out automatically.<br><br>
+      <strong>Here's how it works:</strong> the ATS scans your resume for keywords from the job description, checks the formatting for things it can read cleanly, and scores you against other applicants. If your score is too low, your resume goes into a folder no one opens.<br><br>
+      <strong>Common reasons people get filtered out:</strong> missing keywords that appear in the job posting, two-column layouts the software can't parse, special bullet characters that show up as garbage text, no summary section, or a job title that doesn't match what the role is called.<br><br>
+      This tool scans your resume the way an ATS does, gives you a match score, and tells you exactly what to fix — in priority order — before you submit another application.
+    </div>
     </div>
     <div class="steps">
       <div class="step">
