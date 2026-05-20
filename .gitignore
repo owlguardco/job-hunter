@@ -1,0 +1,19 @@
+# Environment
+.env
+
+# Outputs — your personal docs stay local
+outputs/*
+!outputs/.gitkeep
+
+# Node
+node_modules/
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
