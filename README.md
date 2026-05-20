@@ -85,6 +85,22 @@ job-hunter/
 └── .gitignore
 ```
 
+## Advanced — LinkedIn Auto-Scrape
+
+Technical users can skip the copy-paste step and scrape their LinkedIn profile directly from a URL using a local MCP server.
+
+```bash
+# One-time setup
+uvx linkedin-scraper-mcp@latest --login
+
+# Add your URL to inputs/linkedin-url.txt, then:
+npm run linkedin-scrape
+```
+
+Scrapes the profile, formats it, and runs the full audit automatically. See [ONBOARDING.md](ONBOARDING.md) for the full setup guide.
+
+Uses [stickerdaniel/linkedin-mcp-server](https://github.com/stickerdaniel/linkedin-mcp-server) running locally — credentials never leave your machine.
+
 ## Contributing
 
 The most valuable contributions are:

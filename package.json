@@ -7,6 +7,7 @@
     "resume": "node scripts/preflight.js resume && claude --print \"$(cat agents/resume-tailor.md)\"",
     "cover-letter": "node scripts/preflight.js cover-letter && claude --print \"$(cat agents/cover-letter.md)\"",
     "interview": "node scripts/preflight.js interview && claude --print \"$(cat agents/interview-prep.md)\"",
+    "linkedin-scrape": "claude \"follow agents/linkedin-scraper-setup.md\"",
     "check": "node scripts/preflight.js all"
   },
   "engines": {

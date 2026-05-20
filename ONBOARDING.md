@@ -131,3 +131,66 @@ Specific beats polished. A resume with real numbers that are slightly rough beat
 ## Questions or Issues
 
 Open an issue at [github.com/owlguardco/job-hunter](https://github.com/owlguardco/job-hunter/issues).
+
+---
+
+## Advanced Path — LinkedIn Auto-Scrape (technical users)
+
+Skip the copy-paste step entirely. This path scrapes your LinkedIn profile
+directly from a URL using a local MCP server, then runs the audit automatically.
+
+**Extra requirements:** Python 3.8+, `uv` package manager, Chrome or Chromium
+
+### Setup (one time)
+
+**1. Install `uv`**
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+**2. Log into LinkedIn through the scraper**
+```bash
+uvx linkedin-scraper-mcp@latest --login
+```
+A Chrome window opens. Log in normally. Once you see your LinkedIn feed, close
+the window. Your session is saved locally in `~/.linkedin-mcp/profile/`.
+
+**3. Add your LinkedIn URL**
+
+Create/edit `inputs/linkedin-url.txt` and paste your profile URL:
+```
+https://www.linkedin.com/in/yourname/
+```
+
+### Running
+
+```bash
+npm run linkedin-scrape
+```
+
+This does everything in one shot:
+1. Starts the local MCP server
+2. Scrapes your profile from LinkedIn
+3. Formats it into `inputs/my-linkedin.md`
+4. Runs the full audit if a job description is present
+5. Shuts down the MCP server
+
+Output lands in `outputs/linkedin-audit.md` as usual.
+
+### Re-authentication
+
+LinkedIn sessions expire. If you get a login error:
+```bash
+uvx linkedin-scraper-mcp@latest --login
+```
+Then re-run `npm run linkedin-scrape`.
+
+### Privacy
+
+Your LinkedIn credentials are stored only in `~/.linkedin-mcp/profile/` on your
+machine — the same way Chrome stores any browser session. Nothing goes through
+a third-party service. The scraper runs Chrome locally.
+
+### Source
+
+MCP server: [stickerdaniel/linkedin-mcp-server](https://github.com/stickerdaniel/linkedin-mcp-server)
