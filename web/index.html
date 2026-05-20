@@ -67,48 +67,86 @@
     letter-spacing: 0.05em;
   }
 
-  /* API KEY BANNER */
-  #api-banner {
-    background: var(--warning-light);
-    border-bottom: 1px solid #FBDDBB;
-    padding: 10px 2rem;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-size: 13px;
-    color: var(--warning);
+  /* SETUP MODAL */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 1000; padding: 1rem;
   }
-  #api-banner input {
-    flex: 1;
-    max-width: 360px;
-    padding: 6px 10px;
-    border: 1px solid #FBDDBB;
-    border-radius: var(--radius-sm);
-    font-family: monospace;
-    font-size: 12px;
-    background: white;
-    color: var(--text);
-    outline: none;
+  .modal-overlay.hidden { display: none; }
+  .modal {
+    background: var(--surface); border-radius: 16px;
+    max-width: 520px; width: 100%; padding: 2rem;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
   }
-  #api-banner input:focus { border-color: var(--accent); }
-  #api-banner button {
-    padding: 6px 14px;
-    background: var(--warning);
-    color: white;
-    border: none;
-    border-radius: var(--radius-sm);
-    font-size: 12px;
-    font-weight: 500;
-    cursor: pointer;
-    font-family: 'DM Sans', sans-serif;
+  .modal-logo {
+    font-family: 'DM Serif Display', serif; font-size: 1.4rem;
+    margin-bottom: 0.25rem; color: var(--text);
   }
-  #api-set-notice {
-    background: var(--success-light);
-    border-bottom: 1px solid #B7EDD3;
-    padding: 8px 2rem;
-    font-size: 13px;
-    color: var(--success);
-    display: none;
+  .modal-logo span { color: var(--accent); }
+  .modal-sub { font-size: 13px; color: var(--muted); margin-bottom: 1.5rem; }
+  .setup-steps { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 1.5rem; }
+  .setup-step {
+    display: flex; gap: 14px; align-items: flex-start;
+    padding: 14px; background: var(--bg); border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+  }
+  .setup-step-num {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--accent); color: white;
+    font-size: 13px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; margin-top: 1px;
+  }
+  .setup-step-content {}
+  .setup-step-title { font-weight: 600; font-size: 14px; margin-bottom: 3px; }
+  .setup-step-desc { font-size: 13px; color: var(--muted); line-height: 1.5; }
+  .setup-step-desc a {
+    color: var(--accent); text-decoration: none; font-weight: 500;
+  }
+  .setup-step-desc a:hover { text-decoration: underline; }
+  .key-input-row {
+    display: flex; gap: 8px; margin-top: 10px;
+  }
+  .key-input-row input {
+    flex: 1; padding: 9px 12px;
+    border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+    font-family: monospace; font-size: 13px;
+    background: white; color: var(--text); outline: none;
+    transition: border-color 0.15s;
+  }
+  .key-input-row input:focus { border-color: var(--accent); }
+  .key-input-row input.valid { border-color: var(--success); }
+  .key-input-row input.invalid { border-color: var(--danger); }
+  .key-save-btn {
+    padding: 9px 18px; background: var(--accent); color: white;
+    border: none; border-radius: var(--radius-sm);
+    font-size: 14px; font-weight: 600; cursor: pointer;
+    font-family: 'DM Sans', sans-serif; white-space: nowrap;
+    transition: background 0.15s;
+  }
+  .key-save-btn:hover { background: #2450CC; }
+  .key-save-btn:disabled { background: #BCC8F5; cursor: not-allowed; }
+  .key-error { font-size: 12px; color: var(--danger); margin-top: 6px; display: none; }
+  .privacy-note {
+    font-size: 12px; color: var(--muted); text-align: center;
+    padding-top: 1rem; border-top: 1px solid var(--border);
+  }
+
+  /* API STATUS BAR */
+  #api-status-bar {
+    padding: 8px 2rem; font-size: 13px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+  }
+  #api-status-bar.ready {
+    background: var(--success-light); color: var(--success);
+  }
+  #api-status-bar.not-ready {
+    background: var(--warning-light); color: var(--warning); cursor: pointer;
+  }
+  #api-status-bar .change-key {
+    font-size: 12px; text-decoration: underline; cursor: pointer; opacity: 0.8;
   }
 
   /* LAYOUT */
@@ -350,12 +388,59 @@
   <div class="header-tag">Free & Open Source</div>
 </header>
 
-<div id="api-banner">
-  <span>🔑 Enter your Anthropic API key to get started — stays in your browser only</span>
-  <input type="password" id="api-key-input" placeholder="sk-ant-..." />
-  <button onclick="saveKey()">Save Key</button>
+<!-- SETUP MODAL -->
+<div class="modal-overlay" id="setup-modal">
+  <div class="modal">
+    <div class="modal-logo">Job<span>Hunter</span></div>
+    <div class="modal-sub">Free & open source — let's get you set up in 2 minutes</div>
+
+    <div class="setup-steps">
+      <div class="setup-step">
+        <div class="setup-step-num">1</div>
+        <div class="setup-step-content">
+          <div class="setup-step-title">Create a free Anthropic account</div>
+          <div class="setup-step-desc">
+            Go to <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a> and sign up — it's free. This is separate from Claude.ai but uses the same email.
+          </div>
+        </div>
+      </div>
+
+      <div class="setup-step">
+        <div class="setup-step-num">2</div>
+        <div class="setup-step-content">
+          <div class="setup-step-title">Add a small credit balance</div>
+          <div class="setup-step-desc">
+            Once logged in, go to <a href="https://console.anthropic.com/settings/billing" target="_blank">Billing</a> and add $5. Each job application costs about 2–5 cents, so $5 covers roughly 100–200 uses.
+          </div>
+        </div>
+      </div>
+
+      <div class="setup-step">
+        <div class="setup-step-num">3</div>
+        <div class="setup-step-content">
+          <div class="setup-step-title">Get your API key and paste it here</div>
+          <div class="setup-step-desc">
+            Go to <a href="https://console.anthropic.com/settings/keys" target="_blank">API Keys</a>, click <strong>Create Key</strong>, copy it, and paste it below. It starts with <code style="background:#f0f0ec;padding:1px 5px;border-radius:3px;font-size:12px;">sk-ant-</code>
+          </div>
+          <div class="key-input-row">
+            <input type="password" id="api-key-input" placeholder="sk-ant-api03-..." autocomplete="off" oninput="validateKeyInput()" />
+            <button class="key-save-btn" id="key-save-btn" onclick="saveKey()" disabled>Connect</button>
+          </div>
+          <div class="key-error" id="key-error"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="privacy-note">
+      🔒 Your API key is saved only in your browser. It never touches our servers — requests go directly from your browser to Anthropic.
+    </div>
+  </div>
 </div>
-<div id="api-set-notice">✓ API key saved — you're ready to go</div>
+
+<!-- API STATUS BAR -->
+<div id="api-status-bar" class="not-ready" onclick="showSetup()">
+  <span>🔑 API key needed — click here to set up (takes 2 minutes)</span>
+</div>
 
 <div class="container">
 
@@ -572,24 +657,60 @@
 </div>
 
 <script>
-// ── API KEY ──────────────────────────────────────────────
+// ── API KEY + SETUP MODAL ─────────────────────────────────
 let API_KEY = localStorage.getItem('jh_api_key') || '';
+
+function validateKeyInput() {
+  const val = document.getElementById('api-key-input').value.trim();
+  const btn = document.getElementById('key-save-btn');
+  const errEl = document.getElementById('key-error');
+  const input = document.getElementById('api-key-input');
+  if (!val) {
+    btn.disabled = true;
+    input.className = '';
+    errEl.style.display = 'none';
+    return;
+  }
+  if (val.startsWith('sk-ant-') && val.length > 20) {
+    btn.disabled = false;
+    input.className = 'valid';
+    errEl.style.display = 'none';
+  } else {
+    btn.disabled = true;
+    input.className = val.length > 5 ? 'invalid' : '';
+    if (val.length > 10 && !val.startsWith('sk-ant-')) {
+      errEl.textContent = 'That doesn\'t look right — Anthropic keys start with sk-ant-';
+      errEl.style.display = 'block';
+    }
+  }
+}
 
 function saveKey() {
   const val = document.getElementById('api-key-input').value.trim();
-  if (!val.startsWith('sk-ant-')) {
-    alert('That doesn\'t look like an Anthropic API key. It should start with sk-ant-');
-    return;
-  }
+  if (!val.startsWith('sk-ant-')) return;
   API_KEY = val;
   localStorage.setItem('jh_api_key', val);
-  document.getElementById('api-banner').style.display = 'none';
-  document.getElementById('api-set-notice').style.display = 'block';
+  hideSetup();
 }
 
+function showSetup() {
+  document.getElementById('setup-modal').classList.remove('hidden');
+}
+
+function hideSetup() {
+  document.getElementById('setup-modal').classList.add('hidden');
+  const bar = document.getElementById('api-status-bar');
+  bar.className = 'ready';
+  bar.innerHTML = '<span>✓ Connected — you\'re ready to go</span><span class="change-key" onclick="showSetup()">Change key</span>';
+  bar.onclick = null;
+}
+
+// Init
 if (API_KEY) {
-  document.getElementById('api-banner').style.display = 'none';
-  document.getElementById('api-set-notice').style.display = 'block';
+  hideSetup();
+} else {
+  // Show modal on load
+  document.getElementById('setup-modal').classList.remove('hidden');
 }
 
 // ── TABS ─────────────────────────────────────────────────
