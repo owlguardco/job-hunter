@@ -1,0 +1,113 @@
+name: Setup Repo Metadata
+
+on:
+  workflow_dispatch:
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      contents: read
+
+    steps:
+      - name: Set repo description and topics
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh api -X PATCH /repos/${{ github.repository }} \
+            -f description="AI-powered job search toolkit — LinkedIn audit, resume tailoring, cover letters, and interview prep using Claude Code. Built from a real job search that went from 6 months to 2." \
+            -f homepage="https://github.com/owlguardco/job-hunter"
+
+          gh api -X PUT /repos/${{ github.repository }}/topics \
+            --input - << 'EOF'
+          {"names":["job-search","claude-code","career","resume","linkedin","cover-letter","ai","interview-prep"]}
+          EOF
+
+          echo "Description and topics set."
+
+      - name: Create issue — linkedin-analyzer
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue create \
+            --repo ${{ github.repository }} \
+            --title "Build: linkedin-analyzer agent — end-to-end test and refinement" \
+            --body "## Goal
+          Test the linkedin-analyzer agent against real LinkedIn profiles and refine the prompt for consistent output quality.
+
+          ## Tasks
+          - [ ] Test against 3 different profile types (entry-level, mid-career, senior)
+          - [ ] Validate keyword gap analysis accuracy
+          - [ ] Ensure rewritten examples follow all rules in \`rules/writing-rules.md\`
+          - [ ] Add edge case handling for profiles with missing sections
+          - [ ] Update \`examples/linkedin-audit-example.md\` with a strong sanitized real-world example
+
+          ## Acceptance Criteria
+          - Agent produces a structured audit with ratings for each section
+          - Rewritten examples contain no filler phrases or em dashes
+          - Output saves cleanly to \`outputs/linkedin-audit.md\`
+          - Preflight check catches blank input files before agent runs
+
+          ## Related
+          - \`agents/linkedin-analyzer.md\`
+          - \`rules/writing-rules.md\`
+          - \`scripts/preflight.js\`"
+
+      - name: Create issue — resume-tailor
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue create \
+            --repo ${{ github.repository }} \
+            --title "Build: resume-tailor agent — end-to-end test and refinement" \
+            --body "## Goal
+          Test the resume-tailor agent against real job descriptions and resumes. Refine tailoring logic for accuracy and output quality.
+
+          ## Tasks
+          - [ ] Test against 3 different JD and resume combinations
+          - [ ] Validate that agent does not fabricate experience
+          - [ ] Confirm keyword mirroring is accurate, not forced
+          - [ ] Ensure gaps section is actionable, not vague
+          - [ ] Update \`examples/resume-tailored-example.md\` with a strong sanitized real-world example
+
+          ## Acceptance Criteria
+          - Tailored resume mirrors JD language without inventing claims
+          - Every bullet follows the action verb + what + result formula
+          - Gaps section contains specific, addressable items
+          - Output saves cleanly to \`outputs/resume-tailored.md\` and \`outputs/resume-gaps.md\`
+
+          ## Related
+          - \`agents/resume-tailor.md\`
+          - \`rules/writing-rules.md\`"
+
+      - name: Create issue — cover-letter
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue create \
+            --repo ${{ github.repository }} \
+            --title "Build: cover-letter agent — end-to-end test and refinement" \
+            --body "## Goal
+          Test the cover-letter agent and refine the prompt to consistently produce letters that sound like a person wrote them.
+
+          ## Tasks
+          - [ ] Test against 3 different role types
+          - [ ] Validate word count stays under 350
+          - [ ] Confirm no filler phrases, em dashes, or Hi openers appear
+          - [ ] Ensure the opening paragraph is specific to the JD, not generic
+          - [ ] Update \`examples/cover-letter-example.md\` with a strong sanitized real-world example
+
+          ## Acceptance Criteria
+          - Letter opens with a specific observation, not an announcement
+          - Word count 250 to 350
+          - No violations of rules in \`rules/writing-rules.md\`
+          - Output saves cleanly to \`outputs/cover-letter.md\`
+          - Agent picks up \`outputs/resume-tailored.md\` when it exists
+
+          ## Related
+          - \`agents/cover-letter.md\`
+          - \`rules/writing-rules.md\`"
+
+      - name: Done
+        run: echo "All repo metadata and issues created successfully."
