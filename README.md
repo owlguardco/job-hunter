@@ -1,5 +1,7 @@
 # Job Hunter
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
 > I searched for six months. Then I started using Claude Code to build my own tools — a LinkedIn content system, tailored resumes, research workflows — and wrapped up the search in under two months. This is everything I learned, packaged so you don't have to figure it out the hard way.
 
 ## What This Does
@@ -62,17 +64,23 @@ Sanitized before/after examples live in `examples/`:
 ```
 job-hunter/
 ├── agents/
-│   ├── linkedin-analyzer.md    # LinkedIn profile audit prompt
-│   ├── resume-tailor.md        # Resume tailoring prompt
-│   └── cover-letter.md         # Cover letter generation prompt
+│   ├── linkedin-analyzer.md    # LinkedIn profile audit
+│   ├── resume-tailor.md        # Resume tailoring to a JD
+│   ├── cover-letter.md         # Cover letter generation
+│   └── interview-prep.md       # Interview question coaching
 ├── rules/
-│   └── writing-rules.md        # Tone and style rules injected into every agent
+│   └── writing-rules.md        # Tone rules injected into every agent
 ├── inputs/
-│   ├── my-linkedin.md          # Paste your LinkedIn profile here
+│   ├── my-linkedin.md          # Your LinkedIn profile
 │   ├── my-resume.md            # Your base resume in markdown
 │   └── job-description.md      # Target job description
-├── outputs/                    # Git-ignored — your tailored docs land here
+├── scripts/
+│   └── preflight.js            # Input validation before running agents
+├── outputs/                    # Git-ignored — tailored docs land here
 ├── examples/                   # Sanitized before/after examples
+├── ONBOARDING.md               # First-run walkthrough
+├── JOB-TRACKER.md              # Markdown CRM for your pipeline
+├── package.json                # npm run scripts
 ├── .env.example
 └── .gitignore
 ```
