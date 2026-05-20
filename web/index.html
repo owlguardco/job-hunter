@@ -449,6 +449,7 @@
     <button class="tab" onclick="switchTab('resume')">📄 Resume Tailor</button>
     <button class="tab" onclick="switchTab('cover')">✉️ Cover Letter</button>
     <button class="tab" onclick="switchTab('interview')">🎯 Interview Prep</button>
+    <button class="tab" onclick="switchTab('ats')">🛡️ ATS Scanner</button>
   </div>
 
   <!-- LINKEDIN -->
@@ -651,7 +652,57 @@
     </div>
   </div>
 
-  <div class="footer">
+  <!-- ATS SCANNER -->
+  <div class="tool-panel" id="panel-ats">
+    <div class="tool-header">
+      <div class="tool-title">ATS Scanner</div>
+      <div class="tool-desc">Find every reason you're being filtered out before a human sees your resume. Get a match score, keyword gaps, formatting issues, and a prioritized fix checklist.</div>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-header">
+          <div class="step-num" id="ats-num1">1</div>
+          <div class="step-label">Your resume</div>
+          <div class="step-hint">Plain text — copy from Word or PDF</div>
+        </div>
+        <div class="step-body">
+          <textarea id="ats-resume" rows="10" placeholder="Paste your resume here. Plain text is fine — just copy and paste from Word, PDF, or wherever you have it." oninput="markFilled('ats-resume','ats-num1')"></textarea>
+          <div class="char-count" id="ats-resume-count">0 characters</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-header">
+          <div class="step-num" id="ats-num2">2</div>
+          <div class="step-label">Job description</div>
+          <div class="step-hint">The role you're applying for</div>
+        </div>
+        <div class="step-body">
+          <textarea id="ats-jd" rows="6" placeholder="Paste the full job description here. The more complete it is, the more accurate the keyword gap analysis." oninput="markFilled('ats-jd','ats-num2')"></textarea>
+          <div class="char-count" id="ats-jd-count">0 characters</div>
+        </div>
+      </div>
+    </div>
+    <div class="run-wrap">
+      <button class="run-btn" id="ats-btn" onclick="run('ats')">
+        <span>Scan My Resume</span>
+      </button>
+      <div class="validation-msg" id="ats-validation"></div>
+    </div>
+    <div class="progress-wrap" id="ats-progress">
+      <div class="spinner"></div>
+      <span id="ats-progress-text">Scanning for ATS issues...</span>
+    </div>
+    <div class="error-wrap" id="ats-error"></div>
+    <div class="output-wrap" id="ats-output">
+      <div class="output-header">
+        <div class="output-title">✓ Your ATS Scan Results</div>
+        <button class="copy-btn" id="ats-copy" onclick="copyOutput('ats-output-body','ats-copy')">Copy</button>
+      </div>
+      <div class="output-body" id="ats-output-body"></div>
+    </div>
+  </div>
+
+    <div class="footer">
     Free and open source — <a href="https://github.com/owlguardco/job-hunter" target="_blank">github.com/owlguardco/job-hunter</a> &nbsp;·&nbsp; Your data never leaves your browser
   </div>
 </div>
@@ -823,6 +874,58 @@ Write a cover letter following these rules:
 - No bullet points in a cover letter
 - Apply all hard rules above`;
 
+  if (type === 'ats') return `${RULES}
+
+You are an ATS (Applicant Tracking System) specialist. Find every reason this resume would be filtered out before a human sees it. Be precise — every flag needs a specific fix, not a vague suggestion.
+
+RESUME:
+\${inputs.resume}
+
+JOB DESCRIPTION:
+\${inputs.jd}
+
+Produce the following sections:
+
+---
+ATS MATCH SCORE: XX/100
+Status: LIKELY FILTERED (below 55) / AT RISK (55-74) / LIKELY THROUGH (75+)
+---
+
+KEYWORD GAP ANALYSIS
+List every significant keyword in the JD missing from the resume. For each: state exactly where to add it and give the specific sentence or bullet to insert.
+
+Keyword frequency: list the top 5 JD keywords and how many times each appears in the resume.
+
+FORMATTING FLAGS
+Check for and flag each found: tables, two-column layout, headers/footers used for content, text boxes, graphics or images, non-standard section headings, unusual fonts, special character bullets such as stars or diamonds, inconsistent date formats. For each flag give the specific fix.
+
+CONTENT FLAGS
+- Contact info: name, email, LinkedIn URL, phone, city and state all present?
+- Summary: present? Does it contain the exact job title from the JD?
+- Most recent job title vs target role title — flag if significantly different
+- Employment gaps over 3 months — flag and suggest how to address
+- Bullets over 200 characters — flag and suggest trimming or splitting
+- Acronyms used in the JD that are not spelled out on first use in the resume
+
+REWRITTEN SUMMARY
+Write a new summary that: opens with the exact job title from the JD, naturally hits the top 5 JD keywords, is 3 to 4 sentences and under 100 words, follows all hard rules above.
+
+PRIORITY FIX CHECKLIST
+
+CRITICAL — fix before submitting anything
+[ ] specific fix
+[ ] specific fix
+
+HIGH IMPACT — meaningfully improves your score
+[ ] specific fix
+[ ] specific fix
+
+QUICK WINS — under 5 minutes each
+[ ] specific fix
+[ ] specific fix
+
+PROJECTED SCORE AFTER FIXES: XX/100\`;
+
   if (type === 'interview') return `${RULES}
 
 You are an interview coach preparing someone for a specific role using their actual experience.
@@ -855,7 +958,7 @@ Questions that signal they've done their homework. Not questions answered by rea
 
 // ── RUN ───────────────────────────────────────────────────
 async function run(type) {
-  const prefixes = { linkedin:'ln', resume:'rv', cover:'cl', interview:'ip' };
+  const prefixes = { linkedin:'ln', resume:'rv', cover:'cl', interview:'ip', ats:'ats' };
   const p = prefixes[type];
 
   // Validation
@@ -914,7 +1017,8 @@ async function run(type) {
     linkedin: ['Analyzing your profile...', 'Checking keywords against the JD...', 'Writing recommendations...'],
     resume: ['Reading your resume...', 'Matching to the job description...', 'Tailoring your bullets...'],
     cover: ['Reading your background...', 'Finding the angle...', 'Writing your letter...'],
-    interview: ['Analyzing the role requirements...', 'Building your question set...', 'Writing coached answers...']
+    interview: ['Analyzing the role requirements...', 'Building your question set...', 'Writing coached answers...'],
+    ats: ['Scanning for ATS issues...', 'Checking keyword gaps...', 'Calculating your match score...', 'Building your fix checklist...']
   };
 
   let msgIdx = 0;
