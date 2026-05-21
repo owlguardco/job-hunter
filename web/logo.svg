@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 380" width="900" height="380">
+  <rect width="900" height="380" rx="14" fill="#0e0c0a"/>
+
+  <!-- JOB centered in white -->
+  <text x="450" y="175" font-family="'Arial Black', 'Helvetica Neue', Arial, sans-serif" font-size="148" font-weight="900" fill="#ffffff" letter-spacing="-4" text-anchor="middle">JOB</text>
+
+  <!-- HUNTER centered in orange -->
+  <text x="450" y="320" font-family="'Arial Black', 'Helvetica Neue', Arial, sans-serif" font-size="148" font-weight="900" fill="#e8722a" letter-spacing="-4" text-anchor="middle">HUNTER</text>
+
+  <!-- Tagline centered -->
+  <text x="450" y="358" font-family="'Courier New', Courier, monospace" font-size="16" fill="#7a4020" letter-spacing="6" text-anchor="middle">FIND · APPLY · CLOSE</text>
+
+  <!-- Watermark -->
+  <text x="880" y="373" font-family="'Courier New', Courier, monospace" font-size="13" fill="#3d1a08" text-anchor="end" letter-spacing="1">owlguardco</text>
+</svg>

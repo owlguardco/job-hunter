@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="web/logo.svg" alt="Job Hunter" width="600" />
+</p>
+
 # Job Hunter
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
