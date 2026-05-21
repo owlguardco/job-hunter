@@ -151,6 +151,72 @@ async function ensureUser(userId, email) {
   );
 }
 
+// ── Session context (in-session output threading) ───────────
+const { randomUUID } = require('crypto');
+
+async function getOrCreateSession(userId, sessionId) {
+  if (sessionId) {
+    const res = await db.query(
+      `UPDATE sessions SET last_active = NOW()
+       WHERE id = $1 AND user_id = $2
+       AND last_active > NOW() - INTERVAL '2 hours'
+       RETURNING *`,
+      [sessionId, userId]
+    );
+    if (res.rows.length) return res.rows[0];
+  }
+  // Create new session
+  const id = randomUUID();
+  const res = await db.query(
+    `INSERT INTO sessions (id, user_id) VALUES ($1, $2) RETURNING *`,
+    [id, userId]
+  );
+  return res.rows[0];
+}
+
+async function saveSessionOutput(sessionId, tool, output) {
+  await db.query(
+    `UPDATE sessions
+     SET outputs = outputs || jsonb_build_object($2::text, $3::text),
+         last_active = NOW()
+     WHERE id = $1`,
+    [sessionId, tool, output]
+  );
+}
+
+async function getSessionOutputs(sessionId) {
+  if (!sessionId) return {};
+  const res = await db.query(
+    'SELECT outputs FROM sessions WHERE id = $1',
+    [sessionId]
+  );
+  return res.rows[0]?.outputs || {};
+}
+
+// ── Profile operations ────────────────────────────────────
+async function getProfile(userId) {
+  const res = await db.query(
+    'SELECT * FROM profiles WHERE user_id = $1',
+    [userId]
+  );
+  return res.rows[0] || null;
+}
+
+async function saveProfile(userId, data) {
+  await db.query(
+    `INSERT INTO profiles (user_id, resume, linkedin, target_role, target_location, updated_at)
+     VALUES ($1, $2, $3, $4, $5, NOW())
+     ON CONFLICT (user_id) DO UPDATE SET
+       resume = COALESCE($2, profiles.resume),
+       linkedin = COALESCE($3, profiles.linkedin),
+       target_role = COALESCE($4, profiles.target_role),
+       target_location = COALESCE($5, profiles.target_location),
+       updated_at = NOW()`,
+    [userId, data.resume || null, data.linkedin || null,
+     data.targetRole || null, data.targetLocation || null]
+  );
+}
+
 // ── Load agent prompt (from open source agents/) ──────────
 function loadRules() {
   try { return fs.readFileSync(path.join(ROOT, 'rules/writing-rules.md'), 'utf8'); }
@@ -463,6 +529,29 @@ const server = http.createServer(async (req, res) => {
     }
   }
 
+  // ── GET /api/profile — get saved profile ────────────────
+  if (url.pathname === '/api/profile' && req.method === 'GET') {
+    if (!userId) return json(res, 401, { error: 'Not authenticated' });
+    try {
+      const profile = await getProfile(userId);
+      return json(res, 200, { profile });
+    } catch (err) {
+      return json(res, 500, { error: err.message });
+    }
+  }
+
+  // ── POST /api/profile — save profile ─────────────────────
+  if (url.pathname === '/api/profile' && req.method === 'POST') {
+    if (!userId) return json(res, 401, { error: 'Not authenticated' });
+    try {
+      const data = await body(req);
+      await saveProfile(userId, data);
+      return json(res, 200, { saved: true });
+    } catch (err) {
+      return json(res, 500, { error: err.message });
+    }
+  }
+
   // ── POST /api/run — run a tool ───────────────────────────
   if (url.pathname === '/api/run' && req.method === 'POST') {
     if (!userId) return json(res, 401, { error: 'Not authenticated' });
@@ -478,9 +567,39 @@ const server = http.createServer(async (req, res) => {
         });
       }
 
-      const { type, inputs, interviewMode } = await body(req);
+      const { type, inputs, interviewMode, sessionId } = await body(req);
       const toolType = (type === 'interview' && interviewMode === 'mock') ? 'mock' : type;
-      const prompt = buildPrompt(toolType, inputs);
+
+      // Load session context + profile
+      const [session, profile, sessionOutputs] = await Promise.all([
+        getOrCreateSession(userId, sessionId),
+        getProfile(userId),
+        getSessionOutputs(sessionId),
+      ]);
+
+      // Enrich inputs with session context + saved profile
+      // Profile fills in missing resume/linkedin if user has saved one
+      const enrichedInputs = { ...inputs };
+      if (!enrichedInputs.resume && profile?.resume) enrichedInputs.resume = profile.resume;
+      if (!enrichedInputs.profile && profile?.linkedin) enrichedInputs.profile = profile.linkedin;
+
+      // In-session threading: if cover letter is run after resume tailor,
+      // auto-inject the tailored resume output
+      if (toolType === 'cover' && !enrichedInputs.resume && sessionOutputs.resume) {
+        enrichedInputs.resume = sessionOutputs.resume;
+      }
+      if (toolType === 'interview' && !enrichedInputs.resume && sessionOutputs.resume) {
+        enrichedInputs.resume = sessionOutputs.resume;
+      }
+      if (toolType === 'mock' && !enrichedInputs.resume && sessionOutputs.resume) {
+        enrichedInputs.resume = sessionOutputs.resume;
+      }
+      if (toolType === 'research' && !enrichedInputs.jd && sessionOutputs.ats) {
+        // JD was already used in ATS scan — carry it forward
+        enrichedInputs.jd = inputs.jd || enrichedInputs.jd;
+      }
+
+      const prompt = buildPrompt(toolType, enrichedInputs);
 
       if (!prompt) {
         return json(res, 400, { error: `Unknown tool: ${type}` });
@@ -511,14 +630,18 @@ const server = http.createServer(async (req, res) => {
       const inputTokens = data.usage?.input_tokens || 0;
       const outputTokens = data.usage?.output_tokens || 0;
 
-      // Deduct credit + log usage
-      await deductCredit(userId, toolType, inputTokens, outputTokens);
+      // Deduct credit + log usage + save to session
+      await Promise.all([
+        deductCredit(userId, toolType, inputTokens, outputTokens),
+        saveSessionOutput(session.id, toolType, result),
+      ]);
 
-      // Return result with updated credit balance
+      // Return result with updated credit balance + session ID
       const updatedCredits = await getCredits(userId);
 
       return json(res, 200, {
         result,
+        sessionId: session.id,
         creditsRemaining: updatedCredits.balance,
         unlimited: updatedCredits.unlimited,
       });
@@ -526,6 +649,41 @@ const server = http.createServer(async (req, res) => {
     } catch (err) {
       console.error('Run error:', err);
       return json(res, 500, { error: err.message });
+    }
+  }
+
+  // ── Legal routes ────────────────────────────────────────
+  const legalRoutes = {
+    '/legal/privacy': 'docs/legal/privacy-policy.md',
+    '/legal/terms':   'docs/legal/terms-of-service.md',
+    '/legal/refunds': 'docs/legal/refund-policy.md',
+  };
+
+  if (legalRoutes[url.pathname]) {
+    const mdPath = path.join(ROOT, legalRoutes[url.pathname]);
+    if (fs.existsSync(mdPath)) {
+      const md = fs.readFileSync(mdPath, 'utf8');
+      // Serve as simple HTML page
+      const html = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Job Hunter — Legal</title>
+        <style>
+          body{font-family:system-ui,sans-serif;max-width:720px;margin:0 auto;padding:2rem 1.5rem;
+               background:#0e0c0a;color:#f0ece6;line-height:1.7}
+          h1,h2,h3{color:#e8722a;margin-top:2rem} a{color:#e8722a}
+          table{width:100%;border-collapse:collapse;font-size:14px}
+          th,td{padding:8px 12px;border:1px solid #2a2520;text-align:left}
+          code{background:#1e1b18;padding:2px 6px;border-radius:4px;font-size:13px}
+          .back{display:inline-block;margin-bottom:2rem;color:#6b6058;text-decoration:none;font-size:13px}
+          .back:hover{color:#e8722a}
+        </style></head><body>
+        <a href="/" class="back">← Back to Job Hunter</a>
+        <div>${md.replace(/
+/g,'<br>').replace(/#{3} (.+)/g,'<h3>$1</h3>').replace(/## (.+)/g,'<h2>$1</h2>').replace(/# (.+)/g,'<h1>$1</h1>').replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\[(.+?)\]\((.+?)\)/g,'<a href="$2">$1</a>')}</div>
+        </body></html>`;
+      res.writeHead(200, { 'Content-Type': 'text/html' });
+      res.end(html);
+      return;
     }
   }
 

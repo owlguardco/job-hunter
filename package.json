@@ -1,6 +1,6 @@
 {
   "name": "job-hunter",
-  "version": "0.9.0",
+  "version": "1.0.0",
   "description": "AI-powered job search toolkit \u2014 resume tailoring, ATS scanner, interview prep, offer negotiation, and career growth tools",
   "scripts": {
     "start": "node start.js",

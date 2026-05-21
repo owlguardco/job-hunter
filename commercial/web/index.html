@@ -666,12 +666,32 @@ textarea.filled { border-color: var(--green-dim); }
         <div class="pack-detail">Unlimited runs · Best for active job seekers</div>
       </div>
     </div>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:12px;">
+      By purchasing you agree to our
+      <a href="/legal/terms" style="color:var(--orange)">Terms of Service</a>,
+      <a href="/legal/privacy" style="color:var(--orange)">Privacy Policy</a>, and
+      <a href="/legal/refunds" style="color:var(--orange)">Refund Policy</a>.
+    </div>
     <div class="modal-footer">
       <button class="btn btn-ghost" onclick="closePurchaseModal()">Cancel</button>
       <button class="btn btn-primary" id="checkout-btn" onclick="checkout()">Continue to Payment →</button>
     </div>
   </div>
 </div>
+
+<!-- LEGAL FOOTER -->
+<footer style="border-top:1px solid var(--border);padding:24px 2rem;text-align:center;font-size:12px;color:var(--muted);">
+  <div style="max-width:900px;margin:0 auto;display:flex;flex-wrap:wrap;gap:16px;justify-content:center;align-items:center;">
+    <span>© 2026 owlguardco</span>
+    <a href="/legal/privacy" style="color:var(--muted);text-decoration:none;" onmouseover="this.style.color='var(--orange)'" onmouseout="this.style.color='var(--muted)'">Privacy Policy</a>
+    <a href="/legal/terms" style="color:var(--muted);text-decoration:none;" onmouseover="this.style.color='var(--orange)'" onmouseout="this.style.color='var(--muted)'">Terms of Service</a>
+    <a href="/legal/refunds" style="color:var(--muted);text-decoration:none;" onmouseover="this.style.color='var(--orange)'" onmouseout="this.style.color='var(--muted)'">Refund Policy</a>
+    <a href="https://github.com/owlguardco/job-hunter" target="_blank" style="color:var(--muted);text-decoration:none;" onmouseover="this.style.color='var(--orange)'" onmouseout="this.style.color='var(--muted)'">Open Source</a>
+  </div>
+  <div style="margin-top:8px;font-size:11px;color:#3d3530;">
+    Output is AI-generated and not professional career advice. Review all content before use.
+  </div>
+</footer>
 
 <script>
 // ── State ─────────────────────────────────────────────────
@@ -680,6 +700,8 @@ let clerkToken = null;
 let userCredits = 0;
 let isUnlimited = false;
 let selectedPack = 'pro';
+let currentSessionId = null;   // in-session context threading
+let userProfile = null;        // saved resume/linkedin/target role
 const API = '';  // same origin
 
 // ── Clerk init ────────────────────────────────────────────
@@ -737,13 +759,36 @@ function signInThenBuy(pack) {
 async function loadUser() {
   if (!clerkToken) return;
   try {
-    const res = await api('/api/me');
-    userCredits = res.credits;
-    isUnlimited = res.unlimited;
+    const [me, profileRes] = await Promise.all([
+      api('/api/me'),
+      api('/api/profile'),
+    ]);
+    userCredits = me.credits;
+    isUnlimited = me.unlimited;
+    userProfile = profileRes.profile;
     updateCreditDisplay();
     loadUsageHistory();
+    if (userProfile) prefillFromProfile();
   } catch (e) {
     console.error('loadUser error:', e);
+  }
+}
+
+function prefillFromProfile() {
+  if (!userProfile) return;
+  // Pre-fill resume fields if user has saved profile
+  const resumeFields = ['ats-resume','resume-resume','cover-resume',
+    'interview-resume','mock-resume','negotiate-resume','promote-resume','review-resume'];
+  resumeFields.forEach(id => {
+    const el = document.getElementById(id);
+    if (el && !el.value && userProfile.resume) {
+      el.value = userProfile.resume;
+      el.classList.add('filled');
+    }
+  });
+  if (userProfile.linkedin) {
+    const li = document.getElementById('linkedin-profile');
+    if (li && !li.value) { li.value = userProfile.linkedin; li.classList.add('filled'); }
   }
 }
 
@@ -840,14 +885,18 @@ async function runTool(type) {
   noCredits.className = 'no-credits-msg';
 
   try {
-    const data = await api('/api/run', { type, inputs });
+    const data = await api('/api/run', { type, inputs, sessionId: currentSessionId });
     outputBody.textContent = data.result;
     outputWrap.className = 'output-wrap visible';
     outputWrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    // Save session ID for context threading
+    if (data.sessionId) currentSessionId = data.sessionId;
     userCredits = data.creditsRemaining;
     isUnlimited = data.unlimited;
     updateCreditDisplay();
     loadUsageHistory();
+    // Auto-save resume to profile if this was first run
+    autoSaveProfile(type, inputs);
   } catch (err) {
     if (err.code === 'INSUFFICIENT_CREDITS') {
       noCredits.classList.add('visible');
@@ -954,6 +1003,21 @@ async function api(path, body) {
 // ── Utilities ─────────────────────────────────────────────
 function markFilled(el) {
   el.classList.toggle('filled', el.value.trim().length > 100);
+}
+
+// ── Profile helpers ──────────────────────────────────────
+async function autoSaveProfile(type, inputs) {
+  // Silently save resume to profile after first successful run
+  if (!clerkUser || userProfile?.resume) return;
+  const resume = inputs.resume || inputs.profile;
+  if (!resume || resume.length < 200) return;
+  try {
+    const data = { resume: type === 'linkedin' ? null : resume };
+    if (type === 'linkedin') data.linkedin = inputs.profile;
+    await api('/api/profile', data);
+    userProfile = { ...userProfile, ...data };
+    console.log('Profile auto-saved');
+  } catch (e) { /* silent */ }
 }
 
 async function copyOutput(bodyId, btnId) {
