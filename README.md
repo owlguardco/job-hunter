@@ -117,6 +117,30 @@ npm run send-thankyou # send thank-you note via Gmail (Gmail MCP)
 MCPs required for steps 5: Google Calendar and Gmail connected in Claude.ai settings.
 Everything else runs locally with no additional setup beyond an Anthropic API key.
 
+## All Tools
+
+| Command | What it does |
+|---|---|
+| `npm run linkedin` | Audit your LinkedIn profile against a target role |
+| `npm run resume` | Tailor your resume to a specific JD |
+| `npm run cover-letter` | Write a cover letter that sounds human |
+| `npm run ats` | Scan for ATS issues before submitting |
+| `npm run interview` | Build story bank + coached answers |
+| `npm run mock` | Live mock interview with real-time grading |
+| `npm run send-thankyou` | Send thank-you note via Gmail MCP |
+| `npm run jobs` | Search Indeed/LinkedIn/Glassdoor, score against resume |
+| `npm run salary` | Research market comp + negotiation playbook |
+| `npm run negotiate` | Practice the offer negotiation conversation |
+| `npm run decode` | Decode a JD — red flags, real pay, what they actually want |
+| `npm run research` | Pre-interview brief — company, interviewer, questions |
+| `npm run compare` | Compare two offers side by side |
+| `npm run outreach` | Write cold messages to recruiters or hiring managers |
+| `npm run promote` | Build your promotion case |
+| `npm run review` | Prep for your performance review |
+| `npm run internal` | Apply for an internal role |
+| `npm run schedule` | Schedule interview with Calendar MCP |
+| `npm run check` | Validate all inputs before running anything |
+
 ## Advanced — LinkedIn Auto-Scrape
 
 Technical users can skip the copy-paste step and scrape their LinkedIn profile directly from a URL using a local MCP server.

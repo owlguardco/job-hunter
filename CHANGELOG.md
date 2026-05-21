@@ -4,6 +4,22 @@ All notable changes to Job Hunter are documented here.
 
 ---
 
+## [0.5.0] — 2026-05-21
+
+### Added
+- **Salary Negotiation Simulator** (`npm run negotiate`) — Claude plays the recruiter, you practice countering, grades each move A-D, debrief shows money left on table
+- **Recruiter Cold Outreach** (`npm run outreach`) — 3 versions: LinkedIn (300 chars), email (under 100 words), referral message. Researches the target company first.
+- **Job Description Decoder** (`npm run decode`) — reads between the lines: what they're really asking for, red flags decoded, salary estimate, manager personality assessment
+- **Promotion Case Builder** (`npm run promote`) — builds the written case for promotion with talking points for the conversation; tells you if the case isn't ready yet
+- **Performance Review Prep** (`npm run review`) — what to say, what to quantify, how to handle every rating scenario, what not to say
+- **Pre-Interview Research** (`npm run research`) — one-page brief: company news, interviewer background, competitive landscape, Glassdoor signals, 5 questions grounded in research
+- **Offer Comparison Tool** (`npm run compare`) — side-by-side total comp (Y1 and Y3), scores 7 dimensions, gives a direct recommendation
+- **Internal Job Application** (`npm run internal`) — accounts for internal politics, existing relationships, and what's different about applying for a role at your current company
+- `inputs/cold-outreach-target.md` — template for outreach targets
+- `inputs/interview-context.md` — template for interviewer details
+
+---
+
 ## [0.4.0] — 2026-05-21
 
 ### Added

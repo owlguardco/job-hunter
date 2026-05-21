@@ -14,6 +14,14 @@
     "salary": "node scripts/preflight.js resume && claude --print \"$(cat agents/salary-research.md)\"",
     "schedule": "claude \"follow agents/schedule-interview.md\"",
     "send-thankyou": "claude \"follow agents/send-thankyou.md\"",
+    "negotiate": "claude \"follow agents/salary-negotiation-sim.md\"",
+    "outreach": "node scripts/preflight.js resume && claude \"follow agents/cold-outreach.md\"",
+    "decode": "node scripts/preflight.js resume && claude --print \"$(cat agents/jd-decoder.md)\"",
+    "promote": "claude \"follow agents/promotion-case.md\"",
+    "review": "claude \"follow agents/review-prep.md\"",
+    "research": "claude \"follow agents/pre-interview-research.md\"",
+    "compare": "claude \"follow agents/offer-comparison.md\"",
+    "internal": "node scripts/preflight.js resume && claude \"follow agents/internal-application.md\"",
     "check": "node scripts/preflight.js all"
   },
   "engines": {
