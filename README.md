@@ -8,7 +8,7 @@
   <a href="docs/CONTRIBUTING.md"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs Welcome" /></a>
 </p>
 
-> I searched for six months. Then I built tools to help me — and wrapped up the search in under two months. This is everything I learned, packaged so you don't have to figure it out the hard way.
+> I searched for six months and got nowhere. The turning point wasn't working harder — it was getting honest about what I was actually competitive for, and stopping the spray-and-pray. Then I built tools to sharpen every step of the process. Wrapped up the search in under two months. This is everything I learned, packaged so you don't have to figure it out the hard way.
 
 ---
 
@@ -16,6 +16,7 @@
 
 Job Hunter is a free AI toolkit that helps you:
 
+- **Know where you stand** — resume reality check tells you what tier you're actually in, what roles you'll win, and what's keeping you from moving up. Job fit scorer tells you if a specific role is worth applying to before you spend an hour on it.
 - **Write better applications** — tailored resumes, cover letters that don't sound like a bot, ATS scanner so software doesn't filter you out before a human sees your name
 - **Prep for interviews** — story bank, coached answers, live mock interview with real-time grading
 - **Handle offers** — practice the negotiation conversation, compare two offers side by side
@@ -91,6 +92,8 @@ npm run mock            # practice with live grading
 
 | Stage | Command | What it does |
 |---|---|---|
+| **Reality Check** | `npm run reality-check` | Honest assessment of where you stand — what roles you'll actually win |
+| | `npm run fit` | Score how competitive you are for a specific role before applying |
 | **Apply** | `npm run linkedin` | Audit your LinkedIn profile |
 | | `npm run decode` | Decode a JD — red flags, real pay, subtext |
 | | `npm run ats` | Scan resume for ATS issues before submitting |
@@ -127,11 +130,16 @@ uses its own API connection. See [CLAUDE.md](CLAUDE.md) for project conventions.
 ## The right order for a job application
 
 ```
-decode        ← understand the role before doing anything
+reality-check ← do this once before anything else — know your actual market
+fit           ← score this specific role before spending time on it
+decode        ← understand the JD before doing anything else
 ats           ← fix resume issues before tailoring
 resume        ← tailor to this specific role
 cover-letter  ← write the letter
 ```
+
+If `fit` scores below 6 — stop. Find a better role with `npm run jobs`.
+If `fit` scores 7 or above — continue down the pipeline.
 
 ## The right order for interview prep
 
@@ -152,8 +160,8 @@ job-hunter/                        (main branch — open source only)
 ├── CLAUDE.md                      project context for Claude Code sessions
 ├── README.md · LICENSE · server.js · package.json
 │
-├── agents/                        19 prompt files — one per tool
-│   ├── apply-*   (6)              resume, cover letter, ATS, LinkedIn, JD decode
+├── agents/                        21 prompt files — one per tool
+│   ├── apply-*   (8)              reality-check, fit-score, resume, cover letter, ATS, LinkedIn, JD decode, LinkedIn scrape
 │   ├── search-*  (3)              jobs, salary, outreach
 │   ├── interview-* (3)            prep, mock, research
 │   ├── offer-*   (4)              negotiate, compare, schedule, thank-you
