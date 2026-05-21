@@ -4,6 +4,21 @@ All notable changes to Job Hunter are documented here.
 
 ---
 
+## [0.4.0] — 2026-05-21
+
+### Added
+- **Job Search** (`npm run jobs`) — searches Indeed, LinkedIn, Glassdoor via JobSpy MCP, scores postings against resume, outputs ranked shortlist
+- **Salary Research** (`npm run salary`) — researches market comp before screening calls, produces negotiation playbook with opening number, range, and walk-away number
+- **Interview Scheduler** (`npm run schedule`) — creates Google Calendar events with prep checklist, thank-you reminder, and follow-up reminder via Google Calendar MCP
+- **Send Thank-You** (`npm run send-thankyou`) — sends thank-you notes directly via Gmail MCP, no copy-paste
+- `agents/job-search.md`
+- `agents/salary-research.md`
+- `agents/schedule-interview.md`
+- `agents/send-thankyou.md`
+- `inputs/job-search-criteria.md`
+
+---
+
 ## [0.3.0] — 2026-05-21
 
 ### Added

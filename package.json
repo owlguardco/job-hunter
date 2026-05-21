@@ -10,6 +10,10 @@
     "mock": "node scripts/preflight.js interview && claude \"follow agents/mock-interview.md\"",
     "linkedin-scrape": "claude \"follow agents/linkedin-scraper-setup.md\"",
     "ats": "node scripts/preflight.js resume && claude --print \"$(cat agents/ats-scanner.md)\"",
+    "jobs": "node scripts/preflight.js all && claude \"follow agents/job-search.md\"",
+    "salary": "node scripts/preflight.js resume && claude --print \"$(cat agents/salary-research.md)\"",
+    "schedule": "claude \"follow agents/schedule-interview.md\"",
+    "send-thankyou": "claude \"follow agents/send-thankyou.md\"",
     "check": "node scripts/preflight.js all"
   },
   "engines": {

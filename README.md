@@ -87,6 +87,36 @@ job-hunter/
 └── .gitignore
 ```
 
+## Full Pipeline
+
+Job Hunter now covers the complete job search workflow end to end:
+
+```bash
+# 1. Find jobs matching your criteria
+npm run jobs
+# → outputs/job-shortlist.md — ranked postings scored against your resume
+
+# 2. Research comp before the screening call
+npm run salary
+# → outputs/salary-research.md — range, anchor, negotiation playbook
+
+# 3. Tailor your application
+npm run ats          # scan for ATS issues first
+npm run resume       # tailor resume to the JD
+npm run cover-letter # write the cover letter
+
+# 4. Prep for the interview
+npm run interview    # story bank + coached answers
+npm run mock         # live simulation with grading
+
+# 5. After the interview
+npm run schedule     # create calendar event with reminders (Google Calendar MCP)
+npm run send-thankyou # send thank-you note via Gmail (Gmail MCP)
+```
+
+MCPs required for steps 5: Google Calendar and Gmail connected in Claude.ai settings.
+Everything else runs locally with no additional setup beyond an Anthropic API key.
+
 ## Advanced — LinkedIn Auto-Scrape
 
 Technical users can skip the copy-paste step and scrape their LinkedIn profile directly from a URL using a local MCP server.
