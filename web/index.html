@@ -464,6 +464,7 @@
     <button class="tab" onclick="switchTab('resume')">📄 Resume Tailor</button>
     <button class="tab" onclick="switchTab('cover')">✉️ Cover Letter</button>
     <button class="tab" onclick="switchTab('interview')">🎯 Interview Prep</button>
+    <button class="tab" onclick="switchTab('thankyou')">📬 Thank-You Note</button>
     <button class="tab" onclick="switchTab('ats')">🛡️ ATS Scanner</button>
   </div>
 
@@ -633,10 +634,14 @@
   <div class="tool-panel" id="panel-interview">
     <div class="tool-header">
       <div class="tool-title">Interview Prep</div>
-      <div class="tool-desc">Get the 10 questions you're most likely to face — with coached answers built from your actual experience, not generic templates.</div>
+      <div class="tool-desc">Two modes — build your story bank and coached answers, or run a live mock interview with real-time grading.</div>
     <div class="tool-explainer">
       <div class="explainer-title">💡 Why this matters</div>
-      Most people prep for interviews by reviewing their resume and hoping for the best. That's how you end up stumbling through "tell me about a time you failed" with a rambling non-answer. Interviewers are largely predictable — they ask behavioral questions tied to the job requirements, role-specific questions about how you'd approach their problems, and curveball questions when they have a concern about your background. This tool maps those questions to your actual experience, writes out the answer framework using your real numbers and wins, and flags the objections before they catch you off guard.
+      Most people prep for interviews by reviewing their resume and hoping for the best. That's how you end up stumbling through "tell me about a time you failed" with a rambling non-answer. Interviewers are predictable — behavioral questions tied to the JD, role-specific challenges, and curveball questions about gaps in your background. <strong>Prep Mode</strong> builds your story bank, coaches your answers, and tells you what not to say. <strong>Mock Mode</strong> runs a live simulation — one question at a time, grades your answer, tells you what to fix, then moves on. Run prep first. Then run the mock until you're scoring A's and B's.
+      <div style="display:flex;gap:8px;margin-top:12px;">
+        <button id="mode-prep-btn" onclick="setInterviewMode('prep')" style="flex:1;padding:10px;border:1.5px solid var(--accent);border-radius:var(--radius-sm);background:var(--accent);color:white;font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;">📋 Prep Mode</button>
+        <button id="mode-mock-btn" onclick="setInterviewMode('mock')" style="flex:1;padding:10px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:white;color:var(--text);font-size:13px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;">🎭 Mock Mode — Live grading</button>
+      </div>
     </div>
     </div>
     <div class="steps">
@@ -665,7 +670,7 @@
     </div>
     <div class="run-wrap">
       <button class="run-btn" id="ip-btn" onclick="run('interview')">
-        <span>Prep My Interview</span>
+        <span id="ip-btn-label">Build My Story Bank + Prep Guide</span>
       </button>
       <div class="validation-msg" id="ip-validation"></div>
     </div>
@@ -740,6 +745,70 @@
     </div>
   </div>
 
+    <!-- THANK YOU NOTE -->
+  <div class="tool-panel" id="panel-thankyou">
+    <div class="tool-header">
+      <div class="tool-title">Post-Interview Thank-You</div>
+      <div class="tool-desc">Send within 24 hours. Get three versions for three different scenarios — strong interview, one concern came up, or you're interviewing elsewhere.</div>
+      <div class="tool-explainer">
+        <div class="explainer-title">💡 Why this matters</div>
+        Most thank-you notes open with "Thank you for taking the time to speak with me today" — and that's exactly what every other candidate writes. A good thank-you note does three things: proves you were paying attention, reinforces your single strongest qualification, and closes with confidence instead of just waiting. Sent within 24 hours, it keeps you top of mind during the decision window. This tool writes three versions based on how your interview actually went — pick the one that fits.
+      </div>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-header">
+          <div class="step-num" id="ty-num1">1</div>
+          <div class="step-label">Your resume</div>
+          <div class="step-hint">So the note references your real background</div>
+        </div>
+        <div class="step-body">
+          <textarea id="ty-resume" rows="6" placeholder="Paste your resume here." oninput="markFilled('ty-resume','ty-num1')"></textarea>
+          <div class="char-count" id="ty-resume-count">0 characters</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-header">
+          <div class="step-num" id="ty-num2">2</div>
+          <div class="step-label">Job description</div>
+          <div class="step-hint">The role you just interviewed for</div>
+        </div>
+        <div class="step-body">
+          <textarea id="ty-jd" rows="5" placeholder="Paste the job description here." oninput="markFilled('ty-jd','ty-num2')"></textarea>
+          <div class="char-count" id="ty-jd-count">0 characters</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-header">
+          <div class="step-num" id="ty-num3">3</div>
+          <div class="step-label">Interviewer name + anything notable from the conversation</div>
+          <div class="step-hint">Optional but makes it more specific</div>
+        </div>
+        <div class="step-body">
+          <textarea id="ty-context" rows="3" placeholder="e.g. Interviewer: Sarah Chen, Director of Sales. We talked about their expansion into the Southeast and their Q3 pipeline challenges." oninput="markFilled('ty-context','ty-num3')"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="run-wrap">
+      <button class="run-btn" id="ty-btn" onclick="run('thankyou')">
+        <span>Write My Thank-You Notes</span>
+      </button>
+      <div class="validation-msg" id="ty-validation"></div>
+    </div>
+    <div class="progress-wrap" id="ty-progress">
+      <div class="spinner"></div>
+      <span id="ty-progress-text">Writing your thank-you notes...</span>
+    </div>
+    <div class="error-wrap" id="ty-error"></div>
+    <div class="output-wrap" id="ty-output">
+      <div class="output-header">
+        <div class="output-title">✓ Your Thank-You Notes</div>
+        <button class="copy-btn" id="ty-copy" onclick="copyOutput('ty-output-body','ty-copy')">Copy</button>
+      </div>
+      <div class="output-body" id="ty-output-body"></div>
+    </div>
+  </div>
+
     <div class="footer">
     Free and open source — <a href="https://github.com/owlguardco/job-hunter" target="_blank">github.com/owlguardco/job-hunter</a> &nbsp;·&nbsp; Your data never leaves your browser
   </div>
@@ -784,6 +853,33 @@ function saveKey() {
 
 function showSetup() {
   document.getElementById('setup-modal').classList.remove('hidden');
+}
+
+// ── INTERVIEW MODE ───────────────────────────────────────
+let interviewMode = 'prep';
+
+function setInterviewMode(mode) {
+  interviewMode = mode;
+  const prepBtn = document.getElementById('mode-prep-btn');
+  const mockBtn = document.getElementById('mode-mock-btn');
+  const btnLabel = document.getElementById('ip-btn-label');
+  if (mode === 'prep') {
+    prepBtn.style.background = 'var(--accent)';
+    prepBtn.style.color = 'white';
+    prepBtn.style.borderColor = 'var(--accent)';
+    mockBtn.style.background = 'white';
+    mockBtn.style.color = 'var(--text)';
+    mockBtn.style.borderColor = 'var(--border)';
+    if (btnLabel) btnLabel.textContent = 'Build My Story Bank + Prep Guide';
+  } else {
+    mockBtn.style.background = 'var(--accent)';
+    mockBtn.style.color = 'white';
+    mockBtn.style.borderColor = 'var(--accent)';
+    prepBtn.style.background = 'white';
+    prepBtn.style.color = 'var(--text)';
+    prepBtn.style.borderColor = 'var(--border)';
+    if (btnLabel) btnLabel.textContent = 'Start Mock Interview';
+  }
 }
 
 function hideSetup() {
@@ -843,6 +939,15 @@ const RULES = `HARD RULES FOR ALL OUTPUT:
 - Specific beats vague — use numbers wherever they exist`;
 
 function getPrompt(type, inputs) {
+  const RULES = `HARD RULES FOR ALL OUTPUT:
+- No em dashes anywhere
+- Never open with "Hi" or "Hello"
+- No filler phrases: "proven track record", "results-driven", "passionate about", "strong communication skills", "team player", "detail-oriented", "thought leader"
+- Never start a bullet with "Responsible for" or "Helped"
+- Every resume bullet: Action verb + what you did + measurable result
+- Sound like a person, not a press release
+- Specific beats vague — use numbers wherever they exist`;
+
   if (type === 'linkedin') return `${RULES}
 
 You are a senior recruiter giving an honest LinkedIn profile audit. Be direct — if something is weak, say so and fix it.
@@ -912,7 +1017,95 @@ Write a cover letter following these rules:
 - No bullet points in a cover letter
 - Apply all hard rules above`;
 
+  if (type === 'interview') {
+    if (interviewMode === 'mock') return `${RULES}
+
+You are a senior hiring manager running a live mock interview. Ask ONE question at a time. After I answer each question, grade it before asking the next one.
+
+MY RESUME:
+${inputs.resume}
+
+JOB DESCRIPTION:
+${inputs.jd}
+
+Set the scene in 2 sentences, then ask question 1: "Walk me through your background and why you're interested in this role."
+
+After I answer, grade it using this format:
+GRADE: A / B / C / D
+WHAT LANDED: [specific thing that worked]
+WHAT MISSED: [specific weakness]
+ONE FIX: [single most important improvement]
+Then ask the next question.
+
+Run 8 questions total: opener, core competency behavioral, biggest accomplishment, failure or setback, role-specific challenge, objection about my background, motivation for this company specifically, and questions I have for you.
+
+After question 8, give a full debrief: overall readiness, scorecard for all 8 questions, top 2 strengths, top 2 things to fix before the real interview, and the one thing that will make or break it.`;
+
+    return `${RULES}
+
+You are an interview coach building a full prep program.
+
+MY RESUME:
+${inputs.resume}
+
+JOB DESCRIPTION:
+${inputs.jd}
+
+Produce four sections:
+
+SECTION 1 — STORY BANK
+Pull 8 stories from the resume mapped to these behavioral themes: Leadership, Conflict, Failure or Setback, Ambiguity, High-stakes Decision, Exceeding Expectations, Collaboration, Driving Change, Customer Win, Persistence.
+For each story: Theme | Situation (1-2 sentences) | Action (2-3 sentences) | Result (quantified from resume) | One-line version under 20 words | Maps to which JD requirement.
+End with the 3 most versatile stories.
+
+SECTION 2 — 10 INTERVIEW QUESTIONS WITH COACHED ANSWERS
+4 behavioral questions mapped to top JD requirements — include the one-line lead-in to open the answer.
+3 role-specific questions with coached answers and what NOT to say.
+3 curveball or objection questions based on gaps — include the real concern behind each and how to redirect.
+
+SECTION 3 — SMART QUESTIONS TO ASK
+5 questions to ask the interviewer that signal preparation. For each, note what it signals.
+
+SECTION 4 — WHERE TO FOCUS
+2-3 genuine strengths for this specific interview. 2-3 honest things to prepare before walking in.`;
+  }
+
+  if (type === 'thankyou') return `${RULES}
+
+You are writing post-interview thank-you notes. Most are forgettable — these will not be.
+
+MY RESUME:
+${inputs.resume}
+
+JOB DESCRIPTION:
+${inputs.jd}
+
+CONTEXT FROM THE INTERVIEW:
+${inputs.context || 'No specific context provided — infer likely conversation topics from the JD.'}
+
+Write 3 thank-you note templates:
+
+TEMPLATE 1 — Strong interview, I want this job
+Confident and specific. References something real from the conversation. Reinforces the single strongest qualification. 100-120 words.
+
+TEMPLATE 2 — One concern came up
+Addresses the concern briefly and directly. Pivots to a strength. Does not over-explain or grovel. 100-120 words.
+
+TEMPLATE 3 — I am also interviewing elsewhere
+Warm but signals momentum. Creates mild urgency without being aggressive. 80-100 words.
+
+RULES FOR ALL THREE:
+- Never open with "Thank you for taking the time" — every other candidate writes that
+- Never open with "Hi"
+- Reference the exact role title
+- End with a direct confident statement — not "I look forward to hearing from you"
+- Apply all writing rules above
+
+After the three templates, add one sentence recommending which to use and why.`;
+
   if (type === 'ats') return `${RULES}
+
+    if (type === 'ats') return `${RULES}
 
 You are an ATS (Applicant Tracking System) specialist. Find every reason this resume would be filtered out before a human sees it. Be precise — every flag needs a specific fix, not a vague suggestion.
 
@@ -996,7 +1189,7 @@ Questions that signal they've done their homework. Not questions answered by rea
 
 // ── RUN ───────────────────────────────────────────────────
 async function run(type) {
-  const prefixes = { linkedin:'ln', resume:'rv', cover:'cl', interview:'ip', ats:'ats' };
+  const prefixes = { linkedin:'ln', resume:'rv', cover:'cl', interview:'ip', ats:'ats', thankyou:'ty' };
   const p = prefixes[type];
 
   // Validation
@@ -1023,6 +1216,10 @@ async function run(type) {
       validEl.textContent = 'The job description looks too short. Paste the full posting.';
       return;
     }
+  } else if (type === 'thankyou') {
+    inputs.resume = document.getElementById('ty-resume').value.trim();
+    inputs.jd = document.getElementById('ty-jd').value.trim();
+    inputs.context = document.getElementById('ty-context').value.trim();
   } else {
     inputs.resume = document.getElementById(p + '-resume').value.trim();
     inputs.jd = document.getElementById(p + '-jd').value.trim();
@@ -1034,6 +1231,19 @@ async function run(type) {
     if (!inputs.jd || inputs.jd.length < 100) {
       validEl.className = 'validation-msg error';
       validEl.textContent = 'The job description looks too short. Paste the full posting.';
+      return;
+    }
+  }
+
+  if (type === 'thankyou') {
+    if (!inputs.resume || inputs.resume.length < 100) {
+      validEl.className = 'validation-msg error';
+      validEl.textContent = 'Paste your resume so the note references your real background.';
+      return;
+    }
+    if (!inputs.jd || inputs.jd.length < 50) {
+      validEl.className = 'validation-msg error';
+      validEl.textContent = 'Paste the job description — even just the title and company helps.';
       return;
     }
   }
@@ -1056,7 +1266,9 @@ async function run(type) {
     resume: ['Reading your resume...', 'Matching to the job description...', 'Tailoring your bullets...'],
     cover: ['Reading your background...', 'Finding the angle...', 'Writing your letter...'],
     interview: ['Analyzing the role requirements...', 'Building your question set...', 'Writing coached answers...'],
-    ats: ['Scanning for ATS issues...', 'Checking keyword gaps...', 'Calculating your match score...', 'Building your fix checklist...']
+    ats: ['Scanning for ATS issues...', 'Checking keyword gaps...', 'Calculating your match score...', 'Building your fix checklist...'],
+    thankyou: ['Writing your thank-you notes...', 'Tailoring each scenario...', 'Applying tone rules...'],
+    thankyou: ['Writing your thank-you notes...', 'Tailoring each scenario...', 'Applying tone rules...']
   };
 
   let msgIdx = 0;
