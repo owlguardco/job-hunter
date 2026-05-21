@@ -1,6 +1,8 @@
 # Job Hunter
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Version](https://img.shields.io/badge/version-0.3.0-green.svg)](CHANGELOG.md)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
 > I searched for six months. Then I started using Claude Code to build my own tools — a LinkedIn content system, tailored resumes, research workflows — and wrapped up the search in under two months. This is everything I learned, packaged so you don't have to figure it out the hard way.
 
@@ -100,6 +102,12 @@ npm run linkedin-scrape
 Scrapes the profile, formats it, and runs the full audit automatically. See [ONBOARDING.md](ONBOARDING.md) for the full setup guide.
 
 Uses [stickerdaniel/linkedin-mcp-server](https://github.com/stickerdaniel/linkedin-mcp-server) running locally — credentials never leave your machine.
+
+## Community & Security
+
+- [SECURITY.md](SECURITY.md) — how to report a vulnerability responsibly
+- [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) — how we treat each other
+- [CHANGELOG.md](CHANGELOG.md) — what's changed in each version
 
 ## Contributing
 
