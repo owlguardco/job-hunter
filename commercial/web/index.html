@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Job Hunter — Find · Apply · Close</title>
+<script src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0e0c0a;
+  --surface: #161412;
+  --surface2: #1e1b18;
+  --border: #2a2520;
+  --text: #f0ece6;
+  --muted: #6b6058;
+  --orange: #e8722a;
+  --orange-dim: #7a3a10;
+  --green: #3dba7e;
+  --green-dim: #1a4a35;
+  --red: #e85252;
+  --red-dim: #4a1a1a;
+  --radius: 10px;
+  --radius-sm: 6px;
+}
+
+body {
+  font-family: 'Syne', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+/* ── HEADER ── */
+header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 2rem; height: 56px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+  position: sticky; top: 0; z-index: 100;
+}
+.header-logo { height: 28px; display: block; }
+.header-right { display: flex; align-items: center; gap: 12px; }
+.credit-badge {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px; padding: 4px 10px;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 99px; color: var(--orange);
+}
+.credit-badge.unlimited { color: var(--green); }
+.btn {
+  padding: 7px 16px; border-radius: var(--radius-sm);
+  font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 600;
+  cursor: pointer; border: none; transition: all 0.15s;
+}
+.btn-primary { background: var(--orange); color: white; }
+.btn-primary:hover { background: #d4651f; }
+.btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+.btn-ghost:hover { color: var(--text); border-color: var(--muted); }
+.btn-sm { padding: 5px 12px; font-size: 12px; }
+
+/* ── VIEWS ── */
+.view { display: none; }
+.view.active { display: block; }
+
+/* ── LANDING ── */
+.landing {
+  max-width: 680px; margin: 0 auto;
+  padding: 80px 2rem 60px;
+  text-align: center;
+}
+.landing-logo { height: 80px; margin: 0 auto 2.5rem; display: block; }
+.landing h1 {
+  font-size: 2.8rem; font-weight: 800;
+  line-height: 1.1; letter-spacing: -0.03em;
+  margin-bottom: 1.25rem;
+}
+.landing h1 span { color: var(--orange); }
+.landing .sub {
+  font-size: 1.05rem; color: var(--muted);
+  max-width: 480px; margin: 0 auto 2.5rem;
+  line-height: 1.7;
+}
+.landing-cta { display: flex; gap: 12px; justify-content: center; margin-bottom: 4rem; }
+.btn-large { padding: 13px 28px; font-size: 15px; border-radius: var(--radius); }
+
+.proof {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px;
+  background: var(--border); border-radius: var(--radius);
+  overflow: hidden; margin-bottom: 4rem;
+}
+.proof-item {
+  background: var(--surface); padding: 24px 20px; text-align: center;
+}
+.proof-num {
+  font-size: 2rem; font-weight: 800; color: var(--orange);
+  font-family: 'DM Mono', monospace; display: block; margin-bottom: 4px;
+}
+.proof-label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+
+.tools-grid {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;
+  margin-bottom: 4rem; text-align: left;
+}
+.tool-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 16px;
+}
+.tool-card-label {
+  font-size: 11px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.1em; color: var(--orange); margin-bottom: 6px;
+}
+.tool-card-title { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+.tool-card-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+.pricing {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 1px; background: var(--border);
+  border-radius: var(--radius); overflow: hidden; margin-bottom: 3rem;
+}
+.price-card {
+  background: var(--surface); padding: 24px 20px; text-align: center;
+  position: relative;
+}
+.price-card.featured { background: var(--surface2); }
+.price-badge {
+  position: absolute; top: -1px; left: 50%; transform: translateX(-50%);
+  background: var(--orange); color: white; font-size: 10px; font-weight: 700;
+  padding: 2px 10px; border-radius: 0 0 6px 6px; text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.price-name { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 8px; }
+.price-amount { font-size: 2rem; font-weight: 800; font-family: 'DM Mono', monospace; margin-bottom: 4px; }
+.price-amount span { font-size: 14px; font-weight: 400; color: var(--muted); }
+.price-detail { font-size: 12px; color: var(--muted); margin-bottom: 16px; }
+.price-card .btn { width: 100%; }
+
+.open-source-note {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 20px;
+  font-size: 13px; color: var(--muted); text-align: left;
+}
+.open-source-note a { color: var(--orange); text-decoration: none; }
+.open-source-note strong { color: var(--text); }
+
+/* ── DASHBOARD ── */
+.dashboard { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+.dash-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 2rem;
+}
+.dash-title { font-size: 1.4rem; font-weight: 700; }
+.dash-credits {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 16px 20px;
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 2rem;
+}
+.dash-credits-info {}
+.dash-credits-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); }
+.dash-credits-value {
+  font-size: 2rem; font-weight: 800; font-family: 'DM Mono', monospace;
+  color: var(--orange); line-height: 1.2;
+}
+.dash-credits-value.unlimited { color: var(--green); }
+.dash-credits-sub { font-size: 12px; color: var(--muted); }
+
+/* ── TOOL TABS ── */
+.tool-tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 1.5rem; }
+.tool-tab {
+  padding: 7px 14px; border: 1px solid var(--border);
+  border-radius: 99px; font-size: 12px; font-weight: 600;
+  color: var(--muted); cursor: pointer; background: transparent;
+  font-family: 'Syne', sans-serif; transition: all 0.15s;
+  text-transform: uppercase; letter-spacing: 0.05em;
+}
+.tool-tab:hover { border-color: var(--orange); color: var(--orange); }
+.tool-tab.active { background: var(--orange); border-color: var(--orange); color: white; }
+
+/* ── TOOL PANEL ── */
+.tool-panel { display: none; }
+.tool-panel.active { display: block; }
+.tool-pane {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); overflow: hidden;
+}
+.tool-pane-header {
+  padding: 16px 20px; border-bottom: 1px solid var(--border);
+  background: var(--surface2);
+}
+.tool-pane-title { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+.tool-pane-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
+.tool-explainer {
+  margin: 0; padding: 12px 20px;
+  background: #1a1610; border-bottom: 1px solid var(--border);
+  font-size: 12px; color: var(--muted); line-height: 1.6;
+}
+.tool-explainer strong { color: var(--orange); }
+.tool-body { padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+
+.input-group {}
+.input-label {
+  font-size: 11px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.08em; color: var(--muted); margin-bottom: 6px; display: block;
+}
+textarea {
+  width: 100%; background: var(--bg); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 12px 14px;
+  font-family: 'DM Mono', monospace; font-size: 13px; color: var(--text);
+  resize: vertical; outline: none; line-height: 1.6; transition: border-color 0.15s;
+}
+textarea:focus { border-color: var(--orange); }
+textarea.filled { border-color: var(--green-dim); }
+
+.run-btn {
+  width: 100%; padding: 14px; background: var(--orange); color: white;
+  border: none; border-radius: var(--radius); font-size: 14px; font-weight: 700;
+  cursor: pointer; font-family: 'Syne', sans-serif;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  transition: all 0.15s;
+}
+.run-btn:hover { background: #d4651f; }
+.run-btn:disabled { background: var(--surface2); color: var(--muted); cursor: not-allowed; }
+
+.spinner {
+  width: 16px; height: 16px;
+  border: 2px solid rgba(255,255,255,0.3); border-top-color: white;
+  border-radius: 50%; animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.output-wrap {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: var(--radius); overflow: hidden; display: none;
+}
+.output-wrap.visible { display: block; }
+.output-header {
+  padding: 10px 16px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--green-dim);
+}
+.output-title { font-size: 12px; font-weight: 600; color: var(--green); }
+.copy-btn {
+  padding: 5px 12px; background: transparent; border: 1px solid var(--border);
+  border-radius: var(--radius-sm); font-size: 11px; font-weight: 600;
+  cursor: pointer; font-family: 'Syne', sans-serif; color: var(--muted);
+  transition: all 0.15s;
+}
+.copy-btn:hover { border-color: var(--green); color: var(--green); }
+.copy-btn.copied { background: var(--green); color: white; border-color: var(--green); }
+.output-body {
+  padding: 20px; font-size: 13px; line-height: 1.8;
+  white-space: pre-wrap; font-family: 'DM Mono', monospace;
+  max-height: 560px; overflow-y: auto; color: var(--text);
+}
+
+.error-msg {
+  padding: 12px 16px; background: var(--red-dim); border: 1px solid var(--red);
+  border-radius: var(--radius-sm); font-size: 13px; color: var(--red); display: none;
+}
+.error-msg.visible { display: block; }
+
+.no-credits-msg {
+  padding: 20px; background: var(--surface2); border: 1px solid var(--orange-dim);
+  border-radius: var(--radius); text-align: center; display: none;
+}
+.no-credits-msg.visible { display: block; }
+.no-credits-msg p { color: var(--muted); margin-bottom: 12px; font-size: 13px; }
+
+/* ── RECENT USAGE ── */
+.usage-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.usage-table th {
+  text-align: left; padding: 8px 12px;
+  font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--muted); border-bottom: 1px solid var(--border);
+}
+.usage-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); color: var(--muted); }
+.usage-table td:first-child { color: var(--text); font-weight: 500; }
+.usage-badge {
+  display: inline-block; padding: 2px 8px; border-radius: 99px;
+  font-size: 10px; font-weight: 600; font-family: 'DM Mono', monospace;
+  background: var(--surface); border: 1px solid var(--border);
+}
+
+/* ── PURCHASE MODAL ── */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.8);
+  display: none; align-items: center; justify-content: center;
+  z-index: 1000; padding: 1rem;
+}
+.modal-overlay.visible { display: flex; }
+.modal {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 16px; max-width: 520px; width: 100%; padding: 2rem;
+}
+.modal-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 6px; }
+.modal-sub { font-size: 13px; color: var(--muted); margin-bottom: 1.5rem; }
+.packs { display: flex; flex-direction: column; gap: 10px; margin-bottom: 1.5rem; }
+.pack {
+  border: 1.5px solid var(--border); border-radius: var(--radius);
+  padding: 16px; cursor: pointer; transition: all 0.15s; position: relative;
+}
+.pack:hover { border-color: var(--orange); }
+.pack.selected { border-color: var(--orange); background: #1e1410; }
+.pack-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+.pack-name { font-size: 14px; font-weight: 700; }
+.pack-price { font-size: 18px; font-weight: 800; font-family: 'DM Mono', monospace; color: var(--orange); }
+.pack-detail { font-size: 12px; color: var(--muted); }
+.pack-badge {
+  position: absolute; top: -8px; right: 12px;
+  background: var(--orange); color: white; font-size: 9px; font-weight: 700;
+  padding: 2px 8px; border-radius: 99px; text-transform: uppercase; letter-spacing: 0.08em;
+}
+.modal-footer { display: flex; gap: 10px; }
+.modal-footer .btn { flex: 1; padding: 12px; }
+
+/* ── UTILITY ── */
+.divider { height: 1px; background: var(--border); margin: 2rem 0; }
+.section-title {
+  font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em;
+  color: var(--muted); margin-bottom: 1rem;
+}
+.empty-state { text-align: center; padding: 2rem; color: var(--muted); font-size: 13px; }
+</style>
+</head>
+<body>
+
+<header>
+  <img src="logo.svg" alt="Job Hunter" class="header-logo" />
+  <div class="header-right">
+    <div id="credit-display" style="display:none">
+      <span class="credit-badge" id="credit-badge">0 credits</span>
+    </div>
+    <button class="btn btn-ghost btn-sm" id="header-buy-btn" style="display:none" onclick="showPurchaseModal()">Buy Credits</button>
+    <div id="clerk-user-button"></div>
+    <button class="btn btn-primary btn-sm" id="header-signin-btn" onclick="signIn()">Sign In</button>
+  </div>
+</header>
+
+<!-- LANDING -->
+<div class="view active" id="view-landing">
+  <div class="landing">
+    <img src="logo.svg" alt="Job Hunter" class="landing-logo" />
+    <h1>Stop sending<br/><span>generic applications</span></h1>
+    <p class="sub">
+      AI-powered job search toolkit. Tailored resumes, ATS scanner, interview prep,
+      offer negotiation — built from a real job search that went from 6 months to 2.
+    </p>
+    <div class="landing-cta">
+      <button class="btn btn-primary btn-large" onclick="signIn()">Get Started Free</button>
+      <a href="https://github.com/owlguardco/job-hunter" target="_blank" class="btn btn-ghost btn-large" style="text-decoration:none;display:inline-flex;align-items:center">View on GitHub</a>
+    </div>
+
+    <div class="proof">
+      <div class="proof-item"><span class="proof-num">19</span><span class="proof-label">Tools</span></div>
+      <div class="proof-item"><span class="proof-num">~$0.25</span><span class="proof-label">Per run</span></div>
+      <div class="proof-item"><span class="proof-num">0</span><span class="proof-label">Setup required</span></div>
+    </div>
+
+    <div class="tools-grid">
+      <div class="tool-card"><div class="tool-card-label">Apply</div><div class="tool-card-title">ATS Scanner</div><div class="tool-card-desc">Score your resume against any JD before submitting</div></div>
+      <div class="tool-card"><div class="tool-card-label">Apply</div><div class="tool-card-title">Resume Tailor</div><div class="tool-card-desc">Translate your experience into the language of the role</div></div>
+      <div class="tool-card"><div class="tool-card-label">Interview</div><div class="tool-card-title">Mock Interview</div><div class="tool-card-desc">Live simulation with real-time grading — A/B/C/D per answer</div></div>
+      <div class="tool-card"><div class="tool-card-label">Offer</div><div class="tool-card-title">Negotiation Sim</div><div class="tool-card-desc">Practice the offer conversation before the real call</div></div>
+      <div class="tool-card"><div class="tool-card-label">Search</div><div class="tool-card-title">JD Decoder</div><div class="tool-card-desc">Red flags, real pay, and what they actually want</div></div>
+      <div class="tool-card"><div class="tool-card-label">Career</div><div class="tool-card-title">Promotion Case</div><div class="tool-card-desc">Build the written case your manager can take upstairs</div></div>
+    </div>
+
+    <div class="pricing">
+      <div class="price-card">
+        <div class="price-name">Starter</div>
+        <div class="price-amount">$5<span></span></div>
+        <div class="price-detail">25 runs · $0.20/run</div>
+        <button class="btn btn-ghost" onclick="signInThenBuy('starter')">Buy Starter</button>
+      </div>
+      <div class="price-card featured">
+        <div class="price-badge">Best Value</div>
+        <div class="price-name">Pro</div>
+        <div class="price-amount">$15<span></span></div>
+        <div class="price-detail">100 runs · $0.15/run</div>
+        <button class="btn btn-primary" onclick="signInThenBuy('pro')">Buy Pro</button>
+      </div>
+      <div class="price-card">
+        <div class="price-name">Monthly</div>
+        <div class="price-amount">$19<span>/mo</span></div>
+        <div class="price-detail">Unlimited runs</div>
+        <button class="btn btn-ghost" onclick="signInThenBuy('monthly')">Subscribe</button>
+      </div>
+    </div>
+
+    <div class="open-source-note">
+      <strong>Prefer to self-host?</strong> Job Hunter is fully open source.
+      <a href="https://github.com/owlguardco/job-hunter" target="_blank">Clone the repo</a>,
+      add your own Anthropic API key, and run it locally for free.
+      This hosted version is for people who want zero setup.
+    </div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="view" id="view-dashboard">
+  <div class="dashboard">
+
+    <div class="dash-header">
+      <div class="dash-title">Your Tools</div>
+      <button class="btn btn-primary btn-sm" onclick="showPurchaseModal()">+ Buy Credits</button>
+    </div>
+
+    <!-- Credits -->
+    <div class="dash-credits">
+      <div class="dash-credits-info">
+        <div class="dash-credits-label">Credits Remaining</div>
+        <div class="dash-credits-value" id="dash-credit-value">—</div>
+        <div class="dash-credits-sub" id="dash-credit-sub">Each tool run costs 1 credit</div>
+      </div>
+      <button class="btn btn-ghost" onclick="showPurchaseModal()">Add Credits →</button>
+    </div>
+
+    <!-- Tool Tabs -->
+    <div class="tool-tabs">
+      <button class="tool-tab active" onclick="switchTool('ats')">ATS Scan</button>
+      <button class="tool-tab" onclick="switchTool('resume')">Resume</button>
+      <button class="tool-tab" onclick="switchTool('cover')">Cover Letter</button>
+      <button class="tool-tab" onclick="switchTool('decode')">Decode JD</button>
+      <button class="tool-tab" onclick="switchTool('linkedin')">LinkedIn</button>
+      <button class="tool-tab" onclick="switchTool('interview')">Interview Prep</button>
+      <button class="tool-tab" onclick="switchTool('mock')">Mock Interview</button>
+      <button class="tool-tab" onclick="switchTool('research')">Pre-Interview</button>
+      <button class="tool-tab" onclick="switchTool('negotiate')">Negotiate</button>
+      <button class="tool-tab" onclick="switchTool('compare')">Compare Offers</button>
+      <button class="tool-tab" onclick="switchTool('promote')">Promotion</button>
+      <button class="tool-tab" onclick="switchTool('review')">Review Prep</button>
+    </div>
+
+    <!-- Tool Panels -->
+    <div id="tool-panels">
+
+      <!-- ATS -->
+      <div class="tool-panel active" id="panel-ats">
+        <div class="tool-pane">
+          <div class="tool-pane-header">
+            <div class="tool-pane-title">ATS Scanner</div>
+            <div class="tool-pane-desc">Find why you're being filtered out before a human sees your resume.</div>
+          </div>
+          <div class="tool-explainer">Most companies use software to filter resumes before a human sees them. This scans yours the same way, gives you a score, and tells you exactly what to fix — in priority order.</div>
+          <div class="tool-body">
+            <div class="input-group"><label class="input-label">Your Resume</label><textarea id="ats-resume" rows="8" placeholder="Paste your resume here — plain text is fine" oninput="markFilled(this)"></textarea></div>
+            <div class="input-group"><label class="input-label">Job Description</label><textarea id="ats-jd" rows="5" placeholder="Paste the full job posting" oninput="markFilled(this)"></textarea></div>
+            <button class="run-btn" id="ats-btn" onclick="runTool('ats')"><span>Scan My Resume — 1 credit</span></button>
+            <div class="no-credits-msg" id="ats-no-credits"><p>You're out of credits.</p><button class="btn btn-primary" onclick="showPurchaseModal()">Buy Credits</button></div>
+            <div class="error-msg" id="ats-error"></div>
+            <div class="output-wrap" id="ats-output"><div class="output-header"><span class="output-title">✓ ATS Scan Results</span><button class="copy-btn" id="ats-copy" onclick="copyOutput('ats-output-body','ats-copy')">Copy</button></div><div class="output-body" id="ats-output-body"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RESUME -->
+      <div class="tool-panel" id="panel-resume">
+        <div class="tool-pane">
+          <div class="tool-pane-header"><div class="tool-pane-title">Resume Tailor</div><div class="tool-pane-desc">Translate your real experience into the language of the role.</div></div>
+          <div class="tool-explainer">Sending the same resume everywhere is why qualified people don't get callbacks. This rewrites your bullets in the exact vocabulary of the JD — without inventing anything.</div>
+          <div class="tool-body">
+            <div class="input-group"><label class="input-label">Your Resume</label><textarea id="resume-resume" rows="9" placeholder="Paste your resume here" oninput="markFilled(this)"></textarea></div>
+            <div class="input-group"><label class="input-label">Job Description</label><textarea id="resume-jd" rows="5" placeholder="Paste the full job posting" oninput="markFilled(this)"></textarea></div>
+            <button class="run-btn" id="resume-btn" onclick="runTool('resume')"><span>Tailor My Resume — 1 credit</span></button>
+            <div class="no-credits-msg" id="resume-no-credits"><p>You're out of credits.</p><button class="btn btn-primary" onclick="showPurchaseModal()">Buy Credits</button></div>
+            <div class="error-msg" id="resume-error"></div>
+            <div class="output-wrap" id="resume-output"><div class="output-header"><span class="output-title">✓ Tailored Resume</span><button class="copy-btn" id="resume-copy" onclick="copyOutput('resume-output-body','resume-copy')">Copy</button></div><div class="output-body" id="resume-output-body"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- COVER -->
+      <div class="tool-panel" id="panel-cover">
+        <div class="tool-pane">
+          <div class="tool-pane-header"><div class="tool-pane-title">Cover Letter</div><div class="tool-pane-desc">Sounds like you wrote it. Specific, confident, under 350 words.</div></div>
+          <div class="tool-explainer">Most cover letters open with "I am writing to express my interest" and get skipped. This one opens with something real and closes with confidence — not a plea.</div>
+          <div class="tool-body">
+            <div class="input-group"><label class="input-label">Your Resume</label><textarea id="cover-resume" rows="7" placeholder="Paste your resume here" oninput="markFilled(this)"></textarea></div>
+            <div class="input-group"><label class="input-label">Job Description</label><textarea id="cover-jd" rows="5" placeholder="Paste the full job posting" oninput="markFilled(this)"></textarea></div>
+            <button class="run-btn" id="cover-btn" onclick="runTool('cover')"><span>Write Cover Letter — 1 credit</span></button>
+            <div class="no-credits-msg" id="cover-no-credits"><p>You're out of credits.</p><button class="btn btn-primary" onclick="showPurchaseModal()">Buy Credits</button></div>
+            <div class="error-msg" id="cover-error"></div>
+            <div class="output-wrap" id="cover-output"><div class="output-header"><span class="output-title">✓ Cover Letter</span><button class="copy-btn" id="cover-copy" onclick="copyOutput('cover-output-body','cover-copy')">Copy</button></div><div class="output-body" id="cover-output-body"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DECODE -->
+      <div class="tool-panel" id="panel-decode">
+        <div class="tool-pane">
+          <div class="tool-pane-header"><div class="tool-pane-title">Job Description Decoder</div><div class="tool-pane-desc">Red flags, real pay, and what they actually want.</div></div>
+          <div class="tool-explainer">"Fast-paced environment" means something. "Wear many hats" means something. This reads the JD the way an insider would — subtext, salary estimate, culture signals, and fit assessment.</div>
+          <div class="tool-body">
+            <div class="input-group"><label class="input-label">Job Description</label><textarea id="decode-jd" rows="10" placeholder="Paste the full job posting" oninput="markFilled(this)"></textarea></div>
+            <div class="input-group"><label class="input-label">Your Resume (optional — for fit assessment)</label><textarea id="decode-resume" rows="5" placeholder="Paste your resume for a fit assessment" oninput="markFilled(this)"></textarea></div>
+            <button class="run-btn" id="decode-btn" onclick="runTool('decode')"><span>Decode This JD — 1 credit</span></button>
+            <div class="no-credits-msg" id="decode-no-credits"><p>You're out of credits.</p><button class="btn btn-primary" onclick="showPurchaseModal()">Buy Credits</button></div>
+            <div class="error-msg" id="decode-error"></div>
+            <div class="output-wrap" id="decode-output"><div class="output-header"><span class="output-title">✓ JD Decoded</span><button class="copy-btn" id="decode-copy" onclick="copyOutput('decode-output-body','decode-copy')">Copy</button></div><div class="output-body" id="decode-output-body"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- LINKEDIN -->
+      <div class="tool-panel" id="panel-linkedin">
+        <div class="tool-pane">
+          <div class="tool-pane-header"><div class="tool-pane-title">LinkedIn Audit</div><div class="tool-pane-desc">Honest critique. Rewritten where needed.</div></div>
+          <div class="tool-explainer">Recruiters spend 6 seconds on a profile. If your headline is a job title and your About opens with "results-driven," you're invisible. This audits every section and rewrites the weak parts.</div>
+          <div class="tool-body">
+            <div class="input-group"><label class="input-label">Your LinkedIn Profile</label><textarea id="linkedin-profile" rows="9" placeholder="Paste your profile — headline, about, experience, skills" oninput="markFilled(this)"></textarea></div>
+            <div class="input-group"><label class="input-label">Target Role / Job Description</label><textarea id="linkedin-jd" rows="4" placeholder="Paste the type of role you're targeting" oninput="markFilled(this)"></textarea></div>
+            <button class="run-btn" id="linkedin-btn" onclick="runTool('linkedin')"><span>Audit My LinkedIn — 1 credit</span></button>
+            <div class="no-credits-msg" id="linkedin-no-credits"><p>You're out of credits.</p><button class="btn btn-primary" onclick="showPurchaseModal()">Buy Credits</button></div>
+            <div class="error-msg" id="linkedin-error"></div>
+            <div class="output-wrap" id="linkedin-output"><div class="output-header"><span class="output-title">✓ LinkedIn Audit</span><button class="copy-btn" id="linkedin-copy" onclick="copyOutput('linkedin-output-body','linkedin-copy')">Copy</button></div><div class="output-body" id="linkedin-output-body"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- INTERVIEW -->
+      <div class="tool-panel" id="panel-interview">
+        <div class="tool-pane">
+          <div class="tool-pane-header"><div class="tool-pane-title">Interview Prep</div><div class="tool-pane-desc">Story bank + 10 coached questions + what not to say.</div></div>
+          <div class="tool-explainer">8–10 STAR stories from your background mapped to behavioral themes. 10 likely questions with coached answers built from your actual experience. Curveball questions based on gaps in your resume.</div>
+          <div class="tool-body">
+            <div class="input-group"><label class="input-label">Your Resume</label><textarea id="interview-resume" rows="8" placeholder="Paste your resume" oninput="markFilled(this)"></textarea></div>
+            <div class="input-group"><label class="input-label">Job Description</label><textarea id="interview-jd" rows="5" placeholder="Paste the job posting" oninput="markFilled(this)"></textarea></div>
+            <button class="run-btn" id="interview-btn" onclick="runTool('interview')"><span>Build My Prep Guide — 1 credit</span></button>
+            <div class="no-credits-msg" id="interview-no-credits"><p>You're out of credits.</p><button class="btn btn-primary" onclick="showPurchaseModal()">Buy Credits</button></div>
+            <div class="error-msg" id="interview-error"></div>
+            <div class="output-wrap" id="interview-output"><div class="output-header"><span class="output-title">✓ Interview Prep Guide</span><button class="copy-btn" id="interview-copy" onclick="copyOutput('interview-output-body','interview-copy')">Copy</button></div><div class="output-body" id="interview-output-body"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MOCK -->
+      <div class="tool-panel" id="panel-mock">
+        <div class="tool-pane">
+          <div class="tool-pane-header"><div class="tool-pane-title">Mock Interview</div><div class="tool-pane-desc">One question at a time. Real-time grading. Full debrief.</div></div>
+          <div class="tool-explainer">8 questions in realistic sequence. Each answer gets graded A–D with specific feedback before the next question. Final debrief shows your scorecard and the one thing that will make or break the real interview.</div>
+          <div class="tool-body">
+            <div class="input-group"><label class="input-label">Your Resume</label><textarea id="mock-resume" rows="7" placeholder="Paste your resume" oninput="markFilled(this)"></textarea></div>
+            <div class="input-group"><label class="input-label">Job Description</label><textarea id="mock-jd" rows="5" placeholder="Paste the job posting" oninput="markFilled(this)"></textarea></div>
+            <button class="run-btn" id="mock-btn" onclick="runTool('mock')"><span>Start Mock Interview — 1 credit</span></button>
+            <div class="no-credits-msg" id="mock-no-credits"><p>You're out of credits.</p><button class="btn btn-primary" onclick="showPurchaseModal()">Buy Credits</button></div>
+            <div class="error-msg" id="mock-error"></div>
+            <div class="output-wrap" id="mock-output"><div class="output-header"><span class="output-title">✓ Mock Interview</span><button class="copy-btn" id="mock-copy" onclick="copyOutput('mock-output-body','mock-copy')">Copy</button></div><div class="output-body" id="mock-output-body"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RESEARCH -->
+      <div class="tool-panel" id="panel-research">
+        <div class="tool-pane">
+          <div class="tool-pane-header"><div class="tool-pane-title">Pre-Interview Research</div><div class="tool-pane-desc">One-page brief. Read it 30 minutes before the call.</div></div>
+          <div class="tool-explainer">Company news, financial health, competitive landscape, Glassdoor signals, interviewer background, and 5 questions grounded in the research. Walking in knowing something specific is the single thing that separates memorable candidates.</div>
+          <div class="tool-body">
+            <div class="input-group"><label class="input-label">Job Description / Company</label><textarea id="research-jd" rows="6" placeholder="Paste the job posting — company name is the key thing" oninput="markFilled(this)"></textarea></div>
+            <div class="input-group"><label class="input-label">Interviewer Name + Title (optional)</label><textarea id="research-interviewer" rows="2" placeholder="e.g. Sarah Chen, Director of Sales" oninput="markFilled(this)"></textarea></div>
+            <button class="run-btn" id="research-btn" onclick="runTool('research')"><span>Pull Research Brief — 1 credit</span></button>
+            <div class="no-credits-msg" id="research-no-credits"><p>You're out of credits.</p><button class="btn btn-primary" onclick="showPurchaseModal()">Buy Credits</button></div>
+            <div class="error-msg" id="research-error"></div>
+            <div class="output-wrap" id="research-output"><div class="output-header"><span class="output-title">✓ Research Brief</span><button class="copy-btn" id="research-copy" onclick="copyOutput('research-output-body','research-copy')">Copy</button></div><div class="output-body" id="research-output-body"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- NEGOTIATE -->
+      <div class="tool-panel" id="panel-negotiate">
+        <div class="tool-pane">
+          <div class="tool-pane-header"><div class="tool-pane-title">Negotiation Simulator</div><div class="tool-pane-desc">Practice the offer conversation before the real call.</div></div>
+          <div class="tool-explainer">Most people have never practiced this conversation before the real one. Claude plays the recruiter. You counter. It grades your moves and shows you how much you left on the table.</div>
+          <div class="tool-body">
+            <div class="input-group"><label class="input-label">The Offer You Received</label><textarea id="negotiate-context" rows="4" placeholder="Base salary, OTE/bonus, equity, signing bonus, what you actually want" oninput="markFilled(this)"></textarea></div>
+            <div class="input-group"><label class="input-label">Your Resume / Background</label><textarea id="negotiate-resume" rows="5" placeholder="Paste your resume for context" oninput="markFilled(this)"></textarea></div>
+            <button class="run-btn" id="negotiate-btn" onclick="runTool('negotiate')"><span>Start Negotiation Sim — 1 credit</span></button>
+            <div class="no-credits-msg" id="negotiate-no-credits"><p>You're out of credits.</p><button class="btn btn-primary" onclick="showPurchaseModal()">Buy Credits</button></div>
+            <div class="error-msg" id="negotiate-error"></div>
+            <div class="output-wrap" id="negotiate-output"><div class="output-header"><span class="output-title">✓ Negotiation Debrief</span><button class="copy-btn" id="negotiate-copy" onclick="copyOutput('negotiate-output-body','negotiate-copy')">Copy</button></div><div class="output-body" id="negotiate-output-body"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- COMPARE -->
+      <div class="tool-panel" id="panel-compare">
+        <div class="tool-pane">
+          <div class="tool-pane-header"><div class="tool-pane-title">Offer Comparison</div><div class="tool-pane-desc">Side-by-side. Year 1 and Year 3 total comp. Direct recommendation.</div></div>
+          <div class="tool-explainer">Most people compare on base salary alone and miss the full picture. This scores both offers on 7 dimensions, calculates 3-year total comp, and gives a direct recommendation — not "it depends."</div>
+          <div class="tool-body">
+            <div class="input-group"><label class="input-label">Offer A</label><textarea id="compare-offerA" rows="5" placeholder="Company, role, base, OTE, equity, signing, benefits, location, stage" oninput="markFilled(this)"></textarea></div>
+            <div class="input-group"><label class="input-label">Offer B</label><textarea id="compare-offerB" rows="5" placeholder="Company, role, base, OTE, equity, signing, benefits, location, stage" oninput="markFilled(this)"></textarea></div>
+            <button class="run-btn" id="compare-btn" onclick="runTool('compare')"><span>Compare Offers — 1 credit</span></button>
+            <div class="no-credits-msg" id="compare-no-credits"><p>You're out of credits.</p><button class="btn btn-primary" onclick="showPurchaseModal()">Buy Credits</button></div>
+            <div class="error-msg" id="compare-error"></div>
+            <div class="output-wrap" id="compare-output"><div class="output-header"><span class="output-title">✓ Offer Comparison</span><button class="copy-btn" id="compare-copy" onclick="copyOutput('compare-output-body','compare-copy')">Copy</button></div><div class="output-body" id="compare-output-body"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROMOTE -->
+      <div class="tool-panel" id="panel-promote">
+        <div class="tool-pane">
+          <div class="tool-pane-header"><div class="tool-pane-title">Promotion Case Builder</div><div class="tool-pane-desc">The written case your manager can take upstairs.</div></div>
+          <div class="tool-explainer">The hardest part of getting promoted is articulating your own value in the language your manager needs to sell it upstairs. This builds that case — or tells you honestly if it's not ready yet.</div>
+          <div class="tool-body">
+            <div class="input-group"><label class="input-label">Your Background + Accomplishments</label><textarea id="promote-resume" rows="7" placeholder="Current title, target title, top 5 accomplishments with numbers, what your manager has said about you" oninput="markFilled(this)"></textarea></div>
+            <button class="run-btn" id="promote-btn" onclick="runTool('promote')"><span>Build My Case — 1 credit</span></button>
+            <div class="no-credits-msg" id="promote-no-credits"><p>You're out of credits.</p><button class="btn btn-primary" onclick="showPurchaseModal()">Buy Credits</button></div>
+            <div class="error-msg" id="promote-error"></div>
+            <div class="output-wrap" id="promote-output"><div class="output-header"><span class="output-title">✓ Promotion Case</span><button class="copy-btn" id="promote-copy" onclick="copyOutput('promote-output-body','promote-copy')">Copy</button></div><div class="output-body" id="promote-output-body"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- REVIEW -->
+      <div class="tool-panel" id="panel-review">
+        <div class="tool-pane">
+          <div class="tool-pane-header"><div class="tool-pane-title">Performance Review Prep</div><div class="tool-pane-desc">What to say, what to quantify, how to handle any rating.</div></div>
+          <div class="tool-explainer">Most people walk into reviews unprepared and walk out having left money on the table. This tells you exactly what to say, how to frame the ask, and how to handle a lower rating than expected.</div>
+          <div class="tool-body">
+            <div class="input-group"><label class="input-label">Your Role + Year's Accomplishments</label><textarea id="review-resume" rows="7" placeholder="Role, accomplishments with numbers, what went well, what didn't, are you asking for a raise or promotion?" oninput="markFilled(this)"></textarea></div>
+            <button class="run-btn" id="review-btn" onclick="runTool('review')"><span>Prep My Review — 1 credit</span></button>
+            <div class="no-credits-msg" id="review-no-credits"><p>You're out of credits.</p><button class="btn btn-primary" onclick="showPurchaseModal()">Buy Credits</button></div>
+            <div class="error-msg" id="review-error"></div>
+            <div class="output-wrap" id="review-output"><div class="output-header"><span class="output-title">✓ Review Prep</span><button class="copy-btn" id="review-copy" onclick="copyOutput('review-output-body','review-copy')">Copy</button></div><div class="output-body" id="review-output-body"></div></div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /tool-panels -->
+
+    <div class="divider"></div>
+
+    <!-- Recent Usage -->
+    <div class="section-title">Recent Activity</div>
+    <div id="usage-container">
+      <div class="empty-state">No runs yet — pick a tool above to get started.</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- PURCHASE MODAL -->
+<div class="modal-overlay" id="purchase-modal">
+  <div class="modal">
+    <div class="modal-title">Add Credits</div>
+    <div class="modal-sub">Each tool run costs 1 credit. Pick a pack:</div>
+    <div class="packs">
+      <div class="pack" id="pack-starter" onclick="selectPack('starter')">
+        <div class="pack-header"><span class="pack-name">Starter</span><span class="pack-price">$5</span></div>
+        <div class="pack-detail">25 runs · $0.20 per run · Good for one job search</div>
+      </div>
+      <div class="pack selected" id="pack-pro" onclick="selectPack('pro')">
+        <div class="pack-badge">Best Value</div>
+        <div class="pack-header"><span class="pack-name">Pro</span><span class="pack-price">$15</span></div>
+        <div class="pack-detail">100 runs · $0.15 per run · Covers a full search cycle</div>
+      </div>
+      <div class="pack" id="pack-monthly" onclick="selectPack('monthly')">
+        <div class="pack-header"><span class="pack-name">Monthly</span><span class="pack-price">$19/mo</span></div>
+        <div class="pack-detail">Unlimited runs · Best for active job seekers</div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closePurchaseModal()">Cancel</button>
+      <button class="btn btn-primary" id="checkout-btn" onclick="checkout()">Continue to Payment →</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── State ─────────────────────────────────────────────────
+let clerkUser = null;
+let clerkToken = null;
+let userCredits = 0;
+let isUnlimited = false;
+let selectedPack = 'pro';
+const API = '';  // same origin
+
+// ── Clerk init ────────────────────────────────────────────
+window.addEventListener('load', async () => {
+  const publishableKey = window.__CLERK_PUBLISHABLE_KEY__ ||
+    document.querySelector('meta[name="clerk-key"]')?.content;
+
+  if (!publishableKey) {
+    console.warn('Clerk key not found — running in demo mode');
+    return;
+  }
+
+  const clerk = new Clerk(publishableKey);
+  await clerk.load();
+
+  // Mount user button
+  const userButtonDiv = document.getElementById('clerk-user-button');
+  if (clerk.user) {
+    clerk.mountUserButton(userButtonDiv);
+  }
+
+  clerk.addListener(async ({ user }) => {
+    if (user) {
+      clerkUser = user;
+      clerkToken = await clerk.session.getToken();
+      document.getElementById('header-signin-btn').style.display = 'none';
+      userButtonDiv.style.display = 'block';
+      clerk.mountUserButton(userButtonDiv);
+      await loadUser();
+      showDashboard();
+    } else {
+      clerkUser = null;
+      clerkToken = null;
+      document.getElementById('header-signin-btn').style.display = 'block';
+      document.getElementById('credit-display').style.display = 'none';
+      document.getElementById('header-buy-btn').style.display = 'none';
+      showLanding();
+    }
+  });
+
+  window._clerk = clerk;
+});
+
+function signIn() {
+  if (window._clerk) window._clerk.openSignIn();
+}
+
+function signInThenBuy(pack) {
+  selectedPack = pack;
+  if (window._clerk) window._clerk.openSignIn();
+  else showPurchaseModal();
+}
+
+// ── User data ─────────────────────────────────────────────
+async function loadUser() {
+  if (!clerkToken) return;
+  try {
+    const res = await api('/api/me');
+    userCredits = res.credits;
+    isUnlimited = res.unlimited;
+    updateCreditDisplay();
+    loadUsageHistory();
+  } catch (e) {
+    console.error('loadUser error:', e);
+  }
+}
+
+function updateCreditDisplay() {
+  const badge = document.getElementById('credit-badge');
+  const dashVal = document.getElementById('dash-credit-value');
+  const dashSub = document.getElementById('dash-credit-sub');
+
+  if (isUnlimited) {
+    badge.textContent = '∞ unlimited';
+    badge.className = 'credit-badge unlimited';
+    dashVal.textContent = '∞';
+    dashVal.className = 'dash-credits-value unlimited';
+    dashSub.textContent = 'Monthly plan — unlimited runs';
+  } else {
+    badge.textContent = `${userCredits} credit${userCredits !== 1 ? 's' : ''}`;
+    badge.className = 'credit-badge';
+    dashVal.textContent = userCredits;
+    dashVal.className = 'dash-credits-value';
+    dashSub.textContent = 'Each tool run costs 1 credit';
+  }
+
+  document.getElementById('credit-display').style.display = 'block';
+  document.getElementById('header-buy-btn').style.display = isUnlimited ? 'none' : 'block';
+}
+
+async function loadUsageHistory() {
+  if (!clerkToken) return;
+  try {
+    const res = await api('/api/usage');
+    const container = document.getElementById('usage-container');
+    if (!res.usage || res.usage.length === 0) {
+      container.innerHTML = '<div class="empty-state">No runs yet — pick a tool above to get started.</div>';
+      return;
+    }
+    const rows = res.usage.map(u => `
+      <tr>
+        <td>${u.tool}</td>
+        <td>${new Date(u.created_at).toLocaleDateString('en-US', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' })}</td>
+        <td><span class="usage-badge">${u.credits_charged === 0 ? 'free' : `${u.credits_charged} credit`}</span></td>
+      </tr>
+    `).join('');
+    container.innerHTML = `<table class="usage-table"><thead><tr><th>Tool</th><th>Date</th><th>Credits</th></tr></thead><tbody>${rows}</tbody></table>`;
+  } catch (e) {
+    console.error('loadUsage error:', e);
+  }
+}
+
+// ── Views ─────────────────────────────────────────────────
+function showLanding() {
+  document.getElementById('view-landing').classList.add('active');
+  document.getElementById('view-dashboard').classList.remove('active');
+}
+function showDashboard() {
+  document.getElementById('view-landing').classList.remove('active');
+  document.getElementById('view-dashboard').classList.add('active');
+  // Check for purchase success
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('purchase') === 'success') {
+    setTimeout(() => { loadUser(); }, 2000);
+    history.replaceState({}, '', '/dashboard');
+  }
+}
+
+// ── Tool switching ─────────────────────────────────────────
+function switchTool(name) {
+  document.querySelectorAll('.tool-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tool-panel').forEach(p => p.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById(`panel-${name}`).classList.add('active');
+}
+
+// ── Run a tool ─────────────────────────────────────────────
+async function runTool(type) {
+  if (!clerkUser) { signIn(); return; }
+  if (!isUnlimited && userCredits < 1) {
+    document.getElementById(`${type}-no-credits`).classList.add('visible');
+    return;
+  }
+
+  const inputs = getInputs(type);
+  if (!inputs) return;
+
+  const btn = document.getElementById(`${type}-btn`);
+  const errorEl = document.getElementById(`${type}-error`);
+  const outputWrap = document.getElementById(`${type}-output`);
+  const outputBody = document.getElementById(`${type}-output-body`);
+  const noCredits = document.getElementById(`${type}-no-credits`);
+
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner"></div><span>Working...</span>';
+  errorEl.className = 'error-msg';
+  outputWrap.className = 'output-wrap';
+  noCredits.className = 'no-credits-msg';
+
+  try {
+    const data = await api('/api/run', { type, inputs });
+    outputBody.textContent = data.result;
+    outputWrap.className = 'output-wrap visible';
+    outputWrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    userCredits = data.creditsRemaining;
+    isUnlimited = data.unlimited;
+    updateCreditDisplay();
+    loadUsageHistory();
+  } catch (err) {
+    if (err.code === 'INSUFFICIENT_CREDITS') {
+      noCredits.classList.add('visible');
+    } else {
+      errorEl.textContent = err.message || 'Something went wrong. Try again.';
+      errorEl.className = 'error-msg visible';
+    }
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = `<span>${getBtnLabel(type)}</span>`;
+  }
+}
+
+function getBtnLabel(type) {
+  const labels = {
+    ats: 'Scan My Resume — 1 credit',
+    resume: 'Tailor My Resume — 1 credit',
+    cover: 'Write Cover Letter — 1 credit',
+    decode: 'Decode This JD — 1 credit',
+    linkedin: 'Audit My LinkedIn — 1 credit',
+    interview: 'Build My Prep Guide — 1 credit',
+    mock: 'Start Mock Interview — 1 credit',
+    research: 'Pull Research Brief — 1 credit',
+    negotiate: 'Start Negotiation Sim — 1 credit',
+    compare: 'Compare Offers — 1 credit',
+    promote: 'Build My Case — 1 credit',
+    review: 'Prep My Review — 1 credit',
+  };
+  return labels[type] || 'Run — 1 credit';
+}
+
+function getInputs(type) {
+  const g = id => (document.getElementById(id)?.value.trim() || '');
+  const inputs = {
+    ats:       { resume: g('ats-resume'), jd: g('ats-jd') },
+    resume:    { resume: g('resume-resume'), jd: g('resume-jd') },
+    cover:     { resume: g('cover-resume'), jd: g('cover-jd') },
+    decode:    { resume: g('decode-resume'), jd: g('decode-jd') },
+    linkedin:  { profile: g('linkedin-profile'), jd: g('linkedin-jd') },
+    interview: { resume: g('interview-resume'), jd: g('interview-jd') },
+    mock:      { resume: g('mock-resume'), jd: g('mock-jd') },
+    research:  { jd: g('research-jd'), interviewer: g('research-interviewer') },
+    negotiate: { resume: g('negotiate-resume'), context: g('negotiate-context') },
+    compare:   { offerA: g('compare-offerA'), offerB: g('compare-offerB') },
+    promote:   { resume: g('promote-resume') },
+    review:    { resume: g('review-resume') },
+  }[type];
+
+  // Basic validation
+  const primary = inputs.resume || inputs.jd || inputs.profile || inputs.offerA || inputs.context;
+  if (!primary || primary.length < 50) {
+    const errorEl = document.getElementById(`${type}-error`);
+    errorEl.textContent = 'Paste some content first — the field looks empty.';
+    errorEl.className = 'error-msg visible';
+    return null;
+  }
+  return inputs;
+}
+
+// ── Purchase modal ────────────────────────────────────────
+function showPurchaseModal() {
+  if (!clerkUser) { signIn(); return; }
+  document.getElementById('purchase-modal').classList.add('visible');
+}
+function closePurchaseModal() {
+  document.getElementById('purchase-modal').classList.remove('visible');
+}
+function selectPack(pack) {
+  selectedPack = pack;
+  ['starter','pro','monthly'].forEach(p => {
+    document.getElementById(`pack-${p}`).classList.toggle('selected', p === pack);
+  });
+}
+async function checkout() {
+  if (!clerkUser) return;
+  const btn = document.getElementById('checkout-btn');
+  btn.disabled = true;
+  btn.textContent = 'Loading...';
+  try {
+    const data = await api('/api/checkout', { packType: selectedPack, email: clerkUser.primaryEmailAddress?.emailAddress });
+    if (data.url) window.location.href = data.url;
+  } catch (e) {
+    btn.disabled = false;
+    btn.textContent = 'Continue to Payment →';
+    alert('Error creating checkout session. Try again.');
+  }
+}
+
+// ── API helper ────────────────────────────────────────────
+async function api(path, body) {
+  const opts = {
+    headers: {
+      'Content-Type': 'application/json',
+      ...(clerkToken ? { 'Authorization': `Bearer ${clerkToken}` } : {}),
+    },
+  };
+  if (body) { opts.method = 'POST'; opts.body = JSON.stringify(body); }
+  const res = await fetch(path, opts);
+  const data = await res.json();
+  if (!res.ok) throw { message: data.error, code: data.code };
+  return data;
+}
+
+// ── Utilities ─────────────────────────────────────────────
+function markFilled(el) {
+  el.classList.toggle('filled', el.value.trim().length > 100);
+}
+
+async function copyOutput(bodyId, btnId) {
+  const text = document.getElementById(bodyId).textContent;
+  const btn = document.getElementById(btnId);
+  try {
+    await navigator.clipboard.writeText(text);
+    btn.textContent = 'Copied!';
+    btn.className = 'copy-btn copied';
+    setTimeout(() => { btn.textContent = 'Copy'; btn.className = 'copy-btn'; }, 2000);
+  } catch { btn.textContent = 'Select all + copy'; }
+}
+</script>
+</body>
+</html>

@@ -24,3 +24,5 @@ docs/dev-prompts/
 
 # Pipeline logs — local only
 outputs/pipeline-log.md
+commercial/.env
+commercial/node_modules/

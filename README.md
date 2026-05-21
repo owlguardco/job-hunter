@@ -212,6 +212,17 @@ Your key stays on your machine. It's never sent anywhere except Anthropic's API.
 
 ---
 
+## 💰 Hosted Version
+
+Don't want to manage API keys or infrastructure?
+
+**[jobhunter.ai](https://jobhunter.ai)** — sign up and go. $0.25 per run, or $19/month unlimited.
+Same agents, same rules engine, zero setup.
+
+See [COMMERCIAL.md](COMMERCIAL.md) for details on the open core model.
+
+---
+
 ## ⚡ Automation — Hermes + OpenClaw
 
 For advanced users who want Job Hunter running on autopilot.
