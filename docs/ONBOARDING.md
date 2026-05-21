@@ -134,9 +134,9 @@ No `.env` needed — Claude Code uses its own API connection.
 ### Running agents
 
 ```bash
-claude "follow agents/resume-tailor.md"
-claude "follow agents/mock-interview.md"
-claude "follow agents/pre-interview-research.md"
+claude "follow agents/apply-resume.md"
+claude "follow agents/interview-mock.md"
+claude "follow agents/interview-research.md"
 ```
 
 Any file in `agents/` works. Claude Code reads the file and executes the instructions.
@@ -144,7 +144,7 @@ Any file in `agents/` works. Claude Code reads the file and executes the instruc
 ### With --dangerously-skip-permissions (for automated runs)
 
 ```bash
-claude --dangerously-skip-permissions < agents/resume-tailor.md
+claude --dangerously-skip-permissions < agents/apply-resume.md
 ```
 
 Use this when you want the agent to run without any confirmation prompts.

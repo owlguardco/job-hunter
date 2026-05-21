@@ -17,3 +17,6 @@ Thumbs.db
 .vscode/
 .idea/
 *.swp
+
+# Dev build prompts
+docs/dev-prompts/

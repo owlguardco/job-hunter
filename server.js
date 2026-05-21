@@ -54,21 +54,21 @@ function buildWebPrompt(toolType, inputs) {
 ${rules}`;
 
   const agentMap = {
-    linkedin: 'linkedin-analyzer',
-    resume: 'resume-tailor',
-    cover: 'cover-letter',
-    ats: 'ats-scanner',
+    linkedin: 'apply-linkedin-audit',
+    resume: 'apply-resume',
+    cover: 'apply-cover-letter',
+    ats: 'apply-ats-scan',
     interview: 'interview-prep',
-    mock: 'mock-interview',
-    thankyou: 'send-thankyou',
-    negotiate: 'salary-negotiation-sim',
-    decode: 'jd-decoder',
-    research: 'pre-interview-research',
-    compare: 'offer-comparison',
-    outreach: 'cold-outreach',
-    promote: 'promotion-case',
-    review: 'review-prep',
-    internal: 'internal-application',
+    mock: 'interview-mock',
+    thankyou: 'offer-thankyou',
+    negotiate: 'offer-negotiate',
+    decode: 'apply-decode-jd',
+    research: 'interview-research',
+    compare: 'offer-compare',
+    outreach: 'search-outreach',
+    promote: 'career-promote',
+    review: 'career-review',
+    internal: 'career-internal',
   };
 
   const agentName = agentMap[toolType];
