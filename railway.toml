@@ -2,9 +2,7 @@
 builder = "nixpacks"
 
 [deploy]
-# Set START_COMMERCIAL=true in Railway env vars to run the hosted version
-# Leave unset (or false) to run the open source server
-startCommand = "node -e \"process.env.START_COMMERCIAL === 'true' ? require('./commercial/server/index.js') : require('./server.js')\""
+startCommand = "node start.js"
 healthcheckPath = "/api/health"
 healthcheckTimeout = 30
 restartPolicyType = "on_failure"

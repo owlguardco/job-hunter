@@ -11,11 +11,13 @@
  * This server imports from it and adds the commercial layer on top.
  */
 
-// Load .env from commercial/ first, fall back to root
+// Load env — commercial/.env first, fall back to root .env
 const dotenv = require('dotenv');
-const envPath = require('path').join(__dirname, '../.env');
-const rootEnvPath = require('path').join(__dirname, '../../.env');
-dotenv.config({ path: require('fs').existsSync(envPath) ? envPath : rootEnvPath });
+const path = require('path');
+const fs = require('fs');
+const commercialEnv = path.join(__dirname, '../.env');
+const rootEnv = path.join(__dirname, '../../.env');
+dotenv.config({ path: fs.existsSync(commercialEnv) ? commercialEnv : rootEnv });
 
 const http = require('http');
 const https = require('https');

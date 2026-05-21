@@ -3,7 +3,7 @@
   "version": "0.9.0",
   "description": "AI-powered job search toolkit \u2014 resume tailoring, ATS scanner, interview prep, offer negotiation, and career growth tools",
   "scripts": {
-    "start": "node server.js",
+    "start": "node start.js",
     "guide": "node scripts/guide.js",
     "linkedin": "node scripts/preflight.js linkedin && claude --print \"$(cat agents/apply-linkedin-audit.md)\"",
     "resume": "node scripts/preflight.js resume && claude --print \"$(cat agents/apply-resume.md)\"",
@@ -27,8 +27,8 @@
     "check": "node scripts/preflight.js all",
     "daily-search": "python3.11 scripts/job-search.py && claude --dangerously-skip-permissions \"follow automation/pipeline-daily-search.md\"",
     "interview-auto": "claude --dangerously-skip-permissions \"follow automation/pipeline-interview-prep.md\"",
-    "commercial": "node commercial/server/index.js",
-    "commercial:dev": "node --watch commercial/server/index.js",
+    "commercial": "START_COMMERCIAL=true node start.js",
+    "commercial:dev": "START_COMMERCIAL=true node --watch start.js",
     "db:migrate": "node commercial/db/migrate.js"
   },
   "engines": {
