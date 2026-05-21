@@ -197,6 +197,32 @@ Your key stays on your machine. It's never sent anywhere except Anthropic's API.
 
 ---
 
+## ⚡ Automation — Hermes + OpenClaw
+
+For advanced users who want Job Hunter running on autopilot.
+
+Connect Hermes and OpenClaw to automate the search pipeline — new postings
+scored every morning, JDs decoded before you wake up, results delivered
+to Discord.
+
+```bash
+# Copy the included Hermes profile
+cp automation/hermes-job-hunter.yaml ~/.hermes/profiles/job-hunter.yaml
+
+# Test a manual run
+hermes run job-hunter daily-search
+
+# Enable the daily schedule
+hermes schedule job-hunter enable
+```
+
+**What gets automated:** job search, JD decoding, salary research, interview prep trigger.
+**What stays manual:** resume tailoring, cover letters, anything that sends.
+
+Full setup guide: [docs/advanced-automation.md](docs/advanced-automation.md)
+
+---
+
 ## Contributing
 
 The most useful contributions:

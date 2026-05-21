@@ -1,0 +1,105 @@
+# Job Hunter — Hermes Profile
+#
+# Copy to ~/.hermes/profiles/job-hunter.yaml
+# Then run: hermes run job-hunter daily-search
+#
+# Requires: Hermes, OpenClaw, Claude Code, jobspy (pip3.11 install jobspy)
+
+profile:
+  name: job-hunter
+  description: Automated job search pipeline
+
+# ── Model ─────────────────────────────────────────────────
+# Use your local Hermes model or Claude via API
+model:
+  endpoint: http://127.0.0.1:11434/v1   # Ollama local (orchestration only)
+  name: hermes3                          # or any model you have running
+  context_length: 131072
+
+# ── Notifications ──────────────────────────────────────────
+notifications:
+  discord_webhook: ""   # paste your Discord webhook URL here
+  notify_on:
+    - complete
+    - error
+
+# ── Working directory ──────────────────────────────────────
+working_directory: ~/job-hunter
+
+# ── Pipelines ─────────────────────────────────────────────
+pipelines:
+
+  # Runs every morning — finds new jobs, decodes them, scores against resume
+  daily-search:
+    description: Search job boards, decode top postings, deliver scored shortlist
+    schedule: "0 7 * * *"   # 7am daily — change to your preference
+    steps:
+
+      - name: search
+        description: Pull new job postings from Indeed, LinkedIn, Glassdoor
+        command: python3.11 scripts/job-search.py
+        on_error: notify_and_stop
+
+      - name: decode-and-score
+        description: Decode top 10 postings and score against resume
+        command: >
+          claude --dangerously-skip-permissions
+          "follow automation/pipeline-daily-search.md"
+        on_error: notify_and_continue
+
+      - name: notify
+        description: Send shortlist summary to Discord
+        command: >
+          hermes notify job-hunter
+          "Daily search complete. $(wc -l < outputs/job-shortlist.md) results.
+          Top match: $(head -5 outputs/job-shortlist.md | tail -1).
+          Full shortlist: outputs/job-shortlist.md"
+
+  # Triggered manually when an interview is confirmed
+  interview-prep:
+    description: Build full interview prep package for a confirmed interview
+    schedule: manual
+    steps:
+
+      - name: research
+        description: Pull company and interviewer research
+        command: >
+          claude --dangerously-skip-permissions
+          "follow agents/interview-research.md"
+        on_error: notify_and_stop
+
+      - name: prep
+        description: Build story bank and coached answers
+        command: >
+          claude --dangerously-skip-permissions
+          "follow agents/interview-prep.md"
+        on_error: notify_and_continue
+
+      - name: notify
+        description: Notify when prep package is ready
+        command: >
+          hermes notify job-hunter
+          "Interview prep ready.
+          Research: outputs/interview-brief.md
+          Prep guide: outputs/interview-prep.md
+          Story bank: outputs/interview-story-bank.md"
+
+  # Run manually after receiving an offer
+  offer-analysis:
+    description: Research comp and prep negotiation strategy for a new offer
+    schedule: manual
+    steps:
+
+      - name: salary-research
+        description: Pull market comp data
+        command: >
+          claude --dangerously-skip-permissions
+          "follow agents/search-salary.md"
+        on_error: notify_and_stop
+
+      - name: notify
+        description: Notify when analysis is ready
+        command: >
+          hermes notify job-hunter
+          "Offer analysis ready.
+          Salary research: outputs/salary-research.md"

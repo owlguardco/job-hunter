@@ -1,6 +1,6 @@
 {
   "name": "job-hunter",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "AI-powered job search toolkit \u2014 resume tailoring, ATS scanner, interview prep, offer negotiation, and career growth tools",
   "scripts": {
     "start": "node server.js",
@@ -23,7 +23,9 @@
     "research": "claude \"follow agents/interview-research.md\"",
     "compare": "claude \"follow agents/offer-compare.md\"",
     "internal": "node scripts/preflight.js resume && claude \"follow agents/career-internal.md\"",
-    "check": "node scripts/preflight.js all"
+    "check": "node scripts/preflight.js all",
+    "daily-search": "python3.11 scripts/job-search.py && claude --dangerously-skip-permissions \"follow automation/pipeline-daily-search.md\"",
+    "interview-auto": "claude --dangerously-skip-permissions \"follow automation/pipeline-interview-prep.md\""
   },
   "engines": {
     "node": ">=18.0.0"

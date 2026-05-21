@@ -21,3 +21,6 @@ Thumbs.db
 
 # Dev build prompts — internal use only
 docs/dev-prompts/
+
+# Pipeline logs — local only
+outputs/pipeline-log.md

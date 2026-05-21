@@ -4,6 +4,21 @@ All notable changes to Job Hunter are documented here.
 
 ---
 
+## [0.8.0] — 2026-05-21
+
+### Added — Automation layer
+- `automation/` — new folder following the same structure convention
+- `automation/README.md` — entry point: what to automate vs keep manual
+- `automation/hermes-job-hunter.yaml` — ready-to-use Hermes profile (daily-search, interview-prep, offer-analysis pipelines)
+- `automation/pipeline-daily-search.md` — Claude Code prompt: search → decode top 5 → score → rewrite shortlist → log
+- `automation/pipeline-interview-prep.md` — Claude Code prompt: research + full prep in one unattended run
+- `docs/advanced-automation.md` — full setup guide for Hermes + OpenClaw integration
+- `npm run daily-search` — runs full automated search pipeline directly
+- `npm run interview-auto` — runs automated interview prep pipeline
+- README: Automation section with quick-start commands
+
+---
+
 ## [0.7.0] — 2026-05-21
 
 ### Changed — Structural cleanup
