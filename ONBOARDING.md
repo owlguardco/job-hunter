@@ -1,196 +1,252 @@
-# Onboarding — First Run Walkthrough
+# Onboarding — Pick Your Path
 
-Five things to do before you run anything. Takes about 10 minutes.
-
----
-
-## Step 1 — Install Claude Code
-
-Claude Code is the CLI that powers every agent in this repo.
-
-```bash
-npm install -g @anthropic-ai/claude-code
-```
-
-Verify it works:
-```bash
-claude --version
-```
-
-If you hit issues, see the [Claude Code docs](https://docs.anthropic.com/en/docs/claude-code).
+Three ways to use Job Hunter. Pick the one that fits you.
 
 ---
 
-## Step 2 — Add your API key
+## Path 1 — Web UI (no terminal, no install)
+
+**For:** Anyone. Works on any computer. No coding required.
+
+### Option A — Hosted (easiest)
+
+Go to **https://owlguardco.github.io/job-hunter**
+
+You'll need an Anthropic API key. Here's how to get one:
+
+1. Go to **https://console.anthropic.com** and create a free account
+2. Go to **Billing** and add $5 — each use costs about 2-5 cents ($5 covers ~100 uses)
+3. Go to **API Keys**, click **Create Key**, copy it
+4. Paste it into the key field on the site — it stays in your browser only
+
+That's it. Paste your resume, paste a job description, click run.
+
+### Option B — Local server (if you have Node.js)
 
 ```bash
+git clone https://github.com/owlguardco/job-hunter.git
+cd job-hunter
 cp .env.example .env
+# Open .env, add your ANTHROPIC_API_KEY
+npm start
 ```
 
-Open `.env` and replace `your_anthropic_api_key_here` with your key from [console.anthropic.com](https://console.anthropic.com).
+Open **http://localhost:3000**
 
-The key stays on your machine. It is never sent anywhere except Anthropic's API when you run an agent.
-
----
-
-## Step 3 — Fill in your inputs
-
-Three files in `inputs/` — fill in the ones you need before running.
-
-### `inputs/my-linkedin.md`
-Copy your LinkedIn profile into this file. The easiest way:
-- Go to your LinkedIn profile
-- Click "More" → "Save to PDF" — this gives you a clean text dump
-- Paste the relevant sections: Headline, About, Experience, Skills
-
-You don't need contact info. The audit doesn't use it.
-
-### `inputs/my-resume.md`
-Paste your base resume in plain text. This is your master resume — everything you've done, not tailored to any specific role. The `resume-tailor` agent does the tailoring.
-
-### `inputs/job-description.md`
-Paste the full job description for the role you're targeting. The more complete, the better the output. Include: role title, company, responsibilities, requirements, preferred qualifications.
-
-**One JD at a time.** If you're applying to multiple roles, run the agents once per JD. Keep a folder of your outputs — they're git-ignored and stay local.
+Same UI as the hosted version, but prompts load from the local agent files — so any changes you make to `agents/*.md` show up immediately.
 
 ---
 
-## Step 4 — Run the preflight check
+## Path 2 — Terminal
 
-Before running any agent, verify your inputs are filled in:
+**For:** People comfortable with the command line.
+
+### Setup
 
 ```bash
+# 1. Clone
+git clone https://github.com/owlguardco/job-hunter.git
+cd job-hunter
+
+# 2. API key
+cp .env.example .env
+# Open .env and add: ANTHROPIC_API_KEY=sk-ant-your-key-here
+
+# 3. Install Claude Code (if not already installed)
+npm install -g @anthropic-ai/claude-code
+
+# 4. Fill in your inputs
+# Open inputs/my-resume.md — paste your resume
+# Open inputs/job-description.md — paste the job posting
+
+# 5. Verify everything is ready
 npm run check
-```
 
-This catches blank files and template placeholders before you burn API tokens on them.
-
----
-
-## Step 5 — Run your first agent
-
-Start with the LinkedIn audit — it takes the least time and gives you the most immediate feedback:
-
-```bash
-npm run linkedin
-```
-
-Output lands in `outputs/linkedin-audit.md`.
-
-Then tailor your resume to the JD:
-
-```bash
+# 6. Run
 npm run resume
 ```
 
-Output lands in `outputs/resume-tailored.md` and `outputs/resume-gaps.md`.
-
-Then write the cover letter:
+### The right order for a job application
 
 ```bash
-npm run cover-letter
+npm run decode       # understand the JD before doing anything else
+npm run ats          # fix ATS issues before tailoring
+npm run resume       # tailor to the specific role
+npm run cover-letter # write the cover letter
 ```
 
-Output lands in `outputs/cover-letter.md`.
+### The right order for interview prep
 
----
-
-## The Right Order
-
-For a new application, run in this sequence:
-
-```
-npm run linkedin      # Fix your profile first
-npm run resume        # Tailor to the JD
-npm run cover-letter  # Cover letter draws from the tailored resume
-npm run interview     # Prep questions based on the tailored resume + JD
-```
-
-Each agent builds on the previous one. The cover letter agent will automatically pick up `outputs/resume-tailored.md` if it exists.
-
----
-
-## What to Do With the Output
-
-The outputs are markdown files. From there:
-
-- **LinkedIn changes** — make them directly on LinkedIn before you apply anywhere. Your profile should match your resume.
-- **Resume** — copy into your preferred format (Word, Google Docs, a template). Don't submit a markdown file.
-- **Cover letter** — paste into your email or application form. Read it out loud before sending. If any sentence sounds like a bot wrote it, rewrite it.
-
----
-
-## A Note on Tailoring
-
-The agents will not invent experience you don't have. They translate what's real into the language of the role. If there's a gap between what the JD asks for and what you've done, it will show up in `outputs/resume-gaps.md` — those are things to address directly in interviews, not paper over in the resume.
-
-Specific beats polished. A resume with real numbers that are slightly rough beats a beautifully formatted resume with vague claims every time.
-
----
-
-## Questions or Issues
-
-Open an issue at [github.com/owlguardco/job-hunter](https://github.com/owlguardco/job-hunter/issues).
-
----
-
-## Advanced Path — LinkedIn Auto-Scrape (technical users)
-
-Skip the copy-paste step entirely. This path scrapes your LinkedIn profile
-directly from a URL using a local MCP server, then runs the audit automatically.
-
-**Extra requirements:** Python 3.8+, `uv` package manager, Chrome or Chromium
-
-### Setup (one time)
-
-**1. Install `uv`**
 ```bash
+npm run research     # one-page brief on the company + interviewer
+npm run interview    # story bank + coached answers
+npm run mock         # live simulation — practice until you're scoring A's
+npm run send-thankyou # after the interview
+```
+
+### All commands
+
+| Command | What it does |
+|---|---|
+| `npm run linkedin` | LinkedIn profile audit |
+| `npm run resume` | Tailor resume to JD |
+| `npm run cover-letter` | Write cover letter |
+| `npm run ats` | ATS scanner |
+| `npm run interview` | Story bank + coached answers |
+| `npm run mock` | Live mock interview with grading |
+| `npm run research` | Pre-interview brief |
+| `npm run negotiate` | Practice offer negotiation |
+| `npm run decode` | Decode a JD |
+| `npm run compare` | Compare two offers |
+| `npm run outreach` | Cold outreach messages |
+| `npm run promote` | Build promotion case |
+| `npm run review` | Performance review prep |
+| `npm run internal` | Internal job application |
+| `npm run jobs` | Search job boards |
+| `npm run salary` | Research market comp |
+| `npm run schedule` | Schedule interview (Google Calendar MCP) |
+| `npm run send-thankyou` | Send thank-you (Gmail MCP) |
+| `npm run check` | Validate all inputs |
+
+---
+
+## Path 3 — Claude Code
+
+**For:** Developers. Most flexible — run any agent directly, modify prompts on the fly.
+
+### Setup
+
+```bash
+git clone https://github.com/owlguardco/job-hunter.git
+cd job-hunter
+
+# Install Claude Code if not already installed
+npm install -g @anthropic-ai/claude-code
+claude login
+
+# Fill in your inputs
+# inputs/my-resume.md
+# inputs/job-description.md
+```
+
+No `.env` needed — Claude Code uses its own API connection.
+
+### Running agents
+
+```bash
+claude "follow agents/resume-tailor.md"
+claude "follow agents/mock-interview.md"
+claude "follow agents/pre-interview-research.md"
+```
+
+Any file in `agents/` works. Claude Code reads the file and executes the instructions.
+
+### With --dangerously-skip-permissions (for automated runs)
+
+```bash
+claude --dangerously-skip-permissions < agents/resume-tailor.md
+```
+
+Use this when you want the agent to run without any confirmation prompts.
+
+### Modifying agents
+
+Every agent is a plain markdown file in `agents/`. Open any of them and edit the instructions — changes take effect immediately on the next run. This is how you customize the tool for your specific situation.
+
+---
+
+## Inputs reference
+
+| File | Used by | What to put in it |
+|---|---|---|
+| `inputs/my-resume.md` | Most tools | Your full resume, plain text |
+| `inputs/my-linkedin.md` | LinkedIn audit | Your LinkedIn profile text |
+| `inputs/job-description.md` | Most tools | The job posting you're targeting |
+| `inputs/job-search-criteria.md` | `npm run jobs` | Roles, location, filters |
+| `inputs/linkedin-url.txt` | `npm run linkedin-scrape` | Your LinkedIn profile URL |
+| `inputs/cold-outreach-target.md` | `npm run outreach` | Target company and contact |
+| `inputs/interview-context.md` | `npm run research` | Interviewer name and details |
+
+All input files are git-ignored — they never leave your machine.
+
+---
+
+## Outputs reference
+
+All outputs land in `outputs/` — git-ignored, stays local.
+
+| File | Created by |
+|---|---|
+| `outputs/linkedin-audit.md` | `npm run linkedin` |
+| `outputs/resume-tailored.md` | `npm run resume` |
+| `outputs/resume-gaps.md` | `npm run resume` |
+| `outputs/cover-letter.md` | `npm run cover-letter` |
+| `outputs/ats-scan.md` | `npm run ats` |
+| `outputs/interview-prep.md` | `npm run interview` |
+| `outputs/interview-story-bank.md` | `npm run interview` |
+| `outputs/mock-interview.md` | `npm run interview` |
+| `outputs/thank-you-templates.md` | `npm run interview` |
+| `outputs/interview-brief.md` | `npm run research` |
+| `outputs/salary-research.md` | `npm run salary` |
+| `outputs/jd-decoded.md` | `npm run decode` |
+| `outputs/job-shortlist.md` | `npm run jobs` |
+| `outputs/offer-comparison.md` | `npm run compare` |
+| `outputs/cold-outreach.md` | `npm run outreach` |
+| `outputs/promotion-case.md` | `npm run promote` |
+| `outputs/review-prep.md` | `npm run review` |
+| `outputs/internal-application.md` | `npm run internal` |
+
+---
+
+## Advanced — LinkedIn Auto-Scrape
+
+Skip the copy-paste step. Scrape your LinkedIn profile from a URL.
+
+**Extra requirements:** Python 3.8+, `uv`, Chrome
+
+```bash
+# Install uv
 curl -LsSf https://astral.sh/uv/install.sh | sh
-```
 
-**2. Log into LinkedIn through the scraper**
-```bash
+# One-time login
 uvx linkedin-scraper-mcp@latest --login
-```
-A Chrome window opens. Log in normally. Once you see your LinkedIn feed, close
-the window. Your session is saved locally in `~/.linkedin-mcp/profile/`.
+# Log in through the Chrome window that opens
 
-**3. Add your LinkedIn URL**
+# Add your URL
+echo "https://www.linkedin.com/in/yourname/" > inputs/linkedin-url.txt
 
-Create/edit `inputs/linkedin-url.txt` and paste your profile URL:
-```
-https://www.linkedin.com/in/yourname/
-```
-
-### Running
-
-```bash
+# Run
 npm run linkedin-scrape
 ```
 
-This does everything in one shot:
-1. Starts the local MCP server
-2. Scrapes your profile from LinkedIn
-3. Formats it into `inputs/my-linkedin.md`
-4. Runs the full audit if a job description is present
-5. Shuts down the MCP server
-
-Output lands in `outputs/linkedin-audit.md` as usual.
-
-### Re-authentication
-
-LinkedIn sessions expire. If you get a login error:
+If your session expires:
 ```bash
 uvx linkedin-scraper-mcp@latest --login
 ```
-Then re-run `npm run linkedin-scrape`.
 
-### Privacy
+---
 
-Your LinkedIn credentials are stored only in `~/.linkedin-mcp/profile/` on your
-machine — the same way Chrome stores any browser session. Nothing goes through
-a third-party service. The scraper runs Chrome locally.
+## Troubleshooting
 
-### Source
+**`ANTHROPIC_API_KEY not set`**
+```bash
+cp .env.example .env
+# Add your key to .env
+```
 
-MCP server: [stickerdaniel/linkedin-mcp-server](https://github.com/stickerdaniel/linkedin-mcp-server)
+**`npm run check` fails with blank file errors**
+Fill in the input files in `inputs/` before running any tool.
+
+**`npm run jobs` — JobSpy not installed**
+```bash
+pip3.11 install jobspy
+```
+
+**Claude Code shows `/login` error**
+```bash
+/login
+```
+Type that directly in the Claude Code prompt.
+
+**Questions or issues**
+Open an issue: https://github.com/owlguardco/job-hunter/issues

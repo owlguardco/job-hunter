@@ -1,153 +1,94 @@
 # Job Hunter
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-0.3.0-green.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-0.6.0-green.svg)](CHANGELOG.md)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
 > I searched for six months. Then I started using Claude Code to build my own tools — a LinkedIn content system, tailored resumes, research workflows — and wrapped up the search in under two months. This is everything I learned, packaged so you don't have to figure it out the hard way.
 
+---
+
 ## Three Ways to Use It
 
-**1. Web UI — for anyone** (no terminal required)
-```bash
-npm start
-# Opens http://localhost:3000
-# Paste your inputs, click run, copy output
-```
-Or open `web/index.html` directly in your browser for the standalone version (no server needed — bring your own Anthropic API key).
-
-**2. Terminal — for power users**
-```bash
-npm run resume      # tailor resume to a JD
-npm run ats         # scan for ATS issues
-npm run interview   # build story bank + coached answers
-npm run mock        # live mock interview with grading
-npm run research    # pre-interview brief
-# ...19 total commands
-```
-
-**3. Claude Code — for developers**
-```bash
-claude "follow agents/resume-tailor.md"
-claude "follow agents/pre-interview-research.md"
-claude "follow agents/mock-interview.md"
-# Any agent/*.md file works directly
-```
-
-All three paths use the same agent files in `agents/`. One source of truth.
+Pick the one that fits how you work. All three use the same agent files under the hood.
 
 ---
 
-## What This Does
+### Way 1 — Web UI (no terminal required)
 
-Job Hunter is a local CLI tool powered by Claude Code that helps you:
+For anyone. Paste your inputs, click run, copy output.
 
-- **Audit your LinkedIn profile** — get a structured critique of your headline, about section, experience framing, and keyword gaps for your target role
-- **Tailor your resume** — paste a job description and your base resume, get a version translated into the language of that specific role
-- **Write cover letters** — same job description, same resume, outputs a letter that sounds like you wrote it — not a bot
+**Option A — With local server (recommended)**
+```bash
+git clone https://github.com/owlguardco/job-hunter.git
+cd job-hunter
+npm start
+```
+Open **http://localhost:3000** in your browser.
 
-## What Makes It Different
+**Option B — Standalone (no install)**
+Download `web/index.html`, open it in any browser. Bring your own Anthropic API key.
+Or use the hosted version: **https://owlguardco.github.io/job-hunter**
 
-- **Runs locally** — your Anthropic API key, your machine, no data stored anywhere
-- **Rules engine** — every output runs through a set of hard-won tone rules that kill AI tells before they hit the page (see `rules/writing-rules.md`)
-- **Built on a real job search** — not demos. The prompts were refined across dozens of real applications that got screens.
+---
 
-## Quick Start
+### Way 2 — Terminal
 
-**Requirements:** Node.js 18+, an Anthropic API key, Claude Code installed
+For power users who prefer the command line.
 
 ```bash
-# 1. Clone the repo
+git clone https://github.com/owlguardco/job-hunter.git
+cd job-hunter
+cp .env.example .env        # add your ANTHROPIC_API_KEY
+npm run check               # verify your inputs are filled in
+npm run resume              # run any tool
+```
+
+See the [full command list](#all-tools) below.
+
+---
+
+### Way 3 — Claude Code
+
+For developers. Run any agent file directly.
+
+```bash
+git clone https://github.com/owlguardco/job-hunter.git
+cd job-hunter
+claude "follow agents/resume-tailor.md"
+claude "follow agents/pre-interview-research.md"
+claude "follow agents/mock-interview.md"
+```
+
+No `.env` needed — Claude Code uses its own API connection.
+
+---
+
+## Setup (Ways 1 and 2)
+
+**Requirements:** Node.js 18+, an Anthropic API key
+
+```bash
+# 1. Clone
 git clone https://github.com/owlguardco/job-hunter.git
 cd job-hunter
 
 # 2. Add your API key
 cp .env.example .env
-# Edit .env and add your ANTHROPIC_API_KEY
+# Open .env and replace the placeholder with your key from console.anthropic.com
 
-# 3. Paste your LinkedIn profile into inputs/
-# Edit inputs/my-linkedin.md with your profile text
+# 3. Fill in your inputs
+# Edit inputs/my-resume.md      — paste your resume
+# Edit inputs/job-description.md — paste the job you're targeting
 
-# 4. Paste a job description
-# Edit inputs/job-description.md
-
-# 5. Run an agent
-claude "follow agents/linkedin-analyzer.md"
-claude "follow agents/resume-tailor.md"
-claude "follow agents/cover-letter.md"
+# 4. Start the server (Way 1) or run a command (Way 2)
+npm start           # Web UI at http://localhost:3000
+npm run resume      # Terminal
 ```
 
-Outputs land in `outputs/` — git-ignored, stays on your machine.
+**First time?** Read [ONBOARDING.md](ONBOARDING.md) — a full walkthrough for each path.
 
-## The Rules Engine
-
-Every agent prompt loads `rules/writing-rules.md` before generating output. These rules exist because AI-generated job content has tells — patterns that signal to recruiters the writing wasn't done by a person. See the full list in [`rules/writing-rules.md`](rules/writing-rules.md).
-
-The short version: no em dashes, no "Hi", no "proven track record", no bullets that start with "Responsible for."
-
-## Examples
-
-Sanitized before/after examples live in `examples/`:
-
-- [`linkedin-audit-example.md`](examples/linkedin-audit-example.md) — what a profile audit looks like
-- [`resume-tailored-example.md`](examples/resume-tailored-example.md) — before/after tailoring
-- [`cover-letter-example.md`](examples/cover-letter-example.md) — sample output
-
-## Project Structure
-
-```
-job-hunter/
-├── agents/
-│   ├── linkedin-analyzer.md    # LinkedIn profile audit
-│   ├── resume-tailor.md        # Resume tailoring to a JD
-│   ├── cover-letter.md         # Cover letter generation
-│   └── interview-prep.md       # Interview question coaching
-├── rules/
-│   └── writing-rules.md        # Tone rules injected into every agent
-├── inputs/
-│   ├── my-linkedin.md          # Your LinkedIn profile
-│   ├── my-resume.md            # Your base resume in markdown
-│   └── job-description.md      # Target job description
-├── scripts/
-│   └── preflight.js            # Input validation before running agents
-├── outputs/                    # Git-ignored — tailored docs land here
-├── examples/                   # Sanitized before/after examples
-├── ONBOARDING.md               # First-run walkthrough
-├── JOB-TRACKER.md              # Markdown CRM for your pipeline
-├── package.json                # npm run scripts
-├── .env.example
-└── .gitignore
-```
-
-## Full Pipeline
-
-Job Hunter now covers the complete job search workflow end to end:
-
-```bash
-# 1. Find jobs matching your criteria
-npm run jobs
-# → outputs/job-shortlist.md — ranked postings scored against your resume
-
-# 2. Research comp before the screening call
-npm run salary
-# → outputs/salary-research.md — range, anchor, negotiation playbook
-
-# 3. Tailor your application
-npm run ats          # scan for ATS issues first
-npm run resume       # tailor resume to the JD
-npm run cover-letter # write the cover letter
-
-# 4. Prep for the interview
-npm run interview    # story bank + coached answers
-npm run mock         # live simulation with grading
-
-# 5. After the interview
-npm run schedule     # create calendar event with reminders (Google Calendar MCP)
-npm run send-thankyou # send thank-you note via Gmail (Gmail MCP)
-```
-
-MCPs required for steps 5: Google Calendar and Gmail connected in Claude.ai settings.
-Everything else runs locally with no additional setup beyond an Anthropic API key.
+---
 
 ## All Tools
 
@@ -173,9 +114,80 @@ Everything else runs locally with no additional setup beyond an Anthropic API ke
 | `npm run schedule` | Schedule interview with Calendar MCP |
 | `npm run check` | Validate all inputs before running anything |
 
+---
+
+## Full Pipeline
+
+```bash
+# 1. Find matching jobs
+npm run jobs
+# → outputs/job-shortlist.md
+
+# 2. Research comp before the screening call
+npm run salary
+# → outputs/salary-research.md
+
+# 3. Decode the JD
+npm run decode
+# → outputs/jd-decoded.md
+
+# 4. Fix your application
+npm run ats          # scan for ATS issues
+npm run resume       # tailor to the JD
+npm run cover-letter # write the letter
+
+# 5. Prep for the interview
+npm run research     # one-page company + interviewer brief
+npm run interview    # story bank + coached answers
+npm run mock         # live simulation with grading
+
+# 6. After the interview
+npm run send-thankyou # send thank-you via Gmail MCP
+npm run negotiate     # if an offer comes — practice the conversation
+npm run compare       # if two offers come — side-by-side analysis
+```
+
+---
+
+## Project Structure
+
+```
+job-hunter/
+├── agents/              # 19 agent prompt files — one per tool
+├── rules/
+│   └── writing-rules.md # Tone rules injected into every agent
+├── inputs/              # Your data goes here (git-ignored)
+│   ├── my-resume.md
+│   ├── job-description.md
+│   ├── job-search-criteria.md
+│   └── ...
+├── outputs/             # Results land here (git-ignored)
+├── scripts/
+│   ├── preflight.js     # Input validation
+│   └── job-search.py    # JobSpy search script
+├── web/
+│   └── index.html       # Standalone web UI
+├── examples/            # Sanitized before/after examples
+├── server.js            # Local server (npm start)
+├── package.json
+├── ONBOARDING.md        # First-run walkthrough
+├── JOB-TRACKER.md       # Markdown pipeline tracker
+└── .env.example
+```
+
+---
+
+## The Rules Engine
+
+Every agent loads `rules/writing-rules.md` before generating output. These rules exist because AI-generated job content has tells that kill credibility with recruiters. The short version: no em dashes, no "Hi", no "proven track record", no bullets that start with "Responsible for."
+
+See the full list: [`rules/writing-rules.md`](rules/writing-rules.md)
+
+---
+
 ## Advanced — LinkedIn Auto-Scrape
 
-Technical users can skip the copy-paste step and scrape their LinkedIn profile directly from a URL using a local MCP server.
+Skip the copy-paste step entirely. Scrape your LinkedIn profile by URL using a local MCP server.
 
 ```bash
 # One-time setup
@@ -185,24 +197,17 @@ uvx linkedin-scraper-mcp@latest --login
 npm run linkedin-scrape
 ```
 
-Scrapes the profile, formats it, and runs the full audit automatically. See [ONBOARDING.md](ONBOARDING.md) for the full setup guide.
+Full setup guide in [ONBOARDING.md](ONBOARDING.md).
 
-Uses [stickerdaniel/linkedin-mcp-server](https://github.com/stickerdaniel/linkedin-mcp-server) running locally — credentials never leave your machine.
+---
 
 ## Community & Security
 
-- [SECURITY.md](SECURITY.md) — how to report a vulnerability responsibly
+- [ONBOARDING.md](ONBOARDING.md) — full setup guide for all three paths
+- [SECURITY.md](SECURITY.md) — how to report a vulnerability
 - [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) — how we treat each other
-- [CHANGELOG.md](CHANGELOG.md) — what's changed in each version
-
-## Contributing
-
-The most valuable contributions are:
-- Additional writing rules from your own job search learnings
-- Sanitized before/after examples (remove all real names, companies, contact info)
-- Agent prompt improvements
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+- [CHANGELOG.md](CHANGELOG.md) — version history
+- [CONTRIBUTING.md](CONTRIBUTING.md) — how to contribute
 
 ## License
 
