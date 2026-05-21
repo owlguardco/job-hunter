@@ -24,6 +24,7 @@ const https = require('https');
 const fs = require('fs');
 const path = require('path');
 const { Client } = require('pg');
+const memory = require('./memory');
 
 const PORT = process.env.PORT || 3001;
 const ROOT = path.join(__dirname, '../..');  // job-hunter root (commercial/server/ → root)
@@ -228,7 +229,7 @@ function loadAgent(name) {
   return fs.existsSync(p) ? fs.readFileSync(p, 'utf8') : null;
 }
 
-function buildPrompt(toolType, inputs) {
+function buildPrompt(toolType, inputs, memoryContext = '') {
   const rules = loadRules();
   const HARD_RULES = `HARD RULES — APPLY TO ALL OUTPUT:
 - No em dashes (—) anywhere
@@ -297,7 +298,11 @@ ${rules}`;
     inputBlock = `MY RESUME:\n${inputs.resume || ''}\n\nJOB DESCRIPTION:\n${inputs.jd || ''}`;
   }
 
-  return `${HARD_RULES}\n\n---\n\n${taskLines.join('\n').trim()}\n\n---\n\n${inputBlock}`;
+  const memSection = memoryContext
+    ? `\n\nUSER CONTEXT FROM PREVIOUS SESSIONS (use this to personalize output — do not repeat it back verbatim):\n${memoryContext}\n`
+    : '';
+
+  return `${HARD_RULES}${memSection}\n\n---\n\n${taskLines.join('\n').trim()}\n\n---\n\n${inputBlock}`;
 }
 
 // ── Stripe helpers ────────────────────────────────────────
@@ -552,6 +557,28 @@ const server = http.createServer(async (req, res) => {
     }
   }
 
+  // ── GET /api/memories — user's memory profile ──────────
+  if (url.pathname === '/api/memories' && req.method === 'GET') {
+    if (!userId) return json(res, 401, { error: 'Not authenticated' });
+    try {
+      const memories = await memory.getAllMemories(userId);
+      return json(res, 200, { memories });
+    } catch (err) {
+      return json(res, 500, { error: err.message });
+    }
+  }
+
+  // ── DELETE /api/memories — clear user memories ───────────
+  if (url.pathname === '/api/memories' && req.method === 'DELETE') {
+    if (!userId) return json(res, 401, { error: 'Not authenticated' });
+    try {
+      await memory.deleteAllMemories(userId);
+      return json(res, 200, { deleted: true });
+    } catch (err) {
+      return json(res, 500, { error: err.message });
+    }
+  }
+
   // ── POST /api/run — run a tool ───────────────────────────
   if (url.pathname === '/api/run' && req.method === 'POST') {
     if (!userId) return json(res, 401, { error: 'Not authenticated' });
@@ -599,7 +626,10 @@ const server = http.createServer(async (req, res) => {
         enrichedInputs.jd = inputs.jd || enrichedInputs.jd;
       }
 
-      const prompt = buildPrompt(toolType, enrichedInputs);
+      // Fetch relevant memories for this user + tool combo
+      const memoryContext = await memory.getMemoryContext(userId, toolType, enrichedInputs);
+
+      const prompt = buildPrompt(toolType, enrichedInputs, memoryContext);
 
       if (!prompt) {
         return json(res, 400, { error: `Unknown tool: ${type}` });
@@ -630,10 +660,11 @@ const server = http.createServer(async (req, res) => {
       const inputTokens = data.usage?.input_tokens || 0;
       const outputTokens = data.usage?.output_tokens || 0;
 
-      // Deduct credit + log usage + save to session
+      // Deduct credit + log usage + save to session + save to memory
       await Promise.all([
         deductCredit(userId, toolType, inputTokens, outputTokens),
         saveSessionOutput(session.id, toolType, result),
+        memory.addMemory(userId, toolType, enrichedInputs, result),
       ]);
 
       // Return result with updated credit balance + session ID

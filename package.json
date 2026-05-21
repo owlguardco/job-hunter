@@ -45,6 +45,7 @@
   "license": "MIT",
   "dependencies": {
     "pg": "^8.11.3",
-    "dotenv": "^16.4.5"
+    "dotenv": "^16.4.5",
+    "mem0ai": "^2.1.0"
   }
 }

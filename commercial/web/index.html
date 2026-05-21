@@ -319,6 +319,29 @@ textarea.filled { border-color: var(--green-dim); }
 .modal-footer { display: flex; gap: 10px; }
 .modal-footer .btn { flex: 1; padding: 12px; }
 
+/* ── MEMORY PANEL ── */
+.memory-panel {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); overflow: hidden; margin-top: 1.5rem;
+}
+.memory-header {
+  padding: 12px 20px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--surface2);
+}
+.memory-title { font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+.memory-list { padding: 16px 20px; display: flex; flex-direction: column; gap: 8px; max-height: 280px; overflow-y: auto; }
+.memory-item {
+  padding: 10px 14px; background: var(--bg);
+  border: 1px solid var(--border); border-radius: var(--radius-sm);
+  font-size: 12px; color: var(--muted); line-height: 1.5;
+  font-family: 'DM Mono', monospace;
+}
+.memory-item::before { content: '◈ '; color: var(--orange); }
+.memory-empty { padding: 20px; text-align: center; color: var(--muted); font-size: 12px; }
+.btn-danger { background: transparent; color: var(--red); border: 1px solid var(--red-dim); font-size: 11px; padding: 4px 10px; border-radius: var(--radius-sm); cursor: pointer; font-family: 'Syne', sans-serif; }
+.btn-danger:hover { background: var(--red-dim); }
+
 /* ── UTILITY ── */
 .divider { height: 1px; background: var(--border); margin: 2rem 0; }
 .section-title {
@@ -646,6 +669,18 @@ textarea.filled { border-color: var(--green-dim); }
   </div>
 </div>
 
+    <!-- Memory Profile -->
+    <div class="divider"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
+      <div class="section-title" style="margin-bottom:0;">What Job Hunter Remembers About You</div>
+      <button class="btn-danger" onclick="clearMemories()" id="clear-mem-btn">Clear Memory</button>
+    </div>
+    <div class="memory-panel" id="memory-panel">
+      <div class="memory-list" id="memory-list">
+        <div class="memory-empty">Run a few tools and your profile will build up here automatically.</div>
+      </div>
+    </div>
+
 <!-- PURCHASE MODAL -->
 <div class="modal-overlay" id="purchase-modal">
   <div class="modal">
@@ -768,6 +803,7 @@ async function loadUser() {
     userProfile = profileRes.profile;
     updateCreditDisplay();
     loadUsageHistory();
+    loadMemories();
     if (userProfile) prefillFromProfile();
   } catch (e) {
     console.error('loadUser error:', e);
@@ -1003,6 +1039,45 @@ async function api(path, body) {
 // ── Utilities ─────────────────────────────────────────────
 function markFilled(el) {
   el.classList.toggle('filled', el.value.trim().length > 100);
+}
+
+// ── Memory helpers ───────────────────────────────────────
+async function loadMemories() {
+  if (!clerkToken) return;
+  try {
+    const res = await api('/api/memories');
+    const list = document.getElementById('memory-list');
+    if (!res.memories || res.memories.length === 0) {
+      list.innerHTML = '<div class="memory-empty">Run a few tools and your profile will build up here automatically.</div>';
+      return;
+    }
+    list.innerHTML = res.memories
+      .map(m => `<div class="memory-item">${m.memory || m.text || JSON.stringify(m)}</div>`)
+      .join('');
+  } catch (e) {
+    console.error('loadMemories error:', e);
+  }
+}
+
+async function clearMemories() {
+  if (!clerkUser) return;
+  if (!confirm('Clear all Job Hunter memory? This cannot be undone.')) return;
+  const btn = document.getElementById('clear-mem-btn');
+  btn.textContent = 'Clearing...';
+  btn.disabled = true;
+  try {
+    await fetch('/api/memories', {
+      method: 'DELETE',
+      headers: { 'Authorization': `Bearer ${clerkToken}` }
+    });
+    document.getElementById('memory-list').innerHTML =
+      '<div class="memory-empty">Memory cleared.</div>';
+    btn.textContent = 'Clear Memory';
+    btn.disabled = false;
+  } catch (e) {
+    btn.textContent = 'Clear Memory';
+    btn.disabled = false;
+  }
 }
 
 // ── Profile helpers ──────────────────────────────────────

@@ -96,7 +96,34 @@ scripts/
 
 ---
 
-## Current state (v0.9.2)
+## Memory layer (commercial only)
+
+**Mem0** (`mem0ai` npm package) is wired into the commercial server as a persistent
+memory layer on top of the Postgres sessions table.
+
+**How it works:**
+- Before every tool run: `memory.getMemoryContext(userId, toolType, inputs)` searches
+  Mem0 for relevant past memories and injects them into the prompt
+- After every tool run: `memory.addMemory(userId, toolType, inputs, result)` extracts
+  meaningful facts and stores them against the user's ID
+- Memory is keyed by `user_id` + `app_id: 'job-hunter'`
+
+**What gets stored:** target roles, companies researched, interview weak spots, offer
+amounts, career focus (job search vs internal growth). Never full resume text.
+
+**Graceful degradation:** if `MEM0_API_KEY` is not set, all memory calls are silently
+skipped. The tool runs normally without memory context.
+
+**Files:**
+- `commercial/server/memory.js` — Mem0 wrapper, `addMemory`, `searchMemory`, `getMemoryContext`
+- `commercial/server/index.js` — calls `getMemoryContext` before prompt, `addMemory` after run
+- `commercial/web/index.html` — `/api/memories` GET shows memory panel, DELETE clears it
+
+**API endpoints (commercial):**
+- `GET /api/memories` — returns all memories for the authenticated user
+- `DELETE /api/memories` — clears all memories (GDPR compliance)
+
+## Current state (v1.0.0)
 
 - 19 agents across 5 categories
 - 21 npm run commands

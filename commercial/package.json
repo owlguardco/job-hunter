@@ -1,7 +1,7 @@
 {
   "name": "job-hunter-commercial",
   "version": "1.0.0",
-  "description": "Job Hunter — hosted pay-per-use service",
+  "description": "Job Hunter \u2014 hosted pay-per-use service",
   "main": "server/index.js",
   "scripts": {
     "start": "node server/index.js",
@@ -10,7 +10,8 @@
   },
   "dependencies": {
     "pg": "^8.11.3",
-    "dotenv": "^16.4.5"
+    "dotenv": "^16.4.5",
+    "mem0ai": "^2.1.0"
   },
   "engines": {
     "node": ">=18.0.0"
