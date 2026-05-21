@@ -4,7 +4,7 @@
 [![Version](https://img.shields.io/badge/version-0.6.0-green.svg)](CHANGELOG.md)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
-> I searched for six months. Then I started using Claude Code to build my own tools — a LinkedIn content system, tailored resumes, research workflows — and wrapped up the search in under two months. This is everything I learned, packaged so you don't have to figure it out the hard way.
+> I searched for three months. Then I started using Claude Code to build my own tools — a LinkedIn content system, tailored resumes, research workflows — and wrapped up the search in under two months. This is everything I learned, packaged so you don't have to figure it out the hard way.
 
 ---
 
