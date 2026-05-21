@@ -251,6 +251,37 @@ function buildMemoryMessages(toolType, inputs, result) {
         }
       ];
 
+    case 'reality':
+      // Store the market tier assessment for future context
+      const tierMatch = result?.match(/WHERE YOU ACTUALLY ARE[\s\S]+?(?=WHAT YOU)/);
+      const tier = tierMatch?.[0]?.replace('WHERE YOU ACTUALLY ARE', '').trim().substring(0, 200);
+      return [
+        {
+          role: 'user',
+          content: `I ran a resume reality check.${tier ? ' Assessment: ' + tier : ''}`
+        },
+        {
+          role: 'assistant',
+          content: `Noted your market position assessment. I will factor this into future tool runs.`
+        }
+      ];
+
+    case 'fit':
+      const scoreMatch = result?.match(/JOB FIT SCORE[:\s]+(\d+)/i);
+      const recMatch = result?.match(/RECOMMENDATION[:\s]+(APPLY|DO NOT APPLY|APPLY WITH CAVEATS)/i);
+      const fitScore = scoreMatch?.[1];
+      const rec = recMatch?.[1];
+      return [
+        {
+          role: 'user',
+          content: `I scored fit for ${role} at ${company}.${fitScore ? ' Score: ' + fitScore + '/10.' : ''}${rec ? ' Verdict: ' + rec + '.' : ''}`
+        },
+        {
+          role: 'assistant',
+          content: `Noted. ${role} at ${company}${fitScore ? ' scored ' + fitScore + '/10' : ''}${rec ? ' — ' + rec : ''}.`
+        }
+      ];
+
     default:
       return null;
   }

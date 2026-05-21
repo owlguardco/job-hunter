@@ -259,6 +259,8 @@ ${rules}`;
     review: 'career-review',
     internal: 'career-internal',
     salary: 'search-salary',
+    reality: 'apply-reality-check',
+    fit: 'apply-fit-score',
   };
 
   const agentName = agentMap[toolType];

@@ -463,8 +463,40 @@ textarea.filled { border-color: var(--green-dim); }
     <!-- Tool Panels -->
     <div id="tool-panels">
 
+      <!-- REALITY CHECK -->
+      <div class="tool-panel active" id="panel-reality">
+        <div class="tool-pane">
+          <div class="tool-pane-header"><div class="tool-pane-title">Resume Reality Check</div><div class="tool-pane-desc">Find out what you're actually worth on the market before you waste applications.</div></div>
+          <div class="tool-explainer">Most people apply to jobs based on hope. They target roles a level above where they're competitive, get ignored, and assume the market is tough. The market isn't tough — they're applying to the wrong roles. Do this once before applying anywhere. It changes everything.</div>
+          <div class="tool-body">
+            <div class="input-group"><label class="input-label">Your Resume</label><textarea id="reality-resume" rows="9" placeholder="Paste your full resume — work history, accomplishments, numbers, everything." oninput="markFilled(this)"></textarea></div>
+            <div class="input-group"><label class="input-label">Target Role (optional)</label><textarea id="reality-jd" rows="3" placeholder="Optional — paste a JD if you want a reality check against a specific role." oninput="markFilled(this)"></textarea></div>
+            <button class="run-btn" id="reality-btn" onclick="runTool('reality')"><span>Get My Reality Check — 1 credit</span></button>
+            <div class="no-credits-msg" id="reality-no-credits"><p>You're out of credits.</p><button class="btn btn-primary" onclick="showPurchaseModal()">Buy Credits</button></div>
+            <div class="error-msg" id="reality-error"></div>
+            <div class="output-wrap" id="reality-output"><div class="output-header"><span class="output-title">✓ Reality Check</span><button class="copy-btn" id="reality-copy" onclick="copyOutput('reality-output-body','reality-copy')">Copy</button></div><div class="output-body" id="reality-output-body"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FIT SCORE -->
+      <div class="tool-panel" id="panel-fit">
+        <div class="tool-pane">
+          <div class="tool-pane-header"><div class="tool-pane-title">Job Fit Scorer</div><div class="tool-pane-desc">Score how competitive you actually are for a specific role. Apply / Don't Apply verdict.</div></div>
+          <div class="tool-explainer">The ATS scanner tells you if software will filter you out. This tells you if a hiring manager will care. Scores your fit across 5 dimensions. A 4 out of 10 is a 4 out of 10 — the most useful verdict is sometimes Don't Apply.</div>
+          <div class="tool-body">
+            <div class="input-group"><label class="input-label">Your Resume</label><textarea id="fit-resume" rows="7" placeholder="Paste your resume." oninput="markFilled(this)"></textarea></div>
+            <div class="input-group"><label class="input-label">Job Description</label><textarea id="fit-jd" rows="5" placeholder="Paste the full job posting." oninput="markFilled(this)"></textarea></div>
+            <button class="run-btn" id="fit-btn" onclick="runTool('fit')"><span>Score My Fit — 1 credit</span></button>
+            <div class="no-credits-msg" id="fit-no-credits"><p>You're out of credits.</p><button class="btn btn-primary" onclick="showPurchaseModal()">Buy Credits</button></div>
+            <div class="error-msg" id="fit-error"></div>
+            <div class="output-wrap" id="fit-output"><div class="output-header"><span class="output-title">✓ Fit Score</span><button class="copy-btn" id="fit-copy" onclick="copyOutput('fit-output-body','fit-copy')">Copy</button></div><div class="output-body" id="fit-output-body"></div></div>
+          </div>
+        </div>
+      </div>
+
       <!-- ATS -->
-      <div class="tool-panel active" id="panel-ats">
+      <div class="tool-panel" id="panel-ats">
         <div class="tool-pane">
           <div class="tool-pane-header">
             <div class="tool-pane-title">ATS Scanner</div>
@@ -948,6 +980,8 @@ async function runTool(type) {
 
 function getBtnLabel(type) {
   const labels = {
+    reality: 'Get My Reality Check — 1 credit',
+    fit: 'Score My Fit — 1 credit',
     ats: 'Scan My Resume — 1 credit',
     resume: 'Tailor My Resume — 1 credit',
     cover: 'Write Cover Letter — 1 credit',
@@ -967,6 +1001,8 @@ function getBtnLabel(type) {
 function getInputs(type) {
   const g = id => (document.getElementById(id)?.value.trim() || '');
   const inputs = {
+    reality:   { resume: g('reality-resume'), jd: g('reality-jd') },
+    fit:       { resume: g('fit-resume'), jd: g('fit-jd') },
     ats:       { resume: g('ats-resume'), jd: g('ats-jd') },
     resume:    { resume: g('resume-resume'), jd: g('resume-jd') },
     cover:     { resume: g('cover-resume'), jd: g('cover-jd') },
