@@ -147,24 +147,51 @@ send-thankyou ← within 24 hours after the interview
 ## How it works
 
 ```
-job-hunter/
+job-hunter/                        (main branch — open source only)
 │
-├── agents/           ← 19 prompt files, one per tool
-│   ├── apply-*       ← resume, cover letter, ATS, LinkedIn, JD decode
-│   ├── search-*      ← jobs, salary, outreach
-│   ├── interview-*   ← prep, mock, research
-│   ├── offer-*       ← negotiate, compare, schedule, thank-you
-│   └── career-*      ← promote, review, internal
+├── CLAUDE.md                      project context for Claude Code sessions
+├── README.md · LICENSE · server.js · package.json
 │
-├── inputs/           ← paste your resume and job descriptions here
-├── outputs/          ← results land here (never pushed to GitHub)
-├── rules/            ← tone rules injected into every agent
-├── web/              ← browser UI (works standalone or with server)
-├── scripts/          ← guide, preflight check, job search script
-├── examples/         ← sanitized before/after examples
-├── automation/       ← Hermes + OpenClaw pipeline configs
-├── commercial/       ← hosted pay-per-use version (Clerk + Stripe)
-└── docs/             ← onboarding, changelog, legal
+├── agents/                        19 prompt files — one per tool
+│   ├── apply-*   (6)              resume, cover letter, ATS, LinkedIn, JD decode
+│   ├── search-*  (3)              jobs, salary, outreach
+│   ├── interview-* (3)            prep, mock, research
+│   ├── offer-*   (4)              negotiate, compare, schedule, thank-you
+│   └── career-*  (3)              promote, review, internal
+│
+├── inputs/                        paste your stuff here (git-ignored)
+├── outputs/                       results land here (git-ignored)
+├── rules/writing-rules.md         tone rules injected into every agent
+├── web/index.html                 browser UI — works standalone or via server
+├── scripts/                       guide.js · preflight.js · job-search.py
+├── examples/                      sanitized before/after examples
+├── automation/                    Hermes + OpenClaw pipeline configs
+└── docs/                          ONBOARDING · CHANGELOG · CONTRIBUTING · SECURITY
+```
+
+```
+job-hunter/                        (commercial branch — adds hosted layer)
+│
+├── everything above, plus:
+│
+├── COMMERCIAL.md                  open core license stance
+├── start.js                       entry point (routes open source vs commercial)
+├── railway.toml · Procfile        deployment configs
+│
+├── commercial/
+│   ├── server/
+│   │   ├── index.js               Clerk auth · Stripe billing · Postgres
+│   │   └── memory.js              Mem0 persistent memory layer
+│   ├── db/schema.sql              users · credits · purchases · usage · profiles · sessions
+│   ├── web/index.html             commercial UI — landing · dashboard · purchase modal
+│   └── .env.example
+│
+└── docs/
+    ├── commercial-setup.md        Railway · Clerk · Stripe deployment guide
+    └── legal/
+        ├── privacy-policy.md
+        ├── terms-of-service.md
+        └── refund-policy.md
 ```
 
 All three paths (browser, terminal, Claude Code) use the same `agents/` files.
@@ -192,9 +219,15 @@ every morning, results in your Discord. See [docs/advanced-automation.md](docs/a
 
 ## Hosting it yourself commercially
 
-Job Hunter is MIT licensed. The `commercial/` directory contains a full
-hosted version with Clerk auth, Stripe billing, and Postgres.
-See [COMMERCIAL.md](COMMERCIAL.md) and [docs/commercial-setup.md](docs/commercial-setup.md).
+Job Hunter is MIT licensed. The `commercial` branch contains a full
+hosted version with Clerk auth, Stripe billing, Postgres, and Mem0 memory.
+
+```bash
+git checkout commercial
+```
+
+See [`COMMERCIAL.md`](https://github.com/owlguardco/job-hunter/blob/commercial/COMMERCIAL.md)
+and [`docs/commercial-setup.md`](https://github.com/owlguardco/job-hunter/blob/commercial/docs/commercial-setup.md).
 
 ---
 
