@@ -6,6 +6,38 @@
 
 > I searched for six months. Then I started using Claude Code to build my own tools — a LinkedIn content system, tailored resumes, research workflows — and wrapped up the search in under two months. This is everything I learned, packaged so you don't have to figure it out the hard way.
 
+## Three Ways to Use It
+
+**1. Web UI — for anyone** (no terminal required)
+```bash
+npm start
+# Opens http://localhost:3000
+# Paste your inputs, click run, copy output
+```
+Or open `web/index.html` directly in your browser for the standalone version (no server needed — bring your own Anthropic API key).
+
+**2. Terminal — for power users**
+```bash
+npm run resume      # tailor resume to a JD
+npm run ats         # scan for ATS issues
+npm run interview   # build story bank + coached answers
+npm run mock        # live mock interview with grading
+npm run research    # pre-interview brief
+# ...19 total commands
+```
+
+**3. Claude Code — for developers**
+```bash
+claude "follow agents/resume-tailor.md"
+claude "follow agents/pre-interview-research.md"
+claude "follow agents/mock-interview.md"
+# Any agent/*.md file works directly
+```
+
+All three paths use the same agent files in `agents/`. One source of truth.
+
+---
+
 ## What This Does
 
 Job Hunter is a local CLI tool powered by Claude Code that helps you:

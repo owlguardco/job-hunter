@@ -1280,30 +1280,57 @@ async function run(type) {
   }, 3000);
 
   try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': API_KEY,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 4000,
-        messages: [{ role: 'user', content: getPrompt(type, inputs) }]
-      })
-    });
+    // ── Smart routing ──────────────────────────────────────
+    // If local server is running, route through it (prompts load
+    // from agent .md files — single source of truth).
+    // If not, call Anthropic directly from the browser.
+    let text = '';
 
-    clearInterval(msgInterval);
+    const useServer = await fetch('/api/health').then(r => r.ok).catch(() => false);
 
-    if (!response.ok) {
-      const err = await response.json().catch(() => ({}));
-      throw new Error(err.error?.message || `API error ${response.status}`);
+    if (useServer) {
+      // Route through local server — prompts come from agents/*.md
+      const serverRes = await fetch('/api/run', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type,
+          inputs,
+          apiKey: API_KEY,
+          interviewMode
+        })
+      });
+      clearInterval(msgInterval);
+      if (!serverRes.ok) {
+        const err = await serverRes.json().catch(() => ({}));
+        throw new Error(err.error || `Server error ${serverRes.status}`);
+      }
+      const serverData = await serverRes.json();
+      text = serverData.result || '';
+    } else {
+      // Direct browser → Anthropic (standalone HTML, no server)
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': API_KEY,
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true'
+        },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 4000,
+          messages: [{ role: 'user', content: getPrompt(type, inputs) }]
+        })
+      });
+      clearInterval(msgInterval);
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        throw new Error(err.error?.message || `API error ${response.status}`);
+      }
+      const data = await response.json();
+      text = data.content?.[0]?.text || '';
     }
-
-    const data = await response.json();
-    const text = data.content?.[0]?.text || '';
 
     outputBody.textContent = text;
     outputWrap.className = 'output-wrap visible';

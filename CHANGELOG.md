@@ -4,6 +4,21 @@ All notable changes to Job Hunter are documented here.
 
 ---
 
+## [0.6.0] — 2026-05-21
+
+### Added
+- **`server.js`** — unified local server. Serves web UI, reads prompts from `agents/*.md` (single source of truth), proxies requests to Anthropic API
+- **Three-way architecture** — web UI, terminal, and Claude Code all use the same agent files
+- **Smart routing in web UI** — detects if local server is running and routes through it (agents load from .md files); falls back to direct Anthropic API call if not (standalone HTML mode still works)
+- `npm start` — starts local server at http://localhost:3000
+
+### Changed
+- Web UI no longer has hardcoded prompts — all prompts now load from `agents/*.md` via the server
+- README restructured with "Three Ways to Use It" as the primary entry point
+- Version bump to 0.6.0
+
+---
+
 ## [0.5.0] — 2026-05-21
 
 ### Added

@@ -1,8 +1,9 @@
 {
   "name": "job-hunter",
-  "version": "0.1.0",
+  "version": "0.6.0",
   "description": "AI-powered job search toolkit using Claude Code",
   "scripts": {
+    "start": "node server.js",
     "linkedin": "node scripts/preflight.js linkedin && claude --print \"$(cat agents/linkedin-analyzer.md)\"",
     "resume": "node scripts/preflight.js resume && claude --print \"$(cat agents/resume-tailor.md)\"",
     "cover-letter": "node scripts/preflight.js cover-letter && claude --print \"$(cat agents/cover-letter.md)\"",
