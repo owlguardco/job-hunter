@@ -24,7 +24,12 @@
     "research": "claude \"follow agents/interview-research.md\"",
     "compare": "claude \"follow agents/offer-compare.md\"",
     "internal": "node scripts/preflight.js resume && claude \"follow agents/career-internal.md\"",
-    "check": "node scripts/preflight.js all"
+    "check": "node scripts/preflight.js all",
+    "commercial": "START_COMMERCIAL=true node start.js",
+    "commercial:dev": "START_COMMERCIAL=true node --watch start.js",
+    "db:migrate": "node commercial/db/migrate.js",
+    "daily-search": "python3.11 scripts/job-search.py && claude --dangerously-skip-permissions \"follow automation/pipeline-daily-search.md\"",
+    "interview-auto": "claude --dangerously-skip-permissions \"follow automation/pipeline-interview-prep.md\""
   },
   "engines": {
     "node": ">=18.0.0"
@@ -38,5 +43,8 @@
     "ai"
   ],
   "license": "MIT",
-  "dependencies": {}
+  "dependencies": {
+    "pg": "^8.11.3",
+    "dotenv": "^16.4.5"
+  }
 }
