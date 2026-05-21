@@ -102,8 +102,8 @@ Open `commercial/web/index.html` and add this meta tag inside `<head>`:
 
 1. In your Railway project, add a new service → **Deploy from GitHub repo**
 2. Connect `owlguardco/job-hunter` (or your fork)
-3. Set the **Root Directory** to `commercial/`
-4. Set the **Start Command** to `node server/index.js`
+3. Leave **Root Directory** blank — deploy from repo root
+4. Leave **Start Command** blank — `railway.toml` handles it automatically
 
 **Add environment variables in Railway:**
 ```

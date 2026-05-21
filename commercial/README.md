@@ -59,6 +59,37 @@ PORT=3001
 APP_URL=https://jobhunter.ai
 ```
 
+## Single-repo deployment
+
+Both the open source server and commercial server run from the same GitHub repo.
+Railway, Render, Fly.io — one deployment, one config, controlled by an env var.
+
+**Open source server** (users bring their own API key):
+```bash
+npm start                          # local
+# Railway: START_COMMERCIAL not set
+```
+
+**Commercial server** (your key, Stripe + Clerk):
+```bash
+npm run commercial                 # local
+# Railway: START_COMMERCIAL=true
+```
+
+Same `agents/`, `rules/`, and `web/` files power both.
+
+### Railway setup (one service, one repo)
+
+1. Connect `owlguardco/job-hunter` to a Railway service
+2. Leave **Start Command** blank — `railway.toml` handles it
+3. Add env vars:
+   - `START_COMMERCIAL=true` ← this switches to the commercial server
+   - All vars from `.env.example` below
+4. Deploy
+
+To run the open source version on Railway instead:
+- Remove `START_COMMERCIAL` or set it to `false`
+
 ## Setup
 
 See [../docs/commercial-setup.md](../docs/commercial-setup.md) for the full deployment guide.

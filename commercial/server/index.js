@@ -11,7 +11,11 @@
  * This server imports from it and adds the commercial layer on top.
  */
 
-require('dotenv').config({ path: require('path').join(__dirname, '../.env') });
+// Load .env from commercial/ first, fall back to root
+const dotenv = require('dotenv');
+const envPath = require('path').join(__dirname, '../.env');
+const rootEnvPath = require('path').join(__dirname, '../../.env');
+dotenv.config({ path: require('fs').existsSync(envPath) ? envPath : rootEnvPath });
 
 const http = require('http');
 const https = require('https');
@@ -20,7 +24,7 @@ const path = require('path');
 const { Client } = require('pg');
 
 const PORT = process.env.PORT || 3001;
-const ROOT = path.join(__dirname, '../..');  // job-hunter root
+const ROOT = path.join(__dirname, '../..');  // job-hunter root (commercial/server/ → root)
 const COMMERCIAL_WEB = path.join(__dirname, '../web');
 
 // ── DB client ─────────────────────────────────────────────
