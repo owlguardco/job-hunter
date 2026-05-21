@@ -1,0 +1,80 @@
+# Agents
+
+19 prompt files — one per tool. Each one is a standalone instruction set
+for Claude Code or the local server.
+
+## How to run any agent
+
+**Terminal (npm):**
+```bash
+npm run resume
+npm run interview
+# etc — see package.json for all commands
+```
+
+**Claude Code directly:**
+```bash
+claude "follow agents/apply-resume.md"
+claude "follow agents/interview-mock.md"
+```
+
+**Via local server:**
+```bash
+npm start   # then use the web UI at http://localhost:3000
+```
+
+---
+
+## apply-* — Job application tools
+
+| File | Command | What it does |
+|---|---|---|
+| `apply-resume.md` | `npm run resume` | Tailor resume to a specific JD |
+| `apply-cover-letter.md` | `npm run cover-letter` | Write a cover letter |
+| `apply-ats-scan.md` | `npm run ats` | Scan for ATS issues |
+| `apply-decode-jd.md` | `npm run decode` | Decode a JD — red flags, real pay, subtext |
+| `apply-linkedin-audit.md` | `npm run linkedin` | Audit your LinkedIn profile |
+| `apply-linkedin-scrape.md` | `npm run linkedin-scrape` | Scrape LinkedIn by URL (advanced) |
+
+## search-* — Job search tools
+
+| File | Command | What it does |
+|---|---|---|
+| `search-jobs.md` | `npm run jobs` | Search job boards |
+| `search-salary.md` | `npm run salary` | Research market comp |
+| `search-outreach.md` | `npm run outreach` | Cold message a recruiter |
+
+## interview-* — Interview prep tools
+
+| File | Command | What it does |
+|---|---|---|
+| `interview-prep.md` | `npm run interview` | Story bank + coached answers |
+| `interview-mock.md` | `npm run mock` | Live mock with real-time grading |
+| `interview-research.md` | `npm run research` | Pre-interview company brief |
+
+## offer-* — Offer and post-interview tools
+
+| File | Command | What it does |
+|---|---|---|
+| `offer-negotiate.md` | `npm run negotiate` | Practice the negotiation conversation |
+| `offer-compare.md` | `npm run compare` | Compare two offers |
+| `offer-schedule.md` | `npm run schedule` | Schedule interview via Google Calendar |
+| `offer-thankyou.md` | `npm run send-thankyou` | Send thank-you via Gmail |
+
+## career-* — Career growth tools
+
+| File | Command | What it does |
+|---|---|---|
+| `career-promote.md` | `npm run promote` | Build your promotion case |
+| `career-review.md` | `npm run review` | Prep for performance review |
+| `career-internal.md` | `npm run internal` | Apply for an internal role |
+
+---
+
+## Customizing agents
+
+Every agent is plain markdown. Open any file and edit the instructions —
+changes take effect on the next run. No rebuild needed.
+
+The rules engine in `rules/writing-rules.md` is injected automatically
+into every agent. You don't need to add it manually.

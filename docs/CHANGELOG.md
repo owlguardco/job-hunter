@@ -4,6 +4,26 @@ All notable changes to Job Hunter are documented here.
 
 ---
 
+## [0.7.0] — 2026-05-21
+
+### Changed — Structural cleanup
+- All agent files renamed with category prefixes (`apply-*`, `search-*`, `interview-*`, `offer-*`, `career-*`)
+- Reference docs moved to `docs/` (`CHANGELOG`, `CONTRIBUTING`, `SECURITY`, `CODE_OF_CONDUCT`, `ONBOARDING`)
+- `JOB-TRACKER.md` moved to `docs/templates/`
+- Input files renamed to match agent prefixes (`search-outreach-target.md`, `apply-linkedin-url.txt`)
+- Root directory now contains only: `README.md`, `server.js`, `package.json`, `.env.example`, `.gitignore`, `LICENSE`
+- Version bumped to `0.7.0`
+
+### Added — README files in every folder
+- `agents/README.md` — full table of all 19 agents grouped by category
+- `inputs/README.md` — which file goes with which tool
+- `outputs/README.md` — what lands here, full output file reference
+- `rules/README.md` — how the rules engine works, how to contribute
+- `scripts/README.md` — preflight.js and job-search.py documentation
+- `examples/README.md` — context for the seed examples, contribution guide
+
+---
+
 ## [0.6.0] — 2026-05-21
 
 ### Added
@@ -30,7 +50,7 @@ All notable changes to Job Hunter are documented here.
 - **Pre-Interview Research** (`npm run research`) — one-page brief: company news, interviewer background, competitive landscape, Glassdoor signals, 5 questions grounded in research
 - **Offer Comparison Tool** (`npm run compare`) — side-by-side total comp (Y1 and Y3), scores 7 dimensions, gives a direct recommendation
 - **Internal Job Application** (`npm run internal`) — accounts for internal politics, existing relationships, and what's different about applying for a role at your current company
-- `inputs/cold-outreach-target.md` — template for outreach targets
+- `inputs/search-outreach-target.md` — template for outreach targets
 - `inputs/interview-context.md` — template for interviewer details
 
 ---

@@ -163,8 +163,8 @@ Every agent is a plain markdown file in `agents/`. Open any of them and edit the
 | `inputs/my-linkedin.md` | LinkedIn audit | Your LinkedIn profile text |
 | `inputs/job-description.md` | Most tools | The job posting you're targeting |
 | `inputs/job-search-criteria.md` | `npm run jobs` | Roles, location, filters |
-| `inputs/linkedin-url.txt` | `npm run linkedin-scrape` | Your LinkedIn profile URL |
-| `inputs/cold-outreach-target.md` | `npm run outreach` | Target company and contact |
+| `inputs/apply-apply-linkedin-url.txt` | `npm run linkedin-scrape` | Your LinkedIn profile URL |
+| `inputs/search-outreach-target.md` | `npm run outreach` | Target company and contact |
 | `inputs/interview-context.md` | `npm run research` | Interviewer name and details |
 
 All input files are git-ignored — they never leave your machine.
@@ -213,7 +213,7 @@ uvx linkedin-scraper-mcp@latest --login
 # Log in through the Chrome window that opens
 
 # Add your URL
-echo "https://www.linkedin.com/in/yourname/" > inputs/linkedin-url.txt
+echo "https://www.linkedin.com/in/yourname/" > inputs/apply-apply-linkedin-url.txt
 
 # Run
 npm run linkedin-scrape

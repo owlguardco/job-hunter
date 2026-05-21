@@ -1,9 +1,10 @@
-# Environment
+# Environment — never push your API key
 .env
 
 # Outputs — your personal docs stay local
 outputs/*
 !outputs/.gitkeep
+!outputs/README.md
 
 # Node
 node_modules/
@@ -18,5 +19,5 @@ Thumbs.db
 .idea/
 *.swp
 
-# Dev build prompts
+# Dev build prompts — internal use only
 docs/dev-prompts/

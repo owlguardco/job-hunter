@@ -1,7 +1,7 @@
 {
   "name": "job-hunter",
-  "version": "0.6.0",
-  "description": "AI-powered job search toolkit using Claude Code",
+  "version": "0.7.0",
+  "description": "AI-powered job search toolkit \u2014 resume tailoring, ATS scanner, interview prep, offer negotiation, and career growth tools",
   "scripts": {
     "start": "node server.js",
     "linkedin": "node scripts/preflight.js linkedin && claude --print \"$(cat agents/apply-linkedin-audit.md)\"",
@@ -28,6 +28,13 @@
   "engines": {
     "node": ">=18.0.0"
   },
-  "keywords": ["job-search", "claude-code", "resume", "linkedin", "career", "ai"],
+  "keywords": [
+    "job-search",
+    "claude-code",
+    "resume",
+    "linkedin",
+    "career",
+    "ai"
+  ],
   "license": "MIT"
 }

@@ -12,7 +12,7 @@ these or send generic ones that get ignored.
 ### Step 1 — Load inputs
 
 Read `inputs/my-resume.md` for background and experience.
-Read `inputs/cold-outreach-target.md` for target company and contact details.
+Read `inputs/search-outreach-target.md` for target company and contact details.
 Read `rules/writing-rules.md`.
 
 ### Step 2 — Research the target

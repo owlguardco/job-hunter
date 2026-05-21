@@ -79,11 +79,11 @@ If SESSION EXISTS, skip this step and tell the user their session is already sav
 
 ### Step 3 — Read the LinkedIn URL
 
-Read the file `inputs/linkedin-url.txt`. This should contain a single LinkedIn
+Read the file `inputs/apply-apply-linkedin-url.txt`. This should contain a single LinkedIn
 profile URL, e.g. `https://www.linkedin.com/in/yourname/`
 
 If the file is empty or missing, stop and tell the user:
-> Please create the file `inputs/linkedin-url.txt` and paste your LinkedIn
+> Please create the file `inputs/apply-apply-linkedin-url.txt` and paste your LinkedIn
 > profile URL into it (just the URL, nothing else), then run this agent again.
 
 ### Step 4 — Start the MCP server
@@ -112,7 +112,7 @@ If it still fails, stop and report the error output.
 
 ### Step 5 — Scrape the profile
 
-Read the URL from `inputs/linkedin-url.txt`.
+Read the URL from `inputs/apply-apply-linkedin-url.txt`.
 
 Use the MCP server at `http://127.0.0.1:8765/mcp` to call the `get_person_profile`
 tool with:
