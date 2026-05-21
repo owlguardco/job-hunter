@@ -151,36 +151,63 @@ claude "follow agents/career-internal.md"
 ```
 job-hunter/
 │
-├── agents/          ← 19 prompt files, one per tool
-│   ├── apply-*      ← job application tools
-│   ├── search-*     ← job search tools
-│   ├── interview-*  ← interview prep tools
-│   ├── offer-*      ← offer and post-interview tools
-│   └── career-*     ← promotion and career growth tools
+├── CLAUDE.md              ← project context for Claude Code sessions
+├── COMMERCIAL.md          ← open core license stance
+├── README.md
+├── start.js               ← entry point (open source or commercial)
+├── server.js              ← open source server
+├── package.json           ← 21 npm run commands
+├── railway.toml           ← Railway deployment config
 │
-├── inputs/          ← paste your stuff here
+├── agents/                ← 19 agent prompt files
+│   ├── apply-*            ← resume, cover letter, ATS, LinkedIn, JD decode (6)
+│   ├── search-*           ← jobs, salary, outreach (3)
+│   ├── interview-*        ← prep, mock, research (3)
+│   ├── offer-*            ← negotiate, compare, schedule, thank-you (4)
+│   └── career-*           ← promote, review, internal (3)
+│
+├── inputs/                ← paste your stuff here (git-ignored)
 │   ├── my-resume.md
 │   ├── job-description.md
 │   └── ...
 │
-├── outputs/         ← results land here (never pushed to git)
+├── outputs/               ← results land here (git-ignored)
 │
 ├── rules/
 │   └── writing-rules.md   ← tone rules injected into every agent
 │
 ├── web/
-│   └── index.html   ← the web UI (works standalone or via server)
+│   ├── index.html         ← open source UI (standalone or via server)
+│   └── logo.svg
 │
-├── server.js        ← local server (npm start)
-├── package.json     ← all npm run commands
+├── scripts/
+│   ├── guide.js           ← interactive first-run guide
+│   ├── preflight.js       ← input validation
+│   └── job-search.py      ← JobSpy job search
+│
+├── examples/              ← sanitized before/after examples
+│
+├── automation/            ← Hermes + OpenClaw pipeline configs
+│   ├── hermes-job-hunter.yaml
+│   ├── pipeline-daily-search.md
+│   └── pipeline-interview-prep.md
+│
+├── commercial/            ← hosted pay-per-use version
+│   ├── server/index.js    ← Clerk auth + Stripe billing + Postgres
+│   ├── db/schema.sql      ← users, credits, purchases, usage, profiles, sessions
+│   └── web/index.html     ← commercial UI (landing, dashboard, purchase modal)
 │
 └── docs/
-    ├── ONBOARDING.md      ← detailed setup for all three paths
+    ├── ONBOARDING.md
     ├── CHANGELOG.md
-    ├── CONTRIBUTING.md
-    ├── SECURITY.md
+    ├── advanced-automation.md
+    ├── commercial-setup.md
+    ├── legal/
+    │   ├── privacy-policy.md
+    │   ├── terms-of-service.md
+    │   └── refund-policy.md
     └── templates/
-        └── JOB-TRACKER.md ← markdown CRM for your pipeline
+        └── JOB-TRACKER.md
 ```
 
 All three paths (web, terminal, Claude Code) read from the same `agents/` files. Change a prompt once, it updates everywhere.
