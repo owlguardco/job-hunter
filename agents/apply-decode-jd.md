@@ -106,3 +106,12 @@ the red flags and get the real story on the role.
 ### Save output
 
 Write to `outputs/jd-decoded.md`.
+
+---
+
+## ✅ What to do next
+
+```
+npm run ats           ← check your resume against the ATS before tailoring
+npm run resume        ← tailor resume to this specific role
+```

@@ -59,3 +59,12 @@ Write the gaps section to `outputs/resume-gaps.md`.
 The resume should sound like it was written by a person who has done this work — not a copywriter who has read about it. Every word should feel earned. If a bullet doesn't add signal, cut it.
 
 Apply all rules from `rules/writing-rules.md` to all output.
+
+---
+
+## ✅ What to do next
+
+```
+npm run ats           ← if you haven't already, scan for ATS issues
+npm run cover-letter  ← write the cover letter for this role
+```

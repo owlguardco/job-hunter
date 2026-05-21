@@ -87,3 +87,13 @@ settings (Settings → Integrations → Google Calendar). The MCP must be enable
 for Claude Code to access it.
 
 If not connected, Claude Code will prompt you to connect it.
+
+---
+
+## ✅ What to do next
+
+```
+npm run research      ← pull the company + interviewer brief
+npm run interview     ← build your prep guide
+npm run mock          ← practice before the real thing
+```

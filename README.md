@@ -8,6 +8,17 @@
 
 ---
 
+## New here? Start with the guide
+
+```bash
+npm run guide
+```
+
+Asks where you are in your job search and tells you exactly what to run.
+No reading required.
+
+---
+
 ## Pick your path
 
 | I want to... | Use this |

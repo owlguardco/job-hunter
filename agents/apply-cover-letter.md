@@ -54,3 +54,16 @@ Write the cover letter to `outputs/cover-letter.md`.
 Confident without being arrogant. Specific without being a list. This is a person writing to another person — not a marketing document. Every sentence should earn its place. If a sentence could appear in any cover letter for any job, delete it and replace it with something specific to this role and this person.
 
 Apply all rules from `rules/writing-rules.md` to all output.
+
+---
+
+## ✅ What to do next
+
+Read your cover letter out loud before submitting. If any sentence sounds
+like a bot wrote it, rewrite it. Then submit.
+
+When you land the interview:
+```
+npm run research      ← one-page company + interviewer brief
+npm run interview     ← story bank + coached answers
+```

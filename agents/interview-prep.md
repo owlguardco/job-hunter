@@ -168,3 +168,17 @@ This is preparation for a high-stakes conversation, not a feel-good exercise. Be
 Every answer should sound like a person telling a real story — not a rehearsed recitation of a framework.
 
 Apply all rules from `rules/writing-rules.md` to all written content.
+
+---
+
+## ✅ What to do next
+
+Know your story bank cold. Then:
+```
+npm run mock          ← live simulation, one question at a time with grading
+```
+
+After the interview:
+```
+npm run send-thankyou ← send within 24 hours
+```

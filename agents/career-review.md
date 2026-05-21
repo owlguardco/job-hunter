@@ -62,3 +62,10 @@ Flag these and explain why:
 ### Step 3 — Save output
 
 Write to `outputs/review-prep.md`.
+
+---
+
+## ✅ What to do next
+
+Review your prep guide the morning of. Walk in knowing your numbers.
+Follow up the conversation with a written summary email — confirms what was agreed.

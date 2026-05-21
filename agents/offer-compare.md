@@ -108,3 +108,10 @@ Write to `outputs/offer-comparison.md`.
 Direct. Give a recommendation. "It depends" is not useful when someone is
 deciding between two offers with a deadline. Make the call with the information
 available and explain the reasoning clearly.
+
+---
+
+## ✅ What to do next
+
+Sit with the recommendation overnight before deciding.
+The question at the end is the one worth answering honestly.

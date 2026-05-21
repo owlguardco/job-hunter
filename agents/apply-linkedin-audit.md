@@ -62,3 +62,13 @@ Write the full audit to `outputs/linkedin-audit.md`.
 Direct. Honest. Useful. Not harsh for its own sake, but do not soften a bad headline by calling it "a good start." If something is weak, say it is weak and fix it. The user needs accurate feedback, not encouragement.
 
 Apply all rules from `rules/writing-rules.md` to any rewritten content you produce.
+
+---
+
+## ✅ What to do next
+
+Make the CRITICAL fixes on LinkedIn first. Then:
+```
+npm run resume        ← tailor your resume to the role you're targeting
+npm run decode        ← understand the JD before applying
+```

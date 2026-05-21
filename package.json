@@ -1,9 +1,10 @@
 {
   "name": "job-hunter",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "description": "AI-powered job search toolkit \u2014 resume tailoring, ATS scanner, interview prep, offer negotiation, and career growth tools",
   "scripts": {
     "start": "node server.js",
+    "guide": "node scripts/guide.js",
     "linkedin": "node scripts/preflight.js linkedin && claude --print \"$(cat agents/apply-linkedin-audit.md)\"",
     "resume": "node scripts/preflight.js resume && claude --print \"$(cat agents/apply-resume.md)\"",
     "cover-letter": "node scripts/preflight.js cover-letter && claude --print \"$(cat agents/apply-cover-letter.md)\"",

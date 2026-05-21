@@ -138,3 +138,12 @@ Tell the user:
 ```bash
 npm run jobs
 ```
+
+---
+
+## ✅ What to do next
+
+```
+npm run decode    ← decode the top posting before applying
+npm run salary    ← research comp for the role before any screening call
+```

@@ -74,3 +74,12 @@ to use each.
 
 The best cold messages read like they were written by a confident person who
 did their homework — not a desperate job seeker. The goal is curiosity, not sympathy.
+
+---
+
+## ✅ What to do next
+
+Send the message. Then:
+```
+npm run research      ← when they respond and book a call, prep the company brief
+```

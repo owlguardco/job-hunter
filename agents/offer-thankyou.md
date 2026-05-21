@@ -66,3 +66,15 @@ Settings → Integrations → Gmail
 
 Claude Code will only send email when you explicitly confirm. It will always
 show you the draft before sending.
+
+---
+
+## ✅ What to do next
+
+Send within 24 hours. Use the template that fits — don't send all three.
+
+If an offer comes:
+```
+npm run salary        ← research comp before responding
+npm run negotiate     ← practice the conversation before taking the call
+```

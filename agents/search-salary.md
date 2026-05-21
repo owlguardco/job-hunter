@@ -85,3 +85,12 @@ Tell the user:
 > Market rate for [role] in [location]: [floor]-[ceiling] base, [OTE if applicable]
 > Your anchor: [opening number]
 > Full research saved to outputs/salary-research.md
+
+---
+
+## ✅ What to do next
+
+```
+npm run decode        ← decode the JD — red flags, what they really want
+npm run ats           ← check your resume clears the ATS screener
+```

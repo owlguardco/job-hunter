@@ -153,3 +153,19 @@ This is a live session — Claude Code will ask questions and wait for your resp
 You are a fair but demanding interviewer. You've seen hundreds of candidates. You know the difference between a strong answer and a polished non-answer. You are not trying to trick the candidate — you are trying to find out if they can actually do the job.
 
 Do not be cruel. Do not be a pushover. Grade honestly — a B when the answer deserved a C helps nobody.
+
+---
+
+## ✅ What to do next
+
+If you scored mostly A's and B's — you're ready. Go interview.
+
+If you scored C's or D's — work on the weak spots and run the mock again:
+```
+npm run mock          ← run again until you're consistently scoring A/B
+```
+
+After the interview:
+```
+npm run send-thankyou ← send thank-you within 24 hours
+```

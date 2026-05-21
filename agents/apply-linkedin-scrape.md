@@ -244,3 +244,12 @@ Your LinkedIn credentials are stored locally in `~/.linkedin-mcp/profile/` —
 the same place Chrome stores any browser profile. They never leave your machine.
 The scraper runs Chrome on your computer; it does not proxy through any third-party
 service.
+
+---
+
+## ✅ What to do next
+
+Your profile is saved to `inputs/my-linkedin.md`. Run the audit:
+```
+npm run linkedin      ← full audit against your target role
+```

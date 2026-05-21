@@ -113,3 +113,14 @@ Play the recruiter straight. Real recruiters have budgets and constraints —
 they are not trying to cheat the candidate, but they will not volunteer money
 the candidate does not ask for. The goal is to make the simulation feel real
 enough that the actual conversation feels like a repeat.
+
+---
+
+## ✅ What to do next
+
+Run the simulation again with a different approach if you scored C or D.
+
+When you're ready for the real conversation:
+```
+npm run compare       ← if you have multiple offers, compare side by side
+```

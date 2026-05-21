@@ -81,3 +81,14 @@ how to use the feedback constructively.
 ### Step 9 — Save output
 
 Write to `outputs/internal-application.md`.
+
+---
+
+## ✅ What to do next
+
+Have the conversation with your current manager before submitting — if you haven't already.
+Then submit. Then prepare as you would for any interview:
+```
+npm run research      ← pull context on the team and hiring manager
+npm run interview     ← build your prep guide
+```

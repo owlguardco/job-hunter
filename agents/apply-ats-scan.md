@@ -143,3 +143,13 @@ Write the full ATS scan to `outputs/ats-scan.md`.
 This is a diagnostic tool, not a pep talk. Be precise. Every flag needs a specific fix — not "consider adding keywords" but "add 'revenue cycle management' to your second bullet under [Company Name]." The user is being filtered out by software before a human sees their name. They need to know exactly why and exactly what to do about it.
 
 Apply all rules from `rules/writing-rules.md` to all rewritten content.
+
+---
+
+## ✅ What to do next
+
+Fix the CRITICAL issues first, then HIGH IMPACT. Then:
+```
+npm run resume        ← tailor the resume to the JD
+npm run cover-letter  ← write the cover letter
+```

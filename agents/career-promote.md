@@ -92,3 +92,11 @@ Write to `outputs/promotion-case.md`.
 Honest. If the case is strong, say so and build it. If it's not ready, say so
 and explain why. Getting promoted requires making a real argument — not just
 showing up and asking. This agent builds the real argument.
+
+---
+
+## ✅ What to do next
+
+If the case is ready — schedule the conversation. Don't wait for review season.
+
+If the case isn't ready yet — the agent told you what's missing. Go build it.

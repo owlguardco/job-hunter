@@ -134,3 +134,15 @@ Tell the user:
 This is a preparation tool, not a flattery generator. If the Glassdoor reviews
 are concerning, say so. If the company financials look shaky, flag it. The
 candidate should walk into the interview with clear eyes — not just enthusiasm.
+
+---
+
+## ✅ What to do next
+
+Read the brief once through, then close it.
+Don't reference notes in the interview — know the material.
+
+```
+npm run interview     ← build story bank + coached answers
+npm run mock          ← practice before the real thing
+```
