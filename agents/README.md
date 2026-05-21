@@ -29,12 +29,16 @@ npm start   # then use the web UI at http://localhost:3000
 
 | File | Command | What it does |
 |---|---|---|
+| `apply-reality-check.md` | `npm run reality-check` | Honest market assessment — what tier you're in, what roles you'll win |
+| `apply-fit-score.md` | `npm run fit` | Score a specific role 1-10 before applying — Apply / Don't Apply verdict |
 | `apply-resume.md` | `npm run resume` | Tailor resume to a specific JD |
 | `apply-cover-letter.md` | `npm run cover-letter` | Write a cover letter |
 | `apply-ats-scan.md` | `npm run ats` | Scan for ATS issues |
 | `apply-decode-jd.md` | `npm run decode` | Decode a JD — red flags, real pay, subtext |
 | `apply-linkedin-audit.md` | `npm run linkedin` | Audit your LinkedIn profile |
 | `apply-linkedin-scrape.md` | `npm run linkedin-scrape` | Scrape LinkedIn by URL (advanced) |
+
+**Run reality-check first — once. Then fit before every application.**
 
 ## search-* — Job search tools
 

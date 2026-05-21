@@ -468,6 +468,113 @@
     <button class="tab" onclick="switchTab('ats')">🛡️ ATS Scanner</button>
   </div>
 
+  <!-- REALITY CHECK -->
+  <div class="tool-panel" id="panel-reality">
+    <div class="tool-header">
+      <div class="tool-title">Resume Reality Check</div>
+      <div class="tool-desc">Find out what you're actually worth on the market before you waste applications on roles you won't win.</div>
+      <div class="tool-explainer">
+        <div class="explainer-title">💡 Do this first — before anything else</div>
+        Most people apply to jobs based on hope. They target roles a level above where they're competitive, get ignored, and assume the market is tough. The market isn't tough — they're applying to the wrong roles. This tool reads your resume the way a hiring manager reads a hundred of them a week: what tier you're actually in, what roles you'll genuinely win, what's keeping you from the next level, and what you're underselling. Do this once. It changes how you apply to everything.
+      </div>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-header">
+          <div class="step-num" id="rc-num1">1</div>
+          <div class="step-label">Your resume</div>
+          <div class="step-hint">The more complete, the more accurate the assessment</div>
+        </div>
+        <div class="step-body">
+          <textarea id="rc-resume" rows="10" placeholder="Paste your full resume here — work history, accomplishments, numbers, everything. This is a complete read of where you stand, so give it everything." oninput="markFilled('rc-resume','rc-num1')"></textarea>
+          <div class="char-count" id="rc-resume-count">0 characters</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-header">
+          <div class="step-num" id="rc-num2">2</div>
+          <div class="step-label">Target role (optional)</div>
+          <div class="step-hint">If you have a specific role in mind, paste the JD</div>
+        </div>
+        <div class="step-body">
+          <textarea id="rc-jd" rows="4" placeholder="Optional — paste a job description if you want a reality check against a specific role you're considering." oninput="markFilled('rc-jd','rc-num2')"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="run-wrap">
+      <button class="run-btn" id="rc-btn" onclick="run('reality')">
+        <span>Get My Reality Check</span>
+      </button>
+      <div class="validation-msg" id="rc-validation"></div>
+    </div>
+    <div class="progress-wrap" id="rc-progress">
+      <div class="spinner"></div>
+      <span id="rc-progress-text">Reading your resume honestly...</span>
+    </div>
+    <div class="error-wrap" id="rc-error"></div>
+    <div class="output-wrap" id="rc-output">
+      <div class="output-header">
+        <div class="output-title">✓ Your Reality Check</div>
+        <button class="copy-btn" id="rc-copy" onclick="copyOutput('rc-output-body','rc-copy')">Copy</button>
+      </div>
+      <div class="output-body" id="rc-output-body"></div>
+    </div>
+  </div>
+
+  <!-- FIT SCORE -->
+  <div class="tool-panel" id="panel-fit">
+    <div class="tool-header">
+      <div class="tool-title">Job Fit Scorer</div>
+      <div class="tool-desc">Score how competitive you actually are for a specific role before you spend an hour applying to it.</div>
+      <div class="tool-explainer">
+        <div class="explainer-title">💡 Why this matters</div>
+        The ATS scanner tells you if software will filter you out. This tells you if a hiring manager will care. It scores your fit across five dimensions — experience match, level match, industry match, track record, and culture fit — and gives you a direct verdict: Apply, Don't Apply, or Apply With Caveats. A 4/10 is a 4/10. The most useful thing this tool can do is tell you not to apply and point you toward roles where you're actually competitive.
+      </div>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-header">
+          <div class="step-num" id="fit-num1">1</div>
+          <div class="step-label">Your resume</div>
+          <div class="step-hint">Plain text is fine</div>
+        </div>
+        <div class="step-body">
+          <textarea id="fit-resume" rows="8" placeholder="Paste your resume here." oninput="markFilled('fit-resume','fit-num1')"></textarea>
+          <div class="char-count" id="fit-resume-count">0 characters</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-header">
+          <div class="step-num" id="fit-num2">2</div>
+          <div class="step-label">Job description</div>
+          <div class="step-hint">The role you're considering</div>
+        </div>
+        <div class="step-body">
+          <textarea id="fit-jd" rows="6" placeholder="Paste the full job description here — the more complete, the more accurate the score." oninput="markFilled('fit-jd','fit-num2')"></textarea>
+          <div class="char-count" id="fit-jd-count">0 characters</div>
+        </div>
+      </div>
+    </div>
+    <div class="run-wrap">
+      <button class="run-btn" id="fit-btn" onclick="run('fit')">
+        <span>Score My Fit</span>
+      </button>
+      <div class="validation-msg" id="fit-validation"></div>
+    </div>
+    <div class="progress-wrap" id="fit-progress">
+      <div class="spinner"></div>
+      <span id="fit-progress-text">Scoring your fit...</span>
+    </div>
+    <div class="error-wrap" id="fit-error"></div>
+    <div class="output-wrap" id="fit-output">
+      <div class="output-header">
+        <div class="output-title">✓ Your Fit Score</div>
+        <button class="copy-btn" id="fit-copy" onclick="copyOutput('fit-output-body','fit-copy')">Copy</button>
+      </div>
+      <div class="output-body" id="fit-output-body"></div>
+    </div>
+  </div>
+
   <!-- LINKEDIN -->
   <div class="tool-panel active" id="panel-linkedin">
     <div class="tool-header">
@@ -1070,6 +1177,64 @@ SECTION 4 — WHERE TO FOCUS
 2-3 genuine strengths for this specific interview. 2-3 honest things to prepare before walking in.`;
   }
 
+  if (type === 'reality') return `${RULES}
+
+You are an honest career mentor with deep hiring experience. Read this resume the way a hiring manager reads a hundred resumes a week.
+
+MY RESUME:
+${inputs.resume}
+
+${inputs.jd ? 'TARGET ROLE (optional):\n' + inputs.jd : ''}
+
+Write a Reality Check Report with these sections:
+
+WHERE YOU ACTUALLY ARE — 3-4 direct sentences. What tier is this person at? What would a serious hiring manager see in 30 seconds?
+
+WHAT YOU ARE GENUINELY COMPETITIVE FOR — 4-6 specific role types and levels this resume will actually win interviews for. Be specific with seniority, company size, and quota range. Explain why for each.
+
+WHAT YOU ARE NOT COMPETITIVE FOR YET — 2-3 role types where this resume will mostly be ignored. Exact reasons why.
+
+THE GAP ANALYSIS — What stands between here and the next level up. Specific missing experience, weak metrics, absent credentials. Honest timeline to close each gap.
+
+WHAT YOU ARE UNDERSELLING — 2-4 specific things that are stronger than they look. For each: how to reframe it.
+
+YOUR ACTUAL MARKET — Realistic base salary range. OTE if applicable. Company types most likely to hire. Geographic markets where this background is strongest.
+
+THE ONE THING THAT WOULD CHANGE EVERYTHING — Single most important move in the next 6 months. One thing only.
+
+BOTTOM LINE — 2-3 sentences. Direct. What should this person do differently starting today?`;
+
+  if (type === 'fit') return `${RULES}
+
+You are a senior hiring manager scoring a candidate honestly. A 4 out of 10 is a 4 out of 10. The most useful verdict is sometimes Do Not Apply.
+
+MY RESUME:
+${inputs.resume}
+
+JOB DESCRIPTION:
+${inputs.jd}
+
+Write a Job Fit Score Report:
+
+JOB FIT SCORE: X out of 10
+RECOMMENDATION: APPLY or DO NOT APPLY or APPLY WITH CAVEATS
+One sentence explaining the recommendation directly.
+
+SCORECARD — score each 1-10 with one specific line:
+Experience Match: X out of 10 — reason
+Level Match: X out of 10 — reason
+Industry and Domain: X out of 10 — reason
+Track Record: X out of 10 — reason
+Culture and Stage: X out of 10 — reason
+
+WHERE YOU ARE STRONG FOR THIS ROLE — 2-4 specific resume points that match what this role needs.
+
+WHERE YOU ARE WEAK FOR THIS ROLE — 2-4 specific gaps. Be precise: not limited experience but name the exact mismatch between JD requirement and resume reality.
+
+IF YOU APPLY — HOW TO FRAME IT (include if score 6 or above): The single most compelling angle. What to emphasize. What objections to prepare for. What not to volunteer.
+
+IF YOU DO NOT APPLY — WHY NOT AND WHAT INSTEAD (include if score below 6): Specific reason this application will likely fail. 2-3 better-fit alternatives. What would need to change to make this role viable in 12 to 18 months.`;
+
   if (type === 'thankyou') return `${RULES}
 
 You are writing post-interview thank-you notes. Most are forgettable — these will not be.
@@ -1189,7 +1354,7 @@ Questions that signal they've done their homework. Not questions answered by rea
 
 // ── RUN ───────────────────────────────────────────────────
 async function run(type) {
-  const prefixes = { linkedin:'ln', resume:'rv', cover:'cl', interview:'ip', ats:'ats', thankyou:'ty' };
+  const prefixes = { linkedin:'ln', resume:'rv', cover:'cl', interview:'ip', ats:'ats', thankyou:'ty', reality:'rc', fit:'fit' };
   const p = prefixes[type];
 
   // Validation
@@ -1216,6 +1381,12 @@ async function run(type) {
       validEl.textContent = 'The job description looks too short. Paste the full posting.';
       return;
     }
+  } else if (type === 'reality') {
+    inputs.resume = document.getElementById('rc-resume').value.trim();
+    inputs.jd = document.getElementById('rc-jd').value.trim();
+  } else if (type === 'fit') {
+    inputs.resume = document.getElementById('fit-resume').value.trim();
+    inputs.jd = document.getElementById('fit-jd').value.trim();
   } else if (type === 'thankyou') {
     inputs.resume = document.getElementById('ty-resume').value.trim();
     inputs.jd = document.getElementById('ty-jd').value.trim();
@@ -1268,7 +1439,11 @@ async function run(type) {
     interview: ['Analyzing the role requirements...', 'Building your question set...', 'Writing coached answers...'],
     ats: ['Scanning for ATS issues...', 'Checking keyword gaps...', 'Calculating your match score...', 'Building your fix checklist...'],
     thankyou: ['Writing your thank-you notes...', 'Tailoring each scenario...', 'Applying tone rules...'],
-    thankyou: ['Writing your thank-you notes...', 'Tailoring each scenario...', 'Applying tone rules...']
+    reality: ['Reading your resume honestly...', 'Assessing your market tier...', 'Writing your reality check...'],
+    fit: ['Scoring your fit...', 'Analyzing each dimension...', 'Writing your verdict...'],
+    thankyou: ['Writing your thank-you notes...', 'Tailoring each scenario...', 'Applying tone rules...'],
+    reality: ['Reading your resume honestly...', 'Assessing your market tier...', 'Writing your reality check...'],
+    fit: ['Scoring your fit...', 'Analyzing each dimension...', 'Writing your verdict...']
   };
 
   let msgIdx = 0;
