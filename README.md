@@ -16,12 +16,33 @@
 
 Job Hunter is a free AI toolkit that helps you:
 
-- **Know where you stand** — reality check tells you your actual market tier. Fit scorer tells you if a specific role is worth applying to. Bias audit finds every signal getting you auto-rejected before a human sees your name. Rejection analyzer finds the pattern when you're not getting callbacks.
-- **Find the right roles** — job search across three boards, deep company due diligence, referral finder to build the warm path, follow-up generator for every stage, recruiter inbox monitor that drafts responses automatically.
-- **Write better applications** — tailored resume, cover letter, ATS scan, portfolio case study, reference briefs so your references say the right things.
-- **Prep for and debrief every interview** — story bank, coached answers, live mock with grading, smart question bank, debrief right after to capture what happened.
-- **Handle offers properly** — negotiate the conversation, write the counter-offer email, manage competing deadlines, compare side by side.
-- **Stay visible and grow** — LinkedIn content that builds credibility, network messages that don't feel transactional, promotion case builder, review prep.
+**Beat the filters before they beat you:**
+- Bias audit scans your resume for the 8 signals that get you auto-rejected before a human sees your name
+- Ghost job detector scores postings for fake or stale roles before you waste hours applying
+- Skills gap filler tells you which JD requirements are real gates vs. recruiter wishlist — with a sprint plan to close the real ones
+- ATS scanner catches what gets you filtered before it happens
+- Rejection analyzer finds the pattern when you're not getting through
+
+**Find and win the right roles:**
+- Reality check gives your honest market tier. Fit scorer tells you if this specific role is worth your time.
+- Company research covers financial health, hiring velocity, and leadership stability before you invest in applying
+- Referral finder builds your warm path in — referrals convert at 3-5x cold applications
+- Inbox monitor catches recruiter emails and drafts responses so you never miss a window
+
+**Write applications that get through:**
+- Tailored resume, cover letter, portfolio case study, reference briefs — all in the same voice
+- Assessment prep for HireVue, take-homes, case studies, and technical screens
+
+**Survive and win a 4-round interview process:**
+- Panel decoder tells you what each interviewer actually wants and how to play each room differently
+- Interview scorecard builds your personal criteria so you're evaluating them too
+- Story bank, coached answers, live mock with grading, question bank, debrief after every round
+
+**Handle offers without leaving money on the table:**
+- Negotiate the conversation. Write the counter-offer. Manage competing deadlines. Compare side by side.
+
+**Stay energized through a long search:**
+- Weekly momentum check measures your real metrics against benchmarks — and tells you honestly when to take a day off
 
 **It's free.** You bring an Anthropic API key (~$5 covers ~100 uses). Or use the [hosted version](#-just-want-to-use-it-no-setup) if you don't want to deal with any of that.
 
@@ -168,13 +189,13 @@ job-hunter/                        (main branch — open source)
 ├── CLAUDE.md                      project context for Claude Code sessions
 ├── README.md · LICENSE · server.js · package.json
 │
-├── agents/                        37 prompt files — one per tool
-│   ├── apply-*   (12)             reality-check, fit-score, bias-audit, rejection-analysis,
+├── agents/                        43 prompt files — one per tool
+│   ├── apply-*   (14)             reality-check, fit-score, bias-audit, rejection-analysis,
 │   │                              reference-prep, resume, cover-letter, ats-scan,
 │   │                              decode-jd, portfolio-brief, linkedin-audit, linkedin-scrape
-│   ├── search-*  (9)              jobs, salary, company-research, referral-finder,
-│   │                              follow-up, outreach, inbox-scan, send-email, tracker-update
-│   ├── interview-* (5)            prep, mock, research, question-bank, debrief
+│   ├── search-*  (12)             jobs, salary, company-research, ghost-job-detector, referral-finder,
+│   │                              follow-up, interview-scorecard, momentum-check, outreach, inbox-scan, send-email, tracker-update
+│   ├── interview-* (6)            prep, mock, research, question-bank, debrief, panel-decoder
 │   ├── offer-*   (6)              negotiate, counteroffer, deadline-manager,
 │   │                              compare, schedule, thankyou
 │   └── career-*  (5)              promote, review, internal, network-message, linkedin-content

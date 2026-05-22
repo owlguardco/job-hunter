@@ -81,6 +81,8 @@ ${rules}`;
     internal: 'career-internal',
     network:  'career-network-message',
     // New tools
+    'skill-up':      'apply-skills-gap-filler',
+    assessment:      'apply-assessment-prep',
     'bias-audit':    'apply-bias-audit',
     rejection:       'apply-rejection-analysis',
     references:      'apply-reference-prep',
@@ -88,6 +90,9 @@ ${rules}`;
     'linkedin-post': 'career-linkedin-content',
     tracker:         'search-tracker-update',
     referrals:       'search-referral-finder',
+    'ghost-check':   'search-ghost-job-detector',
+    scorecard:       'search-interview-scorecard',
+    momentum:        'search-momentum-check',
     'follow-up':'search-follow-up',
     company:    'search-company-research',
     counter:    'offer-counteroffer',
