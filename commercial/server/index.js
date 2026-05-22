@@ -33,6 +33,24 @@ const COMMERCIAL_WEB = path.join(__dirname, '../web');
 
 // ── DB client ─────────────────────────────────────────────
 const db = new Client({ connectionString: process.env.DATABASE_URL });
+
+// ── In-memory rate limiter (replace with Redis at scale) ─
+const rateLimits = new Map();
+function checkRateLimit(userId, endpoint, maxPerMinute = 20) {
+  const key = `${userId}:${endpoint}`;
+  const now = Date.now();
+  const entry = rateLimits.get(key) || { count: 0, windowStart: now };
+  if (now - entry.windowStart > 60000) { entry.count = 1; entry.windowStart = now; }
+  else { entry.count++; }
+  rateLimits.set(key, entry);
+  return entry.count <= maxPerMinute;
+}
+setInterval(() => {
+  const now = Date.now();
+  for (const [k, v] of rateLimits.entries()) {
+    if (now - v.windowStart > 120000) rateLimits.delete(k);
+  }
+}, 300000);
 db.connect().then(() => console.log('✓ Database connected'));
 
 // ── Helpers ───────────────────────────────────────────────
@@ -400,7 +418,10 @@ const MIME = {
 const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, `http://localhost:${PORT}`);
 
-  res.setHeader('Access-Control-Allow-Origin', process.env.APP_URL || '*');
+  const corsOrigin = process.env.NODE_ENV === 'production'
+    ? (process.env.APP_URL || 'https://jobhunter.ai')
+    : '*';
+  res.setHeader('Access-Control-Allow-Origin', corsOrigin);
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
 
@@ -415,6 +436,14 @@ const server = http.createServer(async (req, res) => {
   // ── Clerk webhook — sync users ──────────────────────────
   if (url.pathname === '/webhooks/clerk' && req.method === 'POST') {
     try {
+      // Replay attack protection — reject webhooks older than 5 minutes
+      const svixTimestamp = req.headers['svix-timestamp'];
+      if (svixTimestamp) {
+        const ts = parseInt(svixTimestamp);
+        if (Math.abs(Date.now() / 1000 - ts) > 300) {
+          return json(res, 400, { error: 'Webhook timestamp too old' });
+        }
+      }
       const payload = await body(req);
       if (payload.type === 'user.created' || payload.type === 'user.updated') {
         const u = payload.data;
@@ -740,6 +769,14 @@ const server = http.createServer(async (req, res) => {
   // ── POST /api/run — run a tool ───────────────────────────
   if (url.pathname === '/api/run' && req.method === 'POST') {
     if (!userId) return json(res, 401, { error: 'Not authenticated' });
+
+    // Rate limit: 20 tool runs per minute per user
+    if (!checkRateLimit(userId, 'run', 20)) {
+      return json(res, 429, {
+        error: 'Too many requests — please wait a moment before running another tool.',
+        code: 'RATE_LIMITED'
+      });
+    }
 
     try {
       // Check credits first
