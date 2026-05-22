@@ -28,9 +28,7 @@ Job Hunter is a free AI toolkit that helps you:
 
 ## Just want to use it? No setup.
 
-Go to **[jobhunter.ai](https://jobhunter.ai)** — sign up, buy a few credits, and start using it immediately. No terminal, no API keys, no install.
-
-$0.25 per run · $19/month unlimited · Same tools as the open source version
+A hosted version is coming. Star this repo to get notified when it launches.
 
 ---
 
