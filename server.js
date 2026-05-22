@@ -14,7 +14,6 @@
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process');
 
 const PORT = process.env.PORT || 3000;
 const ROOT = __dirname;
@@ -54,20 +53,31 @@ function buildWebPrompt(toolType, inputs) {
 ${rules}`;
 
   const agentMap = {
+    // Apply
+    reality:  'apply-reality-check',
+    fit:      'apply-fit-score',
     linkedin: 'apply-linkedin-audit',
-    resume: 'apply-resume',
-    cover: 'apply-cover-letter',
-    ats: 'apply-ats-scan',
-    interview: 'interview-prep',
-    mock: 'interview-mock',
-    thankyou: 'offer-thankyou',
-    negotiate: 'offer-negotiate',
-    decode: 'apply-decode-jd',
-    research: 'interview-research',
-    compare: 'offer-compare',
+    resume:   'apply-resume',
+    cover:    'apply-cover-letter',
+    ats:      'apply-ats-scan',
+    decode:   'apply-decode-jd',
+    // Search
+    jobs:     'search-jobs',
+    salary:   'search-salary',
     outreach: 'search-outreach',
-    promote: 'career-promote',
-    review: 'career-review',
+    inbox:    'search-inbox-scan',
+    // Interview
+    interview: 'interview-prep',
+    mock:      'interview-mock',
+    research:  'interview-research',
+    // Offer
+    negotiate: 'offer-negotiate',
+    compare:   'offer-compare',
+    schedule:  'offer-schedule',
+    thankyou:  'offer-thankyou',
+    // Career
+    promote:  'career-promote',
+    review:   'career-review',
     internal: 'career-internal',
   };
 

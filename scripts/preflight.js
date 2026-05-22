@@ -14,9 +14,13 @@ const PLACEHOLDERS = [
   "<!-- Paste your full LinkedIn profile here -->",
   "<!-- Paste your base resume here",
   "<!-- Paste the full job description here -->",
+  "<!-- Fill this in before running",
+  "<!-- Paste the full job posting",
   "[Most Recent Role Title]",
   "[Your Name]",
   "[Role Title]:",
+  "Company Name:",
+  "Target Company:",
 ];
 
 function readFile(filePath) {

@@ -1175,7 +1175,40 @@ SECTION 3 — SMART QUESTIONS TO ASK
 
 SECTION 4 — WHERE TO FOCUS
 2-3 genuine strengths for this specific interview. 2-3 honest things to prepare before walking in.`;
-  }
+    return `${RULES}
+
+You are an interview coach preparing someone for a specific role using their actual experience.
+
+RESUME:
+${inputs.resume}
+
+TARGET JOB DESCRIPTION:
+${inputs.jd}
+
+Produce exactly 10 interview questions in three sections:
+
+BEHAVIORAL QUESTIONS (4 questions)
+"Tell me about a time when..." style. Map each to a JD requirement.
+For each: question + coached answer framework using their actual resume experience (Situation → Action → Result with numbers where available)
+
+ROLE-SPECIFIC QUESTIONS (3 questions)
+"How would you approach..." style.
+For each: question + coached answer connecting their background to the approach
+
+CURVEBALL / OBJECTION QUESTIONS (3 questions)
+The tough questions based on any gaps or transitions in their background.
+For each: question + coached answer that addresses the concern directly without being defensive
+
+Then add:
+
+5 SMART QUESTIONS TO ASK THE INTERVIEWER
+Questions that signal they've done their homework. Not questions answered by reading the JD.`;
+}
+
+// ── RUN ───────────────────────────────────────────────────
+async function run(type) {
+  const prefixes = { linkedin:'ln', resume:'rv', cover:'cl', interview:'ip', ats:'ats', thankyou:'ty', reality:'rc', fit:'fit' };
+  const p = prefixes[type];
 
   if (type === 'reality') return `${RULES}
 
@@ -1270,8 +1303,6 @@ After the three templates, add one sentence recommending which to use and why.`;
 
   if (type === 'ats') return `${RULES}
 
-    if (type === 'ats') return `${RULES}
-
 You are an ATS (Applicant Tracking System) specialist. Find every reason this resume would be filtered out before a human sees it. Be precise — every flag needs a specific fix, not a vague suggestion.
 
 RESUME:
@@ -1322,40 +1353,6 @@ QUICK WINS — under 5 minutes each
 
 PROJECTED SCORE AFTER FIXES: XX/100\`;
 
-  if (type === 'interview') return `${RULES}
-
-You are an interview coach preparing someone for a specific role using their actual experience.
-
-RESUME:
-${inputs.resume}
-
-TARGET JOB DESCRIPTION:
-${inputs.jd}
-
-Produce exactly 10 interview questions in three sections:
-
-BEHAVIORAL QUESTIONS (4 questions)
-"Tell me about a time when..." style. Map each to a JD requirement.
-For each: question + coached answer framework using their actual resume experience (Situation → Action → Result with numbers where available)
-
-ROLE-SPECIFIC QUESTIONS (3 questions)
-"How would you approach..." style.
-For each: question + coached answer connecting their background to the approach
-
-CURVEBALL / OBJECTION QUESTIONS (3 questions)
-The tough questions based on any gaps or transitions in their background.
-For each: question + coached answer that addresses the concern directly without being defensive
-
-Then add:
-
-5 SMART QUESTIONS TO ASK THE INTERVIEWER
-Questions that signal they've done their homework. Not questions answered by reading the JD.`;
-}
-
-// ── RUN ───────────────────────────────────────────────────
-async function run(type) {
-  const prefixes = { linkedin:'ln', resume:'rv', cover:'cl', interview:'ip', ats:'ats', thankyou:'ty', reality:'rc', fit:'fit' };
-  const p = prefixes[type];
 
   // Validation
   const validEl = document.getElementById(p + '-validation');
