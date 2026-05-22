@@ -167,13 +167,13 @@ job-hunter/                        (main branch — open source)
 ├── CLAUDE.md                      project context for Claude Code sessions
 ├── README.md · LICENSE · server.js · package.json
 │
-├── agents/                        31 prompt files — one per tool
-│   ├── apply-*   (9)              reality-check, fit-score, resume, cover-letter,
-│   │                              ats-scan, decode-jd, linkedin-audit, linkedin-scrape, portfolio-brief
+├── agents/                        38 prompt files — one per tool
+│   ├── apply-*   (12)             reality-check, fit-score, bias-audit, rejection-analysis,
+│   │                              reference-prep, resume, cover-letter, ats-scan, decode-jd, portfolio-brief
 │   ├── search-*  (5)              jobs, salary, outreach, inbox-scan, send-email
 │   ├── interview-* (5)            prep, mock, research, question-bank, debrief
-│   ├── offer-*   (5)              negotiate, counteroffer, compare, schedule, thank-you
-│   └── career-*  (4)              promote, review, internal, network-message
+│   ├── offer-*   (6)              negotiate, counteroffer, deadline-manager, compare, schedule, thank-you
+│   └── career-*  (5)              promote, review, internal, network-message, linkedin-content
 │
 ├── inputs/                        paste your stuff here (git-ignored)
 │   ├── my-resume.md

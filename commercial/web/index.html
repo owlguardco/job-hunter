@@ -478,18 +478,39 @@ textarea.filled { border-color: var(--green-dim); }
 
     <!-- Tool Tabs -->
     <div class="tool-tabs">
-      <button class="tool-tab active" onclick="switchTool('ats')">ATS Scan</button>
+      <!-- Apply -->
+      <button class="tool-tab active" onclick="switchTool('reality')">Reality Check</button>
+      <button class="tool-tab" onclick="switchTool('fit')">Fit Score</button>
+      <button class="tool-tab" onclick="switchTool('bias')">Bias Audit</button>
+      <button class="tool-tab" onclick="switchTool('ats')">ATS Scan</button>
       <button class="tool-tab" onclick="switchTool('resume')">Resume</button>
       <button class="tool-tab" onclick="switchTool('cover')">Cover Letter</button>
       <button class="tool-tab" onclick="switchTool('decode')">Decode JD</button>
+      <button class="tool-tab" onclick="switchTool('portfolio')">Portfolio</button>
       <button class="tool-tab" onclick="switchTool('linkedin')">LinkedIn</button>
+      <button class="tool-tab" onclick="switchTool('references')">References</button>
+      <button class="tool-tab" onclick="switchTool('rejection')">Rejection Analysis</button>
+      <!-- Search -->
+      <button class="tool-tab" onclick="switchTool('company')">Company Research</button>
+      <button class="tool-tab" onclick="switchTool('referrals')">Referrals</button>
+      <button class="tool-tab" onclick="switchTool('followup')">Follow-Up</button>
+      <button class="tool-tab" onclick="switchTool('outreach')">Outreach</button>
+      <!-- Interview -->
       <button class="tool-tab" onclick="switchTool('interview')">Interview Prep</button>
       <button class="tool-tab" onclick="switchTool('mock')">Mock Interview</button>
+      <button class="tool-tab" onclick="switchTool('questions')">Questions</button>
       <button class="tool-tab" onclick="switchTool('research')">Pre-Interview</button>
+      <button class="tool-tab" onclick="switchTool('debrief')">Debrief</button>
+      <!-- Offer -->
       <button class="tool-tab" onclick="switchTool('negotiate')">Negotiate</button>
+      <button class="tool-tab" onclick="switchTool('counter')">Counter-Offer</button>
+      <button class="tool-tab" onclick="switchTool('deadline')">Offer Deadline</button>
       <button class="tool-tab" onclick="switchTool('compare')">Compare Offers</button>
+      <!-- Career -->
       <button class="tool-tab" onclick="switchTool('promote')">Promotion</button>
       <button class="tool-tab" onclick="switchTool('review')">Review Prep</button>
+      <button class="tool-tab" onclick="switchTool('network')">Network</button>
+      <button class="tool-tab" onclick="switchTool('linkedin-post')">LinkedIn Content</button>
     </div>
 
     <!-- Tool Panels -->
@@ -716,6 +737,219 @@ textarea.filled { border-color: var(--green-dim); }
             <div class="no-credits-msg" id="review-no-credits"><p>You're out of credits.</p><button class="btn btn-primary" onclick="showPurchaseModal()">Buy Credits</button></div>
             <div class="error-msg" id="review-error"></div>
             <div class="output-wrap" id="review-output"><div class="output-header"><span class="output-title">✓ Review Prep</span><button class="copy-btn" id="review-copy" onclick="copyOutput('review-output-body','review-copy')">Copy</button></div><div class="output-body" id="review-output-body"></div></div>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- BIAS AUDIT -->
+      <div class="tool-panel" id="panel-bias">
+        <div class="tool-pane">
+          <div class="tool-pane-header"><div class="tool-pane-title">Bias Audit</div><div class="tool-pane-desc">Find every signal that gets you auto-rejected before a human sees your name.</div></div>
+          <div class="tool-explainer">AI screeners prefer white-associated names 85% of the time. Age signals, employment gaps, gendered language, and school prestige all trigger filters. This scans your resume for all 8 bias vectors and gives you the exact fix for each one.</div>
+          <div class="tool-body">
+            <div class="input-group"><label class="input-label">Your Resume</label><textarea id="bias-resume" rows="9" placeholder="Paste your resume here" oninput="markFilled(this)"></textarea></div>
+            <div class="input-group"><label class="input-label">Target Role (optional)</label><textarea id="bias-jd" rows="3" placeholder="Paste a JD for role-specific bias analysis" oninput="markFilled(this)"></textarea></div>
+            <button class="run-btn" id="bias-btn" onclick="runTool('bias')"><span>Run Bias Audit — 1 credit</span></button>
+            <div class="no-credits-msg" id="bias-no-credits"><p>You're out of credits.</p><button class="btn btn-primary" onclick="showPurchaseModal()">Buy Credits</button></div>
+            <div class="error-msg" id="bias-error"></div>
+            <div class="output-wrap" id="bias-output"><div class="output-header"><span class="output-title">✓ Bias Audit</span><button class="copy-btn" id="bias-copy" onclick="copyOutput('bias-output-body','bias-copy')">Copy</button></div><div class="output-body" id="bias-output-body"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PORTFOLIO BRIEF -->
+      <div class="tool-panel" id="panel-portfolio">
+        <div class="tool-pane">
+          <div class="tool-pane-header"><div class="tool-pane-title">Portfolio Brief</div><div class="tool-pane-desc">Turn a project into a one-page case study that makes your application tangible.</div></div>
+          <div class="tool-explainer">For PMs, designers, marketers, engineers — roles where work samples matter. Structured format: problem, what you did, outcome, what you learned. With a relevance frame tied to the target JD.</div>
+          <div class="tool-body">
+            <div class="input-group"><label class="input-label">Your Resume</label><textarea id="portfolio-resume" rows="6" placeholder="Paste your resume" oninput="markFilled(this)"></textarea></div>
+            <div class="input-group"><label class="input-label">Target Role</label><textarea id="portfolio-jd" rows="4" placeholder="Paste the job description" oninput="markFilled(this)"></textarea></div>
+            <div class="input-group"><label class="input-label">The Project</label><textarea id="portfolio-project" rows="6" placeholder="Describe the project: what was the problem, your role, what you did, the outcome, the hardest part" oninput="markFilled(this)"></textarea></div>
+            <button class="run-btn" id="portfolio-btn" onclick="runTool('portfolio')"><span>Build Portfolio Brief — 1 credit</span></button>
+            <div class="no-credits-msg" id="portfolio-no-credits"><p>You're out of credits.</p><button class="btn btn-primary" onclick="showPurchaseModal()">Buy Credits</button></div>
+            <div class="error-msg" id="portfolio-error"></div>
+            <div class="output-wrap" id="portfolio-output"><div class="output-header"><span class="output-title">✓ Portfolio Brief</span><button class="copy-btn" id="portfolio-copy" onclick="copyOutput('portfolio-output-body','portfolio-copy')">Copy</button></div><div class="output-body" id="portfolio-output-body"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- REFERENCE PREP -->
+      <div class="tool-panel" id="panel-references">
+        <div class="tool-pane">
+          <div class="tool-pane-header"><div class="tool-pane-title">Reference Prep</div><div class="tool-pane-desc">Brief your references so they say the right things for this specific role.</div></div>
+          <div class="tool-explainer">Most candidates send a heads-up email and hope for the best. A reference who emphasizes the wrong project or gets caught off guard on a weakness can cost you an offer. This builds a one-page brief per reference and writes the email to send them.</div>
+          <div class="tool-body">
+            <div class="input-group"><label class="input-label">Your Resume</label><textarea id="references-resume" rows="6" placeholder="Paste your resume" oninput="markFilled(this)"></textarea></div>
+            <div class="input-group"><label class="input-label">Job Description</label><textarea id="references-jd" rows="4" placeholder="Paste the target role" oninput="markFilled(this)"></textarea></div>
+            <div class="input-group"><label class="input-label">Your References</label><textarea id="references-refs" rows="6" placeholder="For each: name, title, relationship, how long you worked together, top 2-3 shared projects" oninput="markFilled(this)"></textarea></div>
+            <button class="run-btn" id="references-btn" onclick="runTool('references')"><span>Build Reference Briefs — 1 credit</span></button>
+            <div class="no-credits-msg" id="references-no-credits"><p>You're out of credits.</p><button class="btn btn-primary" onclick="showPurchaseModal()">Buy Credits</button></div>
+            <div class="error-msg" id="references-error"></div>
+            <div class="output-wrap" id="references-output"><div class="output-header"><span class="output-title">✓ Reference Prep</span><button class="copy-btn" id="references-copy" onclick="copyOutput('references-output-body','references-copy')">Copy</button></div><div class="output-body" id="references-output-body"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- REJECTION PATTERN ANALYSIS -->
+      <div class="tool-panel" id="panel-rejection">
+        <div class="tool-pane">
+          <div class="tool-pane-header"><div class="tool-pane-title">Rejection Pattern Analysis</div><div class="tool-pane-desc">Find why you're being rejected — not at one application, but as a pattern.</div></div>
+          <div class="tool-explainer">After 10+ applications, the pattern is usually one of three things: wrong roles, wrong method, or wrong presentation. This finds it and builds a specific strategy shift.</div>
+          <div class="tool-body">
+            <div class="input-group"><label class="input-label">Your Resume</label><textarea id="rejection-resume" rows="5" placeholder="Paste your resume" oninput="markFilled(this)"></textarea></div>
+            <div class="input-group"><label class="input-label">Application History</label><textarea id="rejection-history" rows="10" placeholder="For each role: company, title, seniority level, how you applied (referral/ATS/LinkedIn), result (no response/screen/interview/offer), any feedback" oninput="markFilled(this)"></textarea></div>
+            <button class="run-btn" id="rejection-btn" onclick="runTool('rejection')"><span>Analyze My Rejections — 1 credit</span></button>
+            <div class="no-credits-msg" id="rejection-no-credits"><p>You're out of credits.</p><button class="btn btn-primary" onclick="showPurchaseModal()">Buy Credits</button></div>
+            <div class="error-msg" id="rejection-error"></div>
+            <div class="output-wrap" id="rejection-output"><div class="output-header"><span class="output-title">✓ Rejection Pattern Analysis</span><button class="copy-btn" id="rejection-copy" onclick="copyOutput('rejection-output-body','rejection-copy')">Copy</button></div><div class="output-body" id="rejection-output-body"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- COMPANY RESEARCH -->
+      <div class="tool-panel" id="panel-company">
+        <div class="tool-pane">
+          <div class="tool-pane-header"><div class="tool-pane-title">Company Research</div><div class="tool-pane-desc">Deep due diligence before you invest hours applying.</div></div>
+          <div class="tool-explainer">6-dimension analysis: financial health, hiring velocity, leadership stability, culture signals, competitive position, role signals. Verdict: Pursue / Proceed With Eyes Open / Deprioritize.</div>
+          <div class="tool-body">
+            <div class="input-group"><label class="input-label">Job Description / Company Name</label><textarea id="company-jd" rows="8" placeholder="Paste the job description or at minimum the company name and role" oninput="markFilled(this)"></textarea></div>
+            <div class="input-group"><label class="input-label">Your Resume</label><textarea id="company-resume" rows="5" placeholder="Paste your resume for fit context" oninput="markFilled(this)"></textarea></div>
+            <button class="run-btn" id="company-btn" onclick="runTool('company')"><span>Research This Company — 1 credit</span></button>
+            <div class="no-credits-msg" id="company-no-credits"><p>You're out of credits.</p><button class="btn btn-primary" onclick="showPurchaseModal()">Buy Credits</button></div>
+            <div class="error-msg" id="company-error"></div>
+            <div class="output-wrap" id="company-output"><div class="output-header"><span class="output-title">✓ Company Research</span><button class="copy-btn" id="company-copy" onclick="copyOutput('company-output-body','company-copy')">Copy</button></div><div class="output-body" id="company-output-body"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- REFERRAL FINDER -->
+      <div class="tool-panel" id="panel-referrals">
+        <div class="tool-pane">
+          <div class="tool-pane-header"><div class="tool-pane-title">Referral Finder</div><div class="tool-pane-desc">Find the warm path into any company before applying cold.</div></div>
+          <div class="tool-explainer">Referrals convert at 3-5x the rate of cold ATS applications. This builds a tiered outreach list — former employees, current team, network connections — and writes the specific message for each tier.</div>
+          <div class="tool-body">
+            <div class="input-group"><label class="input-label">Your Resume</label><textarea id="referrals-resume" rows="5" placeholder="Paste your resume" oninput="markFilled(this)"></textarea></div>
+            <div class="input-group"><label class="input-label">Target Job Description</label><textarea id="referrals-jd" rows="6" placeholder="Paste the job posting" oninput="markFilled(this)"></textarea></div>
+            <button class="run-btn" id="referrals-btn" onclick="runTool('referrals')"><span>Find My Warm Paths — 1 credit</span></button>
+            <div class="no-credits-msg" id="referrals-no-credits"><p>You're out of credits.</p><button class="btn btn-primary" onclick="showPurchaseModal()">Buy Credits</button></div>
+            <div class="error-msg" id="referrals-error"></div>
+            <div class="output-wrap" id="referrals-output"><div class="output-header"><span class="output-title">✓ Referral Finder</span><button class="copy-btn" id="referrals-copy" onclick="copyOutput('referrals-output-body','referrals-copy')">Copy</button></div><div class="output-body" id="referrals-output-body"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FOLLOW-UP GENERATOR -->
+      <div class="tool-panel" id="panel-followup">
+        <div class="tool-pane">
+          <div class="tool-pane-header"><div class="tool-pane-title">Follow-Up Generator</div><div class="tool-pane-desc">The right follow-up for the right stage — never too soon, never too desperate.</div></div>
+          <div class="tool-explainer">6 stages covered: applied/no response, after phone screen, after final round, waiting on offer, offer accepted, rejected. Two versions each plus timing guidance.</div>
+          <div class="tool-body">
+            <div class="input-group"><label class="input-label">Your Resume</label><textarea id="followup-resume" rows="5" placeholder="Paste your resume" oninput="markFilled(this)"></textarea></div>
+            <div class="input-group"><label class="input-label">Job Description</label><textarea id="followup-jd" rows="4" placeholder="Paste the role" oninput="markFilled(this)"></textarea></div>
+            <div class="input-group"><label class="input-label">Your Situation</label><textarea id="followup-stage" rows="4" placeholder="What stage are you following up from? How long since last contact? What was the last interaction?" oninput="markFilled(this)"></textarea></div>
+            <button class="run-btn" id="followup-btn" onclick="runTool('followup')"><span>Write My Follow-Up — 1 credit</span></button>
+            <div class="no-credits-msg" id="followup-no-credits"><p>You're out of credits.</p><button class="btn btn-primary" onclick="showPurchaseModal()">Buy Credits</button></div>
+            <div class="error-msg" id="followup-error"></div>
+            <div class="output-wrap" id="followup-output"><div class="output-header"><span class="output-title">✓ Follow-Up Generator</span><button class="copy-btn" id="followup-copy" onclick="copyOutput('followup-output-body','followup-copy')">Copy</button></div><div class="output-body" id="followup-output-body"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- INTERVIEW DEBRIEF -->
+      <div class="tool-panel" id="panel-debrief">
+        <div class="tool-pane">
+          <div class="tool-pane-header"><div class="tool-pane-title">Interview Debrief</div><div class="tool-pane-desc">Grade yourself right after the interview while it's still fresh.</div></div>
+          <div class="tool-explainer">9-question structured debrief that grades your performance, identifies what landed and what missed, and builds prep for the next round. Run within 30 minutes of leaving the interview.</div>
+          <div class="tool-body">
+            <div class="input-group"><label class="input-label">Your Resume</label><textarea id="debrief-resume" rows="5" placeholder="Paste your resume" oninput="markFilled(this)"></textarea></div>
+            <div class="input-group"><label class="input-label">Job Description</label><textarea id="debrief-jd" rows="4" placeholder="Paste the role you interviewed for" oninput="markFilled(this)"></textarea></div>
+            <div class="input-group"><label class="input-label">What Happened</label><textarea id="debrief-notes" rows="8" placeholder="Walk me through: who interviewed you, what they asked, what caught you off guard, what felt strongest, what felt weakest, what they said about next steps, your gut feel" oninput="markFilled(this)"></textarea></div>
+            <button class="run-btn" id="debrief-btn" onclick="runTool('debrief')"><span>Debrief This Interview — 1 credit</span></button>
+            <div class="no-credits-msg" id="debrief-no-credits"><p>You're out of credits.</p><button class="btn btn-primary" onclick="showPurchaseModal()">Buy Credits</button></div>
+            <div class="error-msg" id="debrief-error"></div>
+            <div class="output-wrap" id="debrief-output"><div class="output-header"><span class="output-title">✓ Interview Debrief</span><button class="copy-btn" id="debrief-copy" onclick="copyOutput('debrief-output-body','debrief-copy')">Copy</button></div><div class="output-body" id="debrief-output-body"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- QUESTION BANK -->
+      <div class="tool-panel" id="panel-questions">
+        <div class="tool-pane">
+          <div class="tool-pane-header"><div class="tool-pane-title">Question Bank</div><div class="tool-pane-desc">15 smart questions to ask at the end — ranked by what will actually impress.</div></div>
+          <div class="tool-explainer">5 categories: the role, the team, company direction, why the role is open, and the honest questions you need answered. Top 5 ranked with watch-for guidance.</div>
+          <div class="tool-body">
+            <div class="input-group"><label class="input-label">Job Description</label><textarea id="questions-jd" rows="7" placeholder="Paste the job posting" oninput="markFilled(this)"></textarea></div>
+            <div class="input-group"><label class="input-label">Any Research You Have</label><textarea id="questions-research" rows="4" placeholder="Company news, Glassdoor patterns, anything you found — helps make questions more specific" oninput="markFilled(this)"></textarea></div>
+            <button class="run-btn" id="questions-btn" onclick="runTool('questions')"><span>Build My Question Bank — 1 credit</span></button>
+            <div class="no-credits-msg" id="questions-no-credits"><p>You're out of credits.</p><button class="btn btn-primary" onclick="showPurchaseModal()">Buy Credits</button></div>
+            <div class="error-msg" id="questions-error"></div>
+            <div class="output-wrap" id="questions-output"><div class="output-header"><span class="output-title">✓ Question Bank</span><button class="copy-btn" id="questions-copy" onclick="copyOutput('questions-output-body','questions-copy')">Copy</button></div><div class="output-body" id="questions-output-body"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- COUNTER-OFFER -->
+      <div class="tool-panel" id="panel-counter">
+        <div class="tool-pane">
+          <div class="tool-pane-header"><div class="tool-pane-title">Counter-Offer</div><div class="tool-pane-desc">Write the actual counter-offer email — with rationale for every ask.</div></div>
+          <div class="tool-explainer">The negotiate sim is practice. This is the artifact. Includes leverage assessment, full counter email, backup version for partial-yes scenarios, and 3 phrases for the verbal follow-up call.</div>
+          <div class="tool-body">
+            <div class="input-group"><label class="input-label">Your Background</label><textarea id="counter-resume" rows="5" placeholder="Paste your resume" oninput="markFilled(this)"></textarea></div>
+            <div class="input-group"><label class="input-label">The Offer Details</label><textarea id="counter-offer" rows="6" placeholder="Base, bonus/OTE, equity, signing, PTO, start date. What you received and what you're targeting." oninput="markFilled(this)"></textarea></div>
+            <button class="run-btn" id="counter-btn" onclick="runTool('counter')"><span>Build My Counter-Offer — 1 credit</span></button>
+            <div class="no-credits-msg" id="counter-no-credits"><p>You're out of credits.</p><button class="btn btn-primary" onclick="showPurchaseModal()">Buy Credits</button></div>
+            <div class="error-msg" id="counter-error"></div>
+            <div class="output-wrap" id="counter-output"><div class="output-header"><span class="output-title">✓ Counter-Offer</span><button class="copy-btn" id="counter-copy" onclick="copyOutput('counter-output-body','counter-copy')">Copy</button></div><div class="output-body" id="counter-output-body"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- OFFER DEADLINE MANAGER -->
+      <div class="tool-panel" id="panel-deadline">
+        <div class="tool-pane">
+          <div class="tool-pane-header"><div class="tool-pane-title">Offer Deadline Manager</div><div class="tool-pane-desc">Navigate competing offers and expiring deadlines without blowing either.</div></div>
+          <div class="tool-explainer">Offer A is expiring. Company B hasn't decided. This builds the exact playbook: when to ask for an extension, how to accelerate Company B, and what to do if you have to decide today.</div>
+          <div class="tool-body">
+            <div class="input-group"><label class="input-label">Your Background</label><textarea id="deadline-resume" rows="4" placeholder="Paste your resume" oninput="markFilled(this)"></textarea></div>
+            <div class="input-group"><label class="input-label">Your Situation</label><textarea id="deadline-situation" rows="6" placeholder="Offer A details and deadline. Company B stage and timeline. Which you prefer. Have you told either company about the other?" oninput="markFilled(this)"></textarea></div>
+            <button class="run-btn" id="deadline-btn" onclick="runTool('deadline')"><span>Build My Deadline Playbook — 1 credit</span></button>
+            <div class="no-credits-msg" id="deadline-no-credits"><p>You're out of credits.</p><button class="btn btn-primary" onclick="showPurchaseModal()">Buy Credits</button></div>
+            <div class="error-msg" id="deadline-error"></div>
+            <div class="output-wrap" id="deadline-output"><div class="output-header"><span class="output-title">✓ Offer Deadline Manager</span><button class="copy-btn" id="deadline-copy" onclick="copyOutput('deadline-output-body','deadline-copy')">Copy</button></div><div class="output-body" id="deadline-output-body"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- NETWORK MESSAGE -->
+      <div class="tool-panel" id="panel-network">
+        <div class="tool-pane">
+          <div class="tool-pane-header"><div class="tool-pane-title">Network Message</div><div class="tool-pane-desc">Stay warm with the people who can help before you need them.</div></div>
+          <div class="tool-explainer">5 goal types: stay warm, get their read, get an intro, get referred, reconnect before search. 2 versions each — LinkedIn DM and email. 2-message sequence for cold reconnects.</div>
+          <div class="tool-body">
+            <div class="input-group"><label class="input-label">Your Background</label><textarea id="network-resume" rows="4" placeholder="Paste your resume" oninput="markFilled(this)"></textarea></div>
+            <div class="input-group"><label class="input-label">Who You're Reaching Out To</label><textarea id="network-contact" rows="5" placeholder="Their role, company, how you know them, how long since contact, what you want from this interaction" oninput="markFilled(this)"></textarea></div>
+            <button class="run-btn" id="network-btn" onclick="runTool('network')"><span>Write Network Message — 1 credit</span></button>
+            <div class="no-credits-msg" id="network-no-credits"><p>You're out of credits.</p><button class="btn btn-primary" onclick="showPurchaseModal()">Buy Credits</button></div>
+            <div class="error-msg" id="network-error"></div>
+            <div class="output-wrap" id="network-output"><div class="output-header"><span class="output-title">✓ Network Message</span><button class="copy-btn" id="network-copy" onclick="copyOutput('network-output-body','network-copy')">Copy</button></div><div class="output-body" id="network-output-body"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- LINKEDIN CONTENT -->
+      <div class="tool-panel" id="panel-linkedin-post">
+        <div class="tool-pane">
+          <div class="tool-pane-header"><div class="tool-pane-title">LinkedIn Content</div><div class="tool-pane-desc">5 posts that build credibility with the people who hire for the roles you want.</div></div>
+          <div class="tool-explainer">Not hustle content. Not open-to-work posts. Posts built from your real experience that demonstrate expertise. Counterintuitive take, story post, hard-won insight, industry take, useful failure.</div>
+          <div class="tool-body">
+            <div class="input-group"><label class="input-label">Your Resume</label><textarea id="linkedin-post-resume" rows="6" placeholder="Paste your resume" oninput="markFilled(this)"></textarea></div>
+            <div class="input-group"><label class="input-label">Your Angles</label><textarea id="linkedin-post-angles" rows="8" placeholder="1. Most counterintuitive thing you've learned. 2. A story you tell often. 3. Something obvious to you that took years to learn. 4. What you're genuinely interested in right now. 5. A real failure and what you learned." oninput="markFilled(this)"></textarea></div>
+            <button class="run-btn" id="linkedin-post-btn" onclick="runTool('linkedin-post')"><span>Generate 5 Posts — 1 credit</span></button>
+            <div class="no-credits-msg" id="linkedin-post-no-credits"><p>You're out of credits.</p><button class="btn btn-primary" onclick="showPurchaseModal()">Buy Credits</button></div>
+            <div class="error-msg" id="linkedin-post-error"></div>
+            <div class="output-wrap" id="linkedin-post-output"><div class="output-header"><span class="output-title">✓ LinkedIn Content</span><button class="copy-btn" id="linkedin-post-copy" onclick="copyOutput('linkedin-post-output-body','linkedin-post-copy')">Copy</button></div><div class="output-body" id="linkedin-post-output-body"></div></div>
           </div>
         </div>
       </div>
@@ -1034,7 +1268,20 @@ async function runTool(type) {
 
 function getBtnLabel(type) {
   const labels = {
-    reality: 'Get My Reality Check — 1 credit',
+    bias:          'Run Bias Audit — 1 credit',
+    portfolio:     'Build Portfolio Brief — 1 credit',
+    references:    'Build Reference Briefs — 1 credit',
+    rejection:     'Analyze My Rejections — 1 credit',
+    company:       'Research This Company — 1 credit',
+    referrals:     'Find My Warm Paths — 1 credit',
+    followup:      'Write My Follow-Up — 1 credit',
+    debrief:       'Debrief This Interview — 1 credit',
+    questions:     'Build My Question Bank — 1 credit',
+    counter:       'Build My Counter-Offer — 1 credit',
+    deadline:      'Build Deadline Playbook — 1 credit',
+    network:       'Write Network Message — 1 credit',
+    'linkedin-post':'Generate 5 Posts — 1 credit',
+    reality:       'Get My Reality Check — 1 credit',
     fit: 'Score My Fit — 1 credit',
     ats: 'Scan My Resume — 1 credit',
     resume: 'Tailor My Resume — 1 credit',
@@ -1055,6 +1302,19 @@ function getBtnLabel(type) {
 function getInputs(type) {
   const g = id => (document.getElementById(id)?.value.trim() || '');
   const inputs = {
+    bias:      { resume: g('bias-resume'), jd: g('bias-jd') },
+    portfolio: { resume: g('portfolio-resume'), jd: g('portfolio-jd'), context: g('portfolio-project') },
+    references:{ resume: g('references-resume'), jd: g('references-jd'), context: g('references-refs') },
+    rejection: { resume: g('rejection-resume'), context: g('rejection-history') },
+    company:   { resume: g('company-resume'), jd: g('company-jd') },
+    referrals: { resume: g('referrals-resume'), jd: g('referrals-jd') },
+    followup:  { resume: g('followup-resume'), jd: g('followup-jd'), context: g('followup-stage') },
+    debrief:   { resume: g('debrief-resume'), jd: g('debrief-jd'), context: g('debrief-notes') },
+    questions: { jd: g('questions-jd'), context: g('questions-research') },
+    counter:   { resume: g('counter-resume'), context: g('counter-offer') },
+    deadline:  { resume: g('deadline-resume'), context: g('deadline-situation') },
+    network:   { resume: g('network-resume'), context: g('network-contact') },
+    'linkedin-post': { resume: g('linkedin-post-resume'), context: g('linkedin-post-angles') },
     reality:   { resume: g('reality-resume'), jd: g('reality-jd') },
     fit:       { resume: g('fit-resume'), jd: g('fit-jd') },
     ats:       { resume: g('ats-resume'), jd: g('ats-jd') },
