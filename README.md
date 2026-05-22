@@ -157,43 +157,76 @@ send-thankyou ← within 24 hours after the interview
 ## How it works
 
 ```
-job-hunter/                        (main branch — open source only)
+job-hunter/                        (main branch — open source)
 │
 ├── CLAUDE.md                      project context for Claude Code sessions
 ├── README.md · LICENSE · server.js · package.json
 │
-├── agents/                        21 prompt files — one per tool
-│   ├── apply-*   (8)              reality-check, fit-score, resume, cover letter, ATS, LinkedIn, JD decode, LinkedIn scrape
-│   ├── search-*  (3)              jobs, salary, outreach
+├── agents/                        23 prompt files — one per tool
+│   ├── apply-*   (8)              reality-check, fit-score, resume, cover-letter,
+│   │                              ats-scan, decode-jd, linkedin-audit, linkedin-scrape
+│   ├── search-*  (5)              jobs, salary, outreach, inbox-scan, send-email
 │   ├── interview-* (3)            prep, mock, research
 │   ├── offer-*   (4)              negotiate, compare, schedule, thank-you
 │   └── career-*  (3)              promote, review, internal
 │
 ├── inputs/                        paste your stuff here (git-ignored)
+│   ├── my-resume.md
+│   ├── job-description.md
+│   └── ...
+│
 ├── outputs/                       results land here (git-ignored)
-├── rules/writing-rules.md         tone rules injected into every agent
-├── web/index.html                 browser UI — works standalone or via server
-├── scripts/                       guide.js · preflight.js · job-search.py
+│
+├── rules/
+│   └── writing-rules.md           tone rules injected into every agent
+│
+├── web/
+│   ├── index.html                 browser UI — standalone or via server
+│   └── logo.svg
+│
+├── scripts/
+│   ├── guide.js                   interactive first-run guide (npm run guide)
+│   ├── preflight.js               validates inputs before running agents
+│   └── job-search.py              JobSpy search (pip3.11 install jobspy)
+│
 ├── examples/                      sanitized before/after examples
+│
 ├── automation/                    Hermes + OpenClaw pipeline configs
-└── docs/                          ONBOARDING · CHANGELOG · CONTRIBUTING · SECURITY
+│   ├── hermes-job-hunter.yaml
+│   ├── pipeline-daily-search.md
+│   └── pipeline-interview-prep.md
+│
+└── docs/
+    ├── ONBOARDING.md              setup guide for all three paths
+    ├── CHANGELOG.md
+    ├── CONTRIBUTING.md
+    ├── SECURITY.md
+    ├── advanced-automation.md
+    └── templates/
+        └── JOB-TRACKER.md        markdown pipeline tracker
 ```
 
 ```
 job-hunter/                        (commercial branch — adds hosted layer)
 │
-├── everything above, plus:
+├── everything in main, plus:
 │
 ├── COMMERCIAL.md                  open core license stance
-├── start.js                       entry point (routes open source vs commercial)
+├── start.js                       entry point — routes open source vs commercial
 ├── railway.toml · Procfile        deployment configs
 │
 ├── commercial/
 │   ├── server/
-│   │   ├── index.js               Clerk auth · Stripe billing · Postgres
-│   │   └── memory.js              Mem0 persistent memory layer
-│   ├── db/schema.sql              users · credits · purchases · usage · profiles · sessions
-│   ├── web/index.html             commercial UI — landing · dashboard · purchase modal
+│   │   ├── index.js               Clerk auth · Stripe billing · Postgres · API routes
+│   │   ├── memory.js              Mem0 persistent memory layer
+│   │   └── inbox.js               Gmail polling · alert classification · draft responses
+│   ├── db/
+│   │   ├── schema.sql             users · credits · purchases · usage ·
+│   │   │                          profiles · sessions · inbox_alerts · tracked_companies
+│   │   └── migrate.js
+│   ├── web/
+│   │   └── index.html             commercial UI — landing · dashboard · inbox monitor ·
+│   │                              purchase modal · memory panel
 │   └── .env.example
 │
 └── docs/
