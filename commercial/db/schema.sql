@@ -122,3 +122,18 @@ CREATE INDEX IF NOT EXISTS idx_inbox_alerts_user_id ON inbox_alerts(user_id);
 CREATE INDEX IF NOT EXISTS idx_inbox_alerts_status ON inbox_alerts(status);
 CREATE INDEX IF NOT EXISTS idx_inbox_alerts_urgency ON inbox_alerts(urgency);
 CREATE INDEX IF NOT EXISTS idx_tracked_companies_user_id ON tracked_companies(user_id);
+
+-- ── Audit Log ─────────────────────────────────────────────
+-- Records significant actions for security and compliance
+CREATE TABLE IF NOT EXISTS audit_log (
+  id          SERIAL PRIMARY KEY,
+  user_id     VARCHAR(255) REFERENCES users(id) ON DELETE SET NULL,
+  action      VARCHAR(100) NOT NULL,  -- purchase.completed | credits.deducted | account.deleted | webhook.received
+  metadata    JSONB DEFAULT '{}',
+  ip_address  VARCHAR(45),
+  created_at  TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_audit_log_user_id ON audit_log(user_id);
+CREATE INDEX IF NOT EXISTS idx_audit_log_action ON audit_log(action);
+CREATE INDEX IF NOT EXISTS idx_audit_log_created_at ON audit_log(created_at);

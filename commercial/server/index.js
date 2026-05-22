@@ -26,6 +26,7 @@ const path = require('path');
 const { Client } = require('pg');
 const memory = require('./memory');
 const { scanInbox, draftResponse } = require('./inbox');
+const { Webhook } = require('svix');
 
 const PORT = process.env.PORT || 3001;
 const ROOT = path.join(__dirname, '../..');  // job-hunter root (commercial/server/ → root)
@@ -51,7 +52,43 @@ setInterval(() => {
     if (now - v.windowStart > 120000) rateLimits.delete(k);
   }
 }, 300000);
-db.connect().then(() => console.log('✓ Database connected'));
+db.connect().then(() => {
+  console.log('✓ Database connected');
+  startCleanupScheduler();
+});
+
+// ── Scheduled cleanup ─────────────────────────────────────
+function startCleanupScheduler() {
+  // Run cleanup every hour
+  setInterval(runCleanup, 60 * 60 * 1000);
+  // Also run once on startup
+  setTimeout(runCleanup, 30 * 1000);
+}
+
+async function runCleanup() {
+  try {
+    // Delete expired sessions (inactive > 24 hours)
+    const sessions = await db.query(
+      "DELETE FROM sessions WHERE last_active < NOW() - INTERVAL '24 hours' RETURNING id"
+    );
+
+    // Delete old audit log entries (keep 90 days)
+    const audit = await db.query(
+      "DELETE FROM audit_log WHERE created_at < NOW() - INTERVAL '90 days' RETURNING id"
+    );
+
+    // Delete dismissed/replied inbox alerts older than 30 days
+    const alerts = await db.query(
+      "DELETE FROM inbox_alerts WHERE status IN ('dismissed','replied') AND updated_at < NOW() - INTERVAL '30 days' RETURNING id"
+    );
+
+    if (sessions.rowCount > 0 || audit.rowCount > 0 || alerts.rowCount > 0) {
+      console.log(`Cleanup: ${sessions.rowCount} sessions, ${audit.rowCount} audit entries, ${alerts.rowCount} alerts deleted`);
+    }
+  } catch (err) {
+    console.error('Cleanup error (non-fatal):', err.message);
+  }
+}
 
 // ── Helpers ───────────────────────────────────────────────
 function json(res, status, data) {
@@ -171,6 +208,20 @@ async function ensureUser(userId, email) {
   );
 }
 
+// ── Audit logging ────────────────────────────────────────
+async function auditLog(userId, action, metadata = {}, req = null) {
+  try {
+    const ip = req ? (req.headers['x-forwarded-for'] || req.socket?.remoteAddress || null) : null;
+    await db.query(
+      'INSERT INTO audit_log (user_id, action, metadata, ip_address) VALUES ($1, $2, $3, $4)',
+      [userId, action, JSON.stringify(metadata), ip]
+    );
+  } catch (err) {
+    // Audit log failures are never fatal
+    console.error('Audit log error (non-fatal):', err.message);
+  }
+}
+
 // ── Session context (in-session output threading) ───────────
 const { randomUUID } = require('crypto');
 
@@ -235,6 +286,40 @@ async function saveProfile(userId, data) {
     [userId, data.resume || null, data.linkedin || null,
      data.targetRole || null, data.targetLocation || null]
   );
+}
+
+// ── Input sanitization ───────────────────────────────────
+// Strips prompt injection attempts from user-submitted content
+// Outputs are plain text so XSS is not a concern — this is for
+// preventing users from hijacking the agent instructions
+function sanitizeInput(text) {
+  if (!text || typeof text !== 'string') return '';
+
+  // Remove common prompt injection patterns
+  const injectionPatterns = [
+    /ignore (all |previous |above |prior )?(instructions?|prompts?|rules?|context)/gi,
+    /forget (everything|all|previous|what i said)/gi,
+    /you are now|act as if|pretend (to be|you are|you're)/gi,
+    /system prompt|<\/?system>|<\/?instructions>/gi,
+    /jailbreak|DAN mode|developer mode/gi,
+  ];
+
+  let sanitized = text;
+  for (const pattern of injectionPatterns) {
+    sanitized = sanitized.replace(pattern, '[removed]');
+  }
+
+  // Cap input length — prevents token stuffing attacks
+  // Resume: 8000 chars (~2000 tokens), JD: 5000 chars (~1250 tokens)
+  return sanitized.slice(0, 10000);
+}
+
+function sanitizeInputs(inputs) {
+  const sanitized = {};
+  for (const [key, val] of Object.entries(inputs || {})) {
+    sanitized[key] = typeof val === 'string' ? sanitizeInput(val) : val;
+  }
+  return sanitized;
 }
 
 // ── Load agent prompt (from open source agents/) ──────────
@@ -436,15 +521,33 @@ const server = http.createServer(async (req, res) => {
   // ── Clerk webhook — sync users ──────────────────────────
   if (url.pathname === '/webhooks/clerk' && req.method === 'POST') {
     try {
-      // Replay attack protection — reject webhooks older than 5 minutes
-      const svixTimestamp = req.headers['svix-timestamp'];
-      if (svixTimestamp) {
-        const ts = parseInt(svixTimestamp);
-        if (Math.abs(Date.now() / 1000 - ts) > 300) {
-          return json(res, 400, { error: 'Webhook timestamp too old' });
-        }
+      // Full Svix signature verification
+      const webhookSecret = process.env.CLERK_WEBHOOK_SECRET;
+      if (!webhookSecret) {
+        console.error('CLERK_WEBHOOK_SECRET not set — rejecting webhook');
+        return json(res, 500, { error: 'Webhook secret not configured' });
       }
-      const payload = await body(req);
+
+      const rawPayload = await rawBody(req);
+      const svixHeaders = {
+        'svix-id': req.headers['svix-id'],
+        'svix-timestamp': req.headers['svix-timestamp'],
+        'svix-signature': req.headers['svix-signature'],
+      };
+
+      if (!svixHeaders['svix-id'] || !svixHeaders['svix-timestamp'] || !svixHeaders['svix-signature']) {
+        return json(res, 400, { error: 'Missing Svix headers' });
+      }
+
+      let payload;
+      try {
+        const wh = new Webhook(webhookSecret);
+        payload = wh.verify(rawPayload.toString(), svixHeaders);
+      } catch (err) {
+        console.error('Clerk webhook verification failed:', err.message);
+        return json(res, 400, { error: 'Invalid webhook signature' });
+      }
+
       if (payload.type === 'user.created' || payload.type === 'user.updated') {
         const u = payload.data;
         const email = u.email_addresses?.[0]?.email_address || '';
@@ -505,6 +608,7 @@ const server = http.createServer(async (req, res) => {
         }
 
         console.log(`Purchase fulfilled: ${packType} for user ${userId}`);
+        await auditLog(userId, 'purchase.completed', { packType, sessionId: session.id, amount: session.amount_total });
       }
 
       return json(res, 200, { received: true });
@@ -605,6 +709,7 @@ const server = http.createServer(async (req, res) => {
     if (!userId) return json(res, 401, { error: 'Not authenticated' });
     try {
       await memory.deleteAllMemories(userId);
+      await auditLog(userId, 'memory.cleared', {}, req);
       return json(res, 200, { deleted: true });
     } catch (err) {
       return json(res, 500, { error: err.message });
@@ -799,6 +904,9 @@ const server = http.createServer(async (req, res) => {
         getSessionOutputs(sessionId),
       ]);
 
+      // Sanitize inputs before processing
+      const sanitizedInputs = sanitizeInputs(inputs);
+      const enrichedInputs = { ...sanitizedInputs };
       // Enrich inputs with session context + saved profile
       // Profile fills in missing resume/linkedin if user has saved one
       const enrichedInputs = { ...inputs };
@@ -855,11 +963,12 @@ const server = http.createServer(async (req, res) => {
       const inputTokens = data.usage?.input_tokens || 0;
       const outputTokens = data.usage?.output_tokens || 0;
 
-      // Deduct credit + log usage + save to session + save to memory
+      // Deduct credit + log usage + save to session + save to memory + audit
       await Promise.all([
         deductCredit(userId, toolType, inputTokens, outputTokens),
         saveSessionOutput(session.id, toolType, result),
         memory.addMemory(userId, toolType, enrichedInputs, result),
+        auditLog(userId, 'tool.run', { tool: toolType, inputTokens, outputTokens }, req),
       ]);
 
       // Return result with updated credit balance + session ID

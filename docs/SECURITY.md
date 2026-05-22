@@ -44,6 +44,7 @@ Include:
 
 ## Security Notes for Users
 
+- **LinkedIn scraper session:** The advanced LinkedIn scraper stores a Chrome session at `~/.linkedin-mcp/profile/`. This contains your LinkedIn login credentials. Protect it: `chmod 700 ~/.linkedin-mcp`. Do not run on shared machines. To revoke: delete the directory and sign out of LinkedIn.
 - **API key:** Your Anthropic API key is stored in your browser's `localStorage`. It is not encrypted at rest. Do not use Job Hunter on a shared or public computer.
 - **Local CLI:** The Claude Code agents run with the permissions of your local user account. Review any agent file before running it, especially if you cloned from a fork.
 - **LinkedIn scraper:** The advanced LinkedIn scraper stores a Chrome browser session in `~/.linkedin-mcp/profile/`. This contains your LinkedIn login session. Protect that directory accordingly.

@@ -1,7 +1,7 @@
 # Repo Audit Report
 
-**Date:** May 21, 2026
-**Version:** v1.2.0
+**Date:** May 21, 2026 (updated)
+**Version:** v1.2.1
 **Branches audited:** main, commercial
 
 ---
@@ -40,7 +40,7 @@
 
 ---
 
-## ⚠️ Known gaps (not yet fixed — post-launch)
+## ✅ Known gaps — all resolved (v1.2.1)
 
 ### Commercial server
 
@@ -108,13 +108,13 @@ but worth noting. Documented in `agents/apply-linkedin-scrape.md` and `SECURITY.
 
 ## Recommended pre-launch checklist
 
-- [ ] Install `svix` and implement full Clerk webhook signature verification
-- [ ] Set `NODE_ENV=production` in Railway env vars
-- [ ] Set `APP_URL` in Railway env vars (locks CORS)
-- [ ] Add session cleanup scheduled task
-- [ ] Test Stripe webhook end-to-end with Stripe CLI
-- [ ] Rotate any tokens that appeared in conversation history
-- [ ] Review Privacy Policy dates before first payment is taken
+- [x] Install `svix` and implement full Clerk webhook signature verification
+- [ ] Set `NODE_ENV=production` in Railway env vars ← still manual in Railway env vars
+- [ ] Set `APP_URL` in Railway ← still manual in Railway env vars (locks CORS)
+- [x] Add session cleanup scheduled task
+- [ ] Test Stripe webhook end-to-end with Stripe CLI ← do before launch end-to-end with Stripe CLI
+- [ ] Rotate GitHub and Vercel tokens ← already done that appeared in conversation history
+- [ ] Review Privacy Policy dates before first payment before first payment is taken
 
 ---
 
