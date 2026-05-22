@@ -12,16 +12,11 @@
     "portfolio": "node scripts/preflight.js resume && claude \"follow agents/apply-portfolio-brief.md\"",
     "resume": "node scripts/preflight.js resume && claude --print \"$(cat agents/apply-resume.md)\"",
     "cover-letter": "node scripts/preflight.js cover-letter && claude --print \"$(cat agents/apply-cover-letter.md)\"",
-<<<<<<< HEAD
-=======
-    "portfolio": "node scripts/preflight.js resume && claude \"follow agents/apply-portfolio-brief.md\"",
     "interview": "node scripts/preflight.js interview && claude --print \"$(cat agents/interview-prep.md)\"",
     "mock": "node scripts/preflight.js interview && claude \"follow agents/interview-mock.md\"",
     "debrief": "node scripts/preflight.js resume && claude \"follow agents/interview-debrief.md\"",
     "panel-decode": "node scripts/preflight.js resume && claude \"follow agents/interview-panel-decoder.md\"",
     "questions": "node scripts/preflight.js resume && claude \"follow agents/interview-question-bank.md\"",
-    "linkedin-scrape": "claude \"follow agents/apply-linkedin-scrape.md\"",
->>>>>>> main
     "ats": "node scripts/preflight.js resume && claude --print \"$(cat agents/apply-ats-scan.md)\"",
     "skill-up": "node scripts/preflight.js resume && claude \"follow agents/apply-skills-gap-filler.md\"",
     "assessment": "node scripts/preflight.js resume && claude \"follow agents/apply-assessment-prep.md\"",
@@ -39,24 +34,9 @@
     "inbox": "node scripts/preflight.js resume && claude \"follow agents/search-inbox-scan.md\"",
     "tracker": "claude \"follow agents/search-tracker-update.md\"",
     "send-email": "claude \"follow agents/search-send-email.md\"",
-<<<<<<< HEAD
-    "interview": "node scripts/preflight.js interview && claude --print \"$(cat agents/interview-prep.md)\"",
-    "mock": "node scripts/preflight.js interview && claude \"follow agents/interview-mock.md\"",
-    "debrief": "node scripts/preflight.js resume && claude \"follow agents/interview-debrief.md\"",
-    "questions": "node scripts/preflight.js resume && claude \"follow agents/interview-question-bank.md\"",
-=======
-    "follow-up": "node scripts/preflight.js resume && claude \"follow agents/search-follow-up.md\"",
-    "referrals": "node scripts/preflight.js resume && claude \"follow agents/search-referral-finder.md\"",
-    "company": "node scripts/preflight.js resume && claude \"follow agents/search-company-research.md\"",
     "ghost-check": "node scripts/preflight.js resume && claude \"follow agents/search-ghost-job-detector.md\"",
     "scorecard": "node scripts/preflight.js resume && claude \"follow agents/search-interview-scorecard.md\"",
     "momentum": "claude \"follow agents/search-momentum-check.md\"",
-    "decode": "node scripts/preflight.js resume && claude --print \"$(cat agents/apply-decode-jd.md)\"",
-    "promote": "node scripts/preflight.js resume && claude \"follow agents/career-promote.md\"",
-    "network": "node scripts/preflight.js resume && claude \"follow agents/career-network-message.md\"",
-    "linkedin-post": "node scripts/preflight.js resume && claude \"follow agents/career-linkedin-content.md\"",
-    "review": "node scripts/preflight.js resume && claude \"follow agents/career-review.md\"",
->>>>>>> main
     "research": "node scripts/preflight.js interview && claude \"follow agents/interview-research.md\"",
     "negotiate": "node scripts/preflight.js resume && claude \"follow agents/offer-negotiate.md\"",
     "counter": "node scripts/preflight.js resume && claude \"follow agents/offer-counteroffer.md\"",

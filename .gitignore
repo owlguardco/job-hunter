@@ -26,3 +26,6 @@ docs/dev-prompts/
 outputs/pipeline-log.md
 commercial/.env
 commercial/node_modules/
+
+# Claude Code local settings — machine-specific paths, never commit
+.claude/settings.local.json
