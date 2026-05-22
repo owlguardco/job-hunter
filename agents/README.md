@@ -37,6 +37,7 @@ npm start   # then use the web UI at http://localhost:3000
 | `apply-decode-jd.md` | `npm run decode` | Decode a JD — red flags, real pay, subtext |
 | `apply-linkedin-audit.md` | `npm run linkedin` | Audit your LinkedIn profile |
 | `apply-linkedin-scrape.md` | `npm run linkedin-scrape` | Scrape LinkedIn by URL (advanced) |
+| `apply-portfolio-brief.md` | `npm run portfolio` | Build a one-page project case study |
 
 **Run reality-check first — once. Then fit before every application.**
 
@@ -46,8 +47,11 @@ npm start   # then use the web UI at http://localhost:3000
 |---|---|---|
 | `search-jobs.md` | `npm run jobs` | Search job boards |
 | `search-salary.md` | `npm run salary` | Research market comp |
+| `search-company-research.md` | `npm run company` | Deep company due diligence before pursuing |
+| `search-referral-finder.md` | `npm run referrals` | Find warm intro paths and write outreach per tier |
+| `search-follow-up.md` | `npm run follow-up` | Follow-up messages for every stage |
 | `search-outreach.md` | `npm run outreach` | Cold message a recruiter |
-| `search-inbox-scan.md` | `npm run inbox` | Scan Gmail for recruiter emails, flag urgent ones, draft responses |
+| `search-inbox-scan.md` | `npm run inbox` | Scan Gmail for recruiter emails, flag urgent, draft responses |
 | `search-send-email.md` | `npm run send-email` | Send drafted responses via Gmail MCP |
 
 ## interview-* — Interview prep tools
@@ -57,12 +61,15 @@ npm start   # then use the web UI at http://localhost:3000
 | `interview-prep.md` | `npm run interview` | Story bank + coached answers |
 | `interview-mock.md` | `npm run mock` | Live mock with real-time grading |
 | `interview-research.md` | `npm run research` | Pre-interview company brief |
+| `interview-question-bank.md` | `npm run questions` | 15 smart questions to ask — ranked and prioritized |
+| `interview-debrief.md` | `npm run debrief` | Grade yourself right after the interview |
 
 ## offer-* — Offer and post-interview tools
 
 | File | Command | What it does |
 |---|---|---|
 | `offer-negotiate.md` | `npm run negotiate` | Practice the negotiation conversation |
+| `offer-counteroffer.md` | `npm run counter` | Write the actual counter-offer email |
 | `offer-compare.md` | `npm run compare` | Compare two offers |
 | `offer-schedule.md` | `npm run schedule` | Schedule interview via Google Calendar |
 | `offer-thankyou.md` | `npm run send-thankyou` | Send thank-you via Gmail |
@@ -74,6 +81,7 @@ npm start   # then use the web UI at http://localhost:3000
 | `career-promote.md` | `npm run promote` | Build your promotion case |
 | `career-review.md` | `npm run review` | Prep for performance review |
 | `career-internal.md` | `npm run internal` | Apply for an internal role |
+| `career-network-message.md` | `npm run network` | Stay warm with your network |
 
 ---
 

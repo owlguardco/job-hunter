@@ -355,6 +355,7 @@ ${rules}`;
     mock: 'interview-mock',
     thankyou: 'offer-thankyou',
     negotiate: 'offer-negotiate',
+    counter:   'offer-counteroffer',
     decode: 'apply-decode-jd',
     research: 'interview-research',
     compare: 'offer-compare',
@@ -362,8 +363,13 @@ ${rules}`;
     promote: 'career-promote',
     review: 'career-review',
     internal: 'career-internal',
-    salary: 'search-salary',
-    reality: 'apply-reality-check',
+    network:  'career-network-message',
+    salary:   'search-salary',
+    company:  'search-company-research',
+    referrals:'search-referral-finder',
+    'follow-up':'search-follow-up',
+    reality:  'apply-reality-check',
+    portfolio:'apply-portfolio-brief',
     fit: 'apply-fit-score',
   };
 
