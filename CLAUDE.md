@@ -85,6 +85,25 @@ scripts/
 
 ---
 
+## MANDATORY: After every change
+
+Before committing anything, update these files if the change affects them:
+
+1. **README.md** — both structure diagrams (main and commercial)
+   - Agent counts in apply-*, search-*, interview-*, offer-*, career-*
+   - Any new files at root or in key directories
+   - Any new commercial/ files
+
+2. **agents/README.md** — if an agent was added, renamed, or removed
+3. **docs/CHANGELOG.md** — every commit gets a CHANGELOG entry
+4. **CLAUDE.md** (this file) — if architecture or conventions change
+
+**Quick check before every commit:**
+```bash
+ls agents/*.md | grep -v README | wc -l   # should match count in README
+git diff README.md | grep "agents\|search\|apply\|commercial"
+```
+
 ## What NOT to do
 
 - Don't add external npm dependencies to the open source server (server.js) — it uses stdlib only

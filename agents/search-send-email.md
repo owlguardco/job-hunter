@@ -98,3 +98,12 @@ npm run send-email
 Do not change the tone or content of drafted responses without the user
 explicitly asking for edits. The drafts were written by the inbox scanner
 with the right tone already applied.
+
+## ✅ What to do next
+
+```
+npm run research    ← if an interview is scheduled, pull the company brief
+npm run interview   ← build story bank + coached answers
+npm run schedule    ← add the interview to your calendar
+npm run mock        ← practice before the real thing
+```
