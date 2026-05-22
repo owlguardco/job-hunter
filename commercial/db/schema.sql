@@ -81,3 +81,44 @@ CREATE TABLE IF NOT EXISTS sessions (
 CREATE INDEX IF NOT EXISTS idx_sessions_user_id ON sessions(user_id);
 CREATE INDEX IF NOT EXISTS idx_sessions_last_active ON sessions(last_active);
 CREATE INDEX IF NOT EXISTS idx_profiles_user_id ON profiles(user_id);
+
+-- ── Inbox Alerts ──────────────────────────────────────────
+-- Stores flagged recruiter emails surfaced by the inbox scanner
+CREATE TABLE IF NOT EXISTS inbox_alerts (
+  id              SERIAL PRIMARY KEY,
+  user_id         VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
+  gmail_thread_id VARCHAR(255),
+  gmail_message_id VARCHAR(255) UNIQUE,
+  from_email      VARCHAR(255),
+  from_name       VARCHAR(255),
+  company         VARCHAR(255),
+  subject         TEXT,
+  received_at     TIMESTAMPTZ,
+  snippet         TEXT,
+  classification  VARCHAR(50),   -- RECRUITER_OUTREACH | INTERVIEW_INVITE | OFFER | STATUS | REJECTION | AUTO_CONFIRM
+  urgency         VARCHAR(10),   -- HIGH | MEDIUM | LOW
+  drafted_reply   TEXT,          -- AI-drafted response
+  status          VARCHAR(20) DEFAULT 'pending',  -- pending | replied | dismissed | snoozed
+  replied_at      TIMESTAMPTZ,
+  created_at      TIMESTAMPTZ DEFAULT NOW(),
+  updated_at      TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- ── Tracked Companies ─────────────────────────────────────
+-- Companies the user is tracking for inbox monitoring
+CREATE TABLE IF NOT EXISTS tracked_companies (
+  id          SERIAL PRIMARY KEY,
+  user_id     VARCHAR(255) REFERENCES users(id) ON DELETE CASCADE,
+  name        VARCHAR(255) NOT NULL,
+  domain      VARCHAR(255),
+  role        VARCHAR(255),
+  applied_at  TIMESTAMPTZ,
+  stage       VARCHAR(50) DEFAULT 'applied',  -- applied | screening | interviewing | offer | closed
+  created_at  TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE(user_id, name)
+);
+
+CREATE INDEX IF NOT EXISTS idx_inbox_alerts_user_id ON inbox_alerts(user_id);
+CREATE INDEX IF NOT EXISTS idx_inbox_alerts_status ON inbox_alerts(status);
+CREATE INDEX IF NOT EXISTS idx_inbox_alerts_urgency ON inbox_alerts(urgency);
+CREATE INDEX IF NOT EXISTS idx_tracked_companies_user_id ON tracked_companies(user_id);

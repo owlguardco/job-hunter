@@ -25,6 +25,7 @@ const fs = require('fs');
 const path = require('path');
 const { Client } = require('pg');
 const memory = require('./memory');
+const { scanInbox, draftResponse } = require('./inbox');
 
 const PORT = process.env.PORT || 3001;
 const ROOT = path.join(__dirname, '../..');  // job-hunter root (commercial/server/ → root)
@@ -576,6 +577,161 @@ const server = http.createServer(async (req, res) => {
     try {
       await memory.deleteAllMemories(userId);
       return json(res, 200, { deleted: true });
+    } catch (err) {
+      return json(res, 500, { error: err.message });
+    }
+  }
+
+  // ── GET /api/inbox — get inbox alerts ───────────────────
+  if (url.pathname === '/api/inbox' && req.method === 'GET') {
+    if (!userId) return json(res, 401, { error: 'Not authenticated' });
+    try {
+      const alerts = await db.query(
+        `SELECT * FROM inbox_alerts
+         WHERE user_id = $1 AND status IN ('pending', 'snoozed')
+         ORDER BY
+           CASE urgency WHEN 'HIGH' THEN 1 WHEN 'MEDIUM' THEN 2 ELSE 3 END,
+           received_at DESC
+         LIMIT 50`,
+        [userId]
+      );
+      const companies = await db.query(
+        'SELECT * FROM tracked_companies WHERE user_id = $1 ORDER BY created_at DESC',
+        [userId]
+      );
+      return json(res, 200, { alerts: alerts.rows, companies: companies.rows });
+    } catch (err) {
+      return json(res, 500, { error: err.message });
+    }
+  }
+
+  // ── POST /api/inbox/scan — trigger a Gmail scan ───────────
+  if (url.pathname === '/api/inbox/scan' && req.method === 'POST') {
+    if (!userId) return json(res, 401, { error: 'Not authenticated' });
+    try {
+      const profile = await getProfile(userId);
+      const userResume = profile?.resume || '';
+
+      // Gmail search via Anthropic API with Gmail MCP
+      // We use the API to run searches since Gmail MCP requires a live session
+      // For the commercial server, we use a server-side Anthropic call with Gmail MCP
+      const gmailSearchFn = async (query) => {
+        try {
+          const res = await fetch('https://api.anthropic.com/v1/messages', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'x-api-key': process.env.ANTHROPIC_API_KEY,
+              'anthropic-version': '2023-06-01',
+            },
+            body: JSON.stringify({
+              model: 'claude-sonnet-4-20250514',
+              max_tokens: 2000,
+              mcp_servers: [{ type: 'url', url: 'https://gmailmcp.googleapis.com/mcp/v1', name: 'gmail' }],
+              messages: [{
+                role: 'user',
+                content: `Search Gmail with this exact query and return the results as JSON array with fields: id, threadId, subject, from, snippet, internalDate. Query: ${query}. Return ONLY valid JSON array, no other text.`
+              }],
+            }),
+          });
+          const data = await res.json();
+          const text = data.content?.[0]?.text || '[]';
+          try { return JSON.parse(text.match(/\[[\s\S]*\]/)?.[0] || '[]'); }
+          catch { return []; }
+        } catch { return []; }
+      };
+
+      const result = await scanInbox({
+        userId, db,
+        apiKey: process.env.ANTHROPIC_API_KEY,
+        userResume,
+        gmailSearchFn,
+      });
+
+      return json(res, 200, result);
+    } catch (err) {
+      return json(res, 500, { error: err.message });
+    }
+  }
+
+  // ── POST /api/inbox/companies — add tracked company ──────
+  if (url.pathname === '/api/inbox/companies' && req.method === 'POST') {
+    if (!userId) return json(res, 401, { error: 'Not authenticated' });
+    try {
+      const { name, domain, role } = await body(req);
+      if (!name) return json(res, 400, { error: 'Company name required' });
+
+      // Auto-derive domain if not provided
+      const derivedDomain = domain || name.toLowerCase()
+        .replace(/[^a-z0-9]/g, '') + '.com';
+
+      await db.query(
+        `INSERT INTO tracked_companies (user_id, name, domain, role)
+         VALUES ($1, $2, $3, $4)
+         ON CONFLICT (user_id, name) DO UPDATE SET domain=$3, role=$4`,
+        [userId, name, derivedDomain, role || null]
+      );
+      return json(res, 200, { added: true, name, domain: derivedDomain });
+    } catch (err) {
+      return json(res, 500, { error: err.message });
+    }
+  }
+
+  // ── PATCH /api/inbox/:id — update alert status ───────────
+  if (url.pathname.match(/^\/api\/inbox\/\d+$/) && req.method === 'PATCH') {
+    if (!userId) return json(res, 401, { error: 'Not authenticated' });
+    try {
+      const alertId = url.pathname.split('/').pop();
+      const { status } = await body(req);
+      await db.query(
+        `UPDATE inbox_alerts SET status=$1, replied_at=CASE WHEN $1='replied' THEN NOW() ELSE replied_at END, updated_at=NOW()
+         WHERE id=$2 AND user_id=$3`,
+        [status, alertId, userId]
+      );
+      return json(res, 200, { updated: true });
+    } catch (err) {
+      return json(res, 500, { error: err.message });
+    }
+  }
+
+  // ── POST /api/inbox/reply — send reply via Gmail ──────────
+  if (url.pathname === '/api/inbox/reply' && req.method === 'POST') {
+    if (!userId) return json(res, 401, { error: 'Not authenticated' });
+    try {
+      const { alertId, draft, threadId } = await body(req);
+      if (!draft) return json(res, 400, { error: 'Draft required' });
+
+      // Use Anthropic API with Gmail MCP to send
+      const sendRes = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': process.env.ANTHROPIC_API_KEY,
+          'anthropic-version': '2023-06-01',
+        },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 500,
+          mcp_servers: [{ type: 'url', url: 'https://gmailmcp.googleapis.com/mcp/v1', name: 'gmail' }],
+          messages: [{
+            role: 'user',
+            content: `Create a draft reply to Gmail thread ${threadId} with this exact body: "${draft}". Then send it. Confirm with "SENT" when done.`
+          }],
+        }),
+      });
+
+      const sendData = await sendRes.json();
+      const confirmed = sendData.content?.[0]?.text?.includes('SENT');
+
+      if (confirmed) {
+        await db.query(
+          `UPDATE inbox_alerts SET status='replied', replied_at=NOW(), updated_at=NOW()
+           WHERE id=$1 AND user_id=$2`,
+          [alertId, userId]
+        );
+      }
+
+      return json(res, 200, { sent: confirmed, message: confirmed ? 'Email sent' : 'Check Gmail — may need manual send' });
     } catch (err) {
       return json(res, 500, { error: err.message });
     }

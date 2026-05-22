@@ -96,6 +96,25 @@ scripts/
 
 ---
 
+## Inbox monitor (commercial only)
+
+**Option A — commercial server** (`commercial/server/inbox.js`):
+- `inbox_alerts` and `tracked_companies` tables in Postgres
+- `GET /api/inbox` — returns active alerts + tracked companies
+- `POST /api/inbox/scan` — triggers Gmail scan via Anthropic API + Gmail MCP
+- `POST /api/inbox/companies` — add a company to track
+- `PATCH /api/inbox/:id` — update alert status (replied/dismissed/snoozed)
+- `POST /api/inbox/reply` — send drafted reply via Gmail MCP
+
+**Classification:** RECRUITER_OUTREACH | INTERVIEW_INVITE | OFFER | STATUS | REJECTION | AUTO_CONFIRM | FOLLOW_UP_NEEDED
+**Urgency:** HIGH (respond now) | MEDIUM (review) | LOW (no action)
+**Auto-draft:** HIGH urgency emails get AI-drafted responses using user's resume context
+
+**Option B — open source** (`agents/search-inbox-scan.md`, `npm run inbox`):
+- Claude Code agent using Gmail MCP directly
+- Classifies and drafts responses, writes outputs/inbox-scan.md
+- `npm run send-email` sends drafts via Gmail MCP
+
 ## Memory layer (commercial only)
 
 **Mem0** (`mem0ai` npm package) is wired into the commercial server as a persistent

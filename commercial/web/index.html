@@ -319,6 +319,38 @@ textarea.filled { border-color: var(--green-dim); }
 .modal-footer { display: flex; gap: 10px; }
 .modal-footer .btn { flex: 1; padding: 12px; }
 
+/* ── INBOX PANEL ── */
+.inbox-panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-top: 1.5rem; }
+.inbox-toolbar { padding: 12px 20px; border-bottom: 1px solid var(--border); background: var(--surface2); display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.inbox-title { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+.inbox-actions { display: flex; gap: 8px; align-items: center; }
+.inbox-add { display: flex; gap: 6px; }
+.inbox-add input { padding: 6px 10px; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 12px; color: var(--text); outline: none; font-family: 'DM Mono', monospace; width: 180px; }
+.inbox-add input:focus { border-color: var(--orange); }
+.alert-list { display: flex; flex-direction: column; }
+.alert-item { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px; }
+.alert-item:last-child { border-bottom: none; }
+.alert-header { display: flex; align-items: flex-start; gap: 10px; justify-content: space-between; }
+.alert-urgency { font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 99px; text-transform: uppercase; letter-spacing: 0.08em; white-space: nowrap; flex-shrink: 0; }
+.urgency-HIGH { background: #4a1515; color: #e85252; }
+.urgency-MEDIUM { background: #3a2d10; color: #c28a00; }
+.urgency-LOW { background: var(--surface2); color: var(--muted); }
+.alert-meta { flex: 1; }
+.alert-from { font-size: 13px; font-weight: 600; color: var(--text); }
+.alert-subject { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.alert-time { font-size: 11px; color: var(--muted); font-family: 'DM Mono', monospace; white-space: nowrap; flex-shrink: 0; }
+.alert-snippet { font-size: 12px; color: var(--muted); line-height: 1.5; font-family: 'DM Mono', monospace; }
+.alert-draft { background: var(--bg); border: 1px solid var(--orange-dim); border-radius: var(--radius-sm); padding: 12px 14px; font-size: 12px; line-height: 1.6; color: var(--text); font-family: 'DM Mono', monospace; white-space: pre-wrap; }
+.alert-draft-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--orange); margin-bottom: 6px; }
+.alert-btns { display: flex; gap: 6px; flex-wrap: wrap; }
+.btn-send { padding: 6px 14px; background: var(--green-dim); border: 1px solid var(--green); color: var(--green); border-radius: var(--radius-sm); font-size: 11px; font-weight: 600; cursor: pointer; font-family: 'Syne', sans-serif; }
+.btn-send:hover { background: var(--green); color: var(--bg); }
+.btn-dismiss { padding: 6px 14px; background: transparent; border: 1px solid var(--border); color: var(--muted); border-radius: var(--radius-sm); font-size: 11px; cursor: pointer; font-family: 'Syne', sans-serif; }
+.btn-dismiss:hover { border-color: var(--muted); color: var(--text); }
+.inbox-empty { padding: 32px 20px; text-align: center; color: var(--muted); font-size: 13px; }
+.inbox-empty p { margin-bottom: 8px; }
+.scanning-indicator { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); }
+
 /* ── MEMORY PANEL ── */
 .memory-panel {
   background: var(--surface); border: 1px solid var(--border);
@@ -701,6 +733,27 @@ textarea.filled { border-color: var(--green-dim); }
   </div>
 </div>
 
+    <!-- Inbox Monitor -->
+    <div class="divider"></div>
+    <div class="inbox-panel" id="inbox-panel">
+      <div class="inbox-toolbar">
+        <div class="inbox-title">📬 Recruiter Inbox</div>
+        <div class="inbox-actions">
+          <div class="inbox-add">
+            <input type="text" id="company-input" placeholder="Add company to track..." onkeypress="if(event.key==='Enter')addCompany()" />
+            <button class="btn btn-ghost btn-sm" onclick="addCompany()">+ Track</button>
+          </div>
+          <button class="btn btn-primary btn-sm" id="scan-btn" onclick="scanInbox()">Scan Inbox</button>
+        </div>
+      </div>
+      <div id="inbox-alerts-container">
+        <div class="inbox-empty">
+          <p>No recruiter emails flagged yet.</p>
+          <p>Add companies you've applied to, then click <strong>Scan Inbox</strong>.</p>
+        </div>
+      </div>
+    </div>
+
     <!-- Memory Profile -->
     <div class="divider"></div>
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
@@ -836,6 +889,7 @@ async function loadUser() {
     updateCreditDisplay();
     loadUsageHistory();
     loadMemories();
+    loadInbox();
     if (userProfile) prefillFromProfile();
   } catch (e) {
     console.error('loadUser error:', e);
@@ -1075,6 +1129,130 @@ async function api(path, body) {
 // ── Utilities ─────────────────────────────────────────────
 function markFilled(el) {
   el.classList.toggle('filled', el.value.trim().length > 100);
+}
+
+// ── Inbox monitor ────────────────────────────────────────
+async function loadInbox() {
+  if (!clerkToken) return;
+  try {
+    const res = await api('/api/inbox');
+    renderAlerts(res.alerts || []);
+  } catch (e) { console.error('loadInbox:', e); }
+}
+
+async function scanInbox() {
+  if (!clerkUser) { signIn(); return; }
+  const btn = document.getElementById('scan-btn');
+  btn.disabled = true;
+  btn.textContent = 'Scanning...';
+  const container = document.getElementById('inbox-alerts-container');
+  container.innerHTML = '<div class="inbox-empty"><div class="scanning-indicator"><div class="spinner" style="border-color:rgba(255,255,255,0.2);border-top-color:var(--orange);"></div><span>Scanning Gmail for recruiter emails...</span></div></div>';
+  try {
+    const res = await api('/api/inbox/scan');
+    renderAlerts(res.alerts || []);
+    btn.textContent = res.newCount > 0 ? `✓ ${res.newCount} new` : '✓ Scanned';
+    setTimeout(() => { btn.textContent = 'Scan Inbox'; btn.disabled = false; }, 3000);
+  } catch (e) {
+    btn.textContent = 'Scan Inbox'; btn.disabled = false;
+    container.innerHTML = '<div class="inbox-empty"><p>Scan failed. Make sure Gmail is connected in Claude.ai settings.</p></div>';
+  }
+}
+
+async function addCompany() {
+  const input = document.getElementById('company-input');
+  const name = input.value.trim();
+  if (!name || !clerkUser) return;
+  try {
+    await api('/api/inbox/companies', { name });
+    input.value = '';
+    input.placeholder = `✓ Tracking ${name}`;
+    setTimeout(() => { input.placeholder = 'Add company to track...'; }, 2000);
+  } catch (e) { console.error('addCompany:', e); }
+}
+
+async function sendReply(alertId, threadId, draft) {
+  const btn = document.getElementById('send-btn-' + alertId);
+  btn.textContent = 'Sending...'; btn.disabled = true;
+  try {
+    const res = await api('/api/inbox/reply', { alertId, draft, threadId });
+    if (res.sent) {
+      btn.textContent = '✓ Sent';
+      btn.className = 'btn-dismiss';
+      document.getElementById('alert-' + alertId).style.opacity = '0.4';
+    } else {
+      btn.textContent = 'Check Gmail';
+      btn.disabled = false;
+    }
+  } catch (e) {
+    btn.textContent = 'Error — try again';
+    btn.disabled = false;
+  }
+}
+
+async function dismissAlert(alertId) {
+  try {
+    await fetch('/api/inbox/' + alertId, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + clerkToken },
+      body: JSON.stringify({ status: 'dismissed' })
+    });
+    const el = document.getElementById('alert-' + alertId);
+    if (el) el.remove();
+  } catch (e) { console.error('dismissAlert:', e); }
+}
+
+function renderAlerts(alerts) {
+  const container = document.getElementById('inbox-alerts-container');
+  if (!alerts.length) {
+    container.innerHTML = '<div class="inbox-empty"><p>No recruiter emails flagged.</p><p>Add companies you have applied to and click <strong>Scan Inbox</strong>.</p></div>';
+    return;
+  }
+  const urgencyLabel = { HIGH: '🔴 Respond now', MEDIUM: '🟡 Review', LOW: '⚪ No action' };
+  container.innerHTML = alerts.map(a => `
+    <div class="alert-item" id="alert-${a.id}">
+      <div class="alert-header">
+        <div class="alert-meta">
+          <div class="alert-from">${escHtml(a.from_name || a.from_email)} ${a.company ? '· ' + escHtml(a.company) : ''}</div>
+          <div class="alert-subject">${escHtml(a.subject || '(no subject)')}</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
+          <span class="alert-urgency urgency-${a.urgency}">${urgencyLabel[a.urgency] || a.urgency}</span>
+          <span class="alert-time">${timeAgo(a.received_at)}</span>
+        </div>
+      </div>
+      ${a.snippet ? `<div class="alert-snippet">${escHtml(a.snippet.substring(0, 200))}</div>` : ''}
+      ${a.drafted_reply ? `
+        <div>
+          <div class="alert-draft-label">Drafted response</div>
+          <div class="alert-draft" id="draft-${a.id}" contenteditable="true">${escHtml(a.drafted_reply)}</div>
+        </div>
+        <div class="alert-btns">
+          <button class="btn-send" id="send-btn-${a.id}" onclick="sendReply(${a.id},'${escHtml(a.gmail_thread_id || '')}', document.getElementById('draft-${a.id}').textContent)">Send Reply</button>
+          <button class="btn-dismiss" onclick="dismissAlert(${a.id})">Dismiss</button>
+        </div>
+      ` : `
+        <div class="alert-btns">
+          <button class="btn-dismiss" onclick="dismissAlert(${a.id})">Dismiss</button>
+        </div>
+      `}
+    </div>
+  `).join('');
+}
+
+function timeAgo(dateStr) {
+  if (!dateStr) return '';
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const h = Math.floor(diff / 3600000);
+  const d = Math.floor(h / 24);
+  if (d > 1) return d + ' days ago';
+  if (d === 1) return 'yesterday';
+  if (h > 1) return h + ' hours ago';
+  if (h === 1) return '1 hour ago';
+  return 'just now';
+}
+
+function escHtml(str) {
+  return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
 // ── Memory helpers ───────────────────────────────────────
