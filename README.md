@@ -102,6 +102,8 @@ npm run mock            # practice with live grading
 | **Search** | `npm run jobs` | Search Indeed, LinkedIn, Glassdoor |
 | | `npm run salary` | Research market comp |
 | | `npm run outreach` | Cold message a recruiter |
+| | `npm run inbox` | Scan Gmail for recruiter emails — flag urgent, draft responses |
+| | `npm run send-email` | Send drafted responses via Gmail |
 | **Interview** | `npm run research` | One-page company + interviewer brief |
 | | `npm run interview` | Story bank + coached answers |
 | | `npm run mock` | Live mock interview with grading |

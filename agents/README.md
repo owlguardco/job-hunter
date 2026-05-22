@@ -47,6 +47,8 @@ npm start   # then use the web UI at http://localhost:3000
 | `search-jobs.md` | `npm run jobs` | Search job boards |
 | `search-salary.md` | `npm run salary` | Research market comp |
 | `search-outreach.md` | `npm run outreach` | Cold message a recruiter |
+| `search-inbox-scan.md` | `npm run inbox` | Scan Gmail for recruiter emails, flag urgent ones, draft responses |
+| `search-send-email.md` | `npm run send-email` | Send drafted responses via Gmail MCP |
 
 ## interview-* — Interview prep tools
 

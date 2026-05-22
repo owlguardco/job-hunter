@@ -103,8 +103,9 @@ const stages = [
       { cmd: 'npm run fit',           desc: 'Score a specific role before committing to an application' },
       { cmd: 'npm run salary',        desc: 'Research comp before any screening call' },
       { cmd: 'npm run outreach',      desc: 'Cold message a recruiter at a company with no open role' },
+      { cmd: 'npm run inbox',         desc: 'Scan Gmail for recruiter emails — flag urgent ones and draft responses' },
     ],
-    tip: 'Start with reality-check — do it once. It tells you your actual market tier and stops you wasting applications. Then run jobs to find roles that fit.',
+    tip: 'Run inbox daily during an active search — recruiter emails have short windows. Start with reality-check — do it once. It tells you your actual market tier and stops you wasting applications. Then run jobs to find roles that fit.',
     next: 'apply',
   },
   {
