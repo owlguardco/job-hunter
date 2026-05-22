@@ -8,7 +8,7 @@
   <a href="docs/CONTRIBUTING.md"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs Welcome" /></a>
 </p>
 
-> I searched for six months and got nowhere. The turning point wasn't working harder — it was getting honest about what I was actually competitive for, and stopping the spray-and-pray. Then I built tools to sharpen every step of the process. Wrapped up the search in under two months. This is everything I learned, packaged so you don't have to figure it out the hard way.
+> I searched for months and got nowhere. The turning point wasn't working harder — it was getting honest about what I was actually competitive for, and stopping the spray-and-pray. Then I built tools to sharpen every step of the process. Wrapped up the search in under two months. This is everything I learned, packaged so you don't have to figure it out the hard way.
 
 ---
 
