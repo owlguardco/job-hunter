@@ -4,6 +4,59 @@ All notable changes to Job Hunter are documented here.
 
 ---
 
+## [1.2.1] — 2026-05-21 — Current
+
+### Security hardening
+- Clerk webhook: full Svix cryptographic signature verification (`wh.verify`)
+- Input sanitization: strips prompt injection patterns, 10K char cap
+- Rate limiting: 20 req/min per user on `/api/run`
+- CORS: locked to `APP_URL` in production
+- Audit log: `audit_log` table + `auditLog()` for tool runs, purchases, memory clears
+- Session cleanup: automated hourly scheduler (sessions, audit entries, alerts)
+- Python version check in preflight for `npm run jobs`
+- LinkedIn scraper session security note in `SECURITY.md`
+
+### Added
+- `agents/apply-reality-check.md` (`npm run reality-check`) — market tier, what you're competitive for, gap analysis
+- `agents/apply-fit-score.md` (`npm run fit`) — 1-10 score, Apply/Don't Apply/Apply With Caveats verdict
+- `agents/search-inbox-scan.md` (`npm run inbox`) — Gmail scan, classify recruiter emails, draft responses
+- `agents/search-send-email.md` (`npm run send-email`) — review and send drafted responses via Gmail
+- Mem0 persistent memory layer (commercial) — cross-session user context
+- Inbox monitor dashboard panel (commercial) — flagged emails, drafted responses, one-click send
+- `commercial/server/inbox.js` — Gmail polling, classification, draft generation
+- `commercial/server/memory.js` — Mem0 wrapper with graceful degradation
+- `docs/AUDIT.md` — full security audit with pre-launch checklist
+
+### Fixed
+- `execSync` imported but unused in `server.js` — removed
+- `server.js` agentMap missing `reality`, `fit`, `inbox`, `jobs`, `salary`, `schedule` — added all 21 tools
+- Duplicate `type === 'ats'` check in `web/index.html` — removed
+- Duplicate `type === 'interview'` check — merged into single clean block
+- Missing preflight on 9 npm scripts — all scripts now validate inputs before running
+- `agents/apply-linkedin-scrape.md` doubled input path — fixed
+- `agents/search-send-email.md` missing next-steps section — added
+
+---
+
+## [1.1.0] — 2026-05-21
+
+### Added
+- `agents/apply-reality-check.md` — resume reality check
+- `agents/apply-fit-score.md` — job fit scorer
+- `npm run reality-check`, `npm run fit`
+
+---
+
+## [1.0.0] — 2026-05-21
+
+### Added
+- `CLAUDE.md` — project context for Claude Code sessions
+- Persistent profile storage (commercial) — Postgres profiles table
+- In-session context threading (commercial) — sessions table
+- Legal docs: Privacy Policy, Terms of Service, Refund Policy
+
+---
+
 ## [0.8.0] — 2026-05-21
 
 ### Added — Automation layer
