@@ -191,10 +191,12 @@ job-hunter/                        (main branch — open source)
 │
 ├── agents/                        43 prompt files — one per tool
 │   ├── apply-*   (14)             reality-check, fit-score, bias-audit, rejection-analysis,
-│   │                              reference-prep, resume, cover-letter, ats-scan,
-│   │                              decode-jd, portfolio-brief, linkedin-audit, linkedin-scrape
-│   ├── search-*  (12)             jobs, salary, company-research, ghost-job-detector, referral-finder,
-│   │                              follow-up, interview-scorecard, momentum-check, outreach, inbox-scan, send-email, tracker-update
+│   │                              reference-prep, skills-gap-filler, assessment-prep,
+│   │                              resume, cover-letter, ats-scan, decode-jd,
+│   │                              portfolio-brief, linkedin-audit, linkedin-scrape
+│   ├── search-*  (12)             jobs, salary, company-research, ghost-job-detector,
+│   │                              referral-finder, follow-up, interview-scorecard,
+│   │                              momentum-check, outreach, inbox-scan, send-email, tracker-update
 │   ├── interview-* (6)            prep, mock, research, question-bank, debrief, panel-decoder
 │   ├── offer-*   (6)              negotiate, counteroffer, deadline-manager,
 │   │                              compare, schedule, thankyou
