@@ -54,6 +54,29 @@ function check(label, filePath, required = true) {
   return true;
 }
 
+function checkPython() {
+  const { execSync } = require('child_process');
+  try {
+    const ver = execSync('python3.11 --version 2>/dev/null || python3 --version 2>/dev/null', { encoding: 'utf8' }).trim();
+    const match = ver.match(/Python (\d+)\.(\d+)/);
+    if (match) {
+      const minor = parseInt(match[2]);
+      const major = parseInt(match[1]);
+      if (major === 3 && minor >= 10) {
+        console.log('  ✓  Python', ver.replace('Python ', ''));
+        return true;
+      }
+    }
+    console.error('  ✗  Python 3.10+ required for npm run jobs');
+    console.error('     Install with: brew install python@3.11');
+    return false;
+  } catch {
+    console.error('  ✗  Python not found — required for npm run jobs');
+    console.error('     Install with: brew install python@3.11');
+    return false;
+  }
+}
+
 function checkEnv() {
   const envPath = path.join(ROOT, ".env");
   if (!fs.existsSync(envPath)) {
