@@ -16,11 +16,12 @@
 
 Job Hunter is a free AI toolkit that helps you:
 
-- **Know where you stand** — resume reality check tells you what tier you're actually in, what roles you'll win, and what's keeping you from moving up. Job fit scorer tells you if a specific role is worth applying to before you spend an hour on it.
-- **Write better applications** — tailored resumes, cover letters that don't sound like a bot, ATS scanner so software doesn't filter you out before a human sees your name
-- **Prep for interviews** — story bank, coached answers, live mock interview with real-time grading
-- **Handle offers** — practice the negotiation conversation, compare two offers side by side
-- **Grow your career** — promotion case builder, performance review prep, internal job applications
+- **Know where you stand** — reality check tells you your actual market tier. Fit scorer tells you if a specific role is worth applying to. Bias audit finds every signal getting you auto-rejected before a human sees your name. Rejection analyzer finds the pattern when you're not getting callbacks.
+- **Find the right roles** — job search across three boards, deep company due diligence, referral finder to build the warm path, follow-up generator for every stage, recruiter inbox monitor that drafts responses automatically.
+- **Write better applications** — tailored resume, cover letter, ATS scan, portfolio case study, reference briefs so your references say the right things.
+- **Prep for and debrief every interview** — story bank, coached answers, live mock with grading, smart question bank, debrief right after to capture what happened.
+- **Handle offers properly** — negotiate the conversation, write the counter-offer email, manage competing deadlines, compare side by side.
+- **Stay visible and grow** — LinkedIn content that builds credibility, network messages that don't feel transactional, promotion case builder, review prep.
 
 **It's free.** You bring an Anthropic API key (~$5 covers ~100 uses). Or use the [hosted version](#-just-want-to-use-it-no-setup) if you don't want to deal with any of that.
 
@@ -167,13 +168,16 @@ job-hunter/                        (main branch — open source)
 ├── CLAUDE.md                      project context for Claude Code sessions
 ├── README.md · LICENSE · server.js · package.json
 │
-├── agents/                        31 prompt files — one per tool
-│   ├── apply-*   (9)              reality-check, fit-score, resume, cover-letter,
-│   │                              ats-scan, decode-jd, linkedin-audit, linkedin-scrape, portfolio-brief
-│   ├── search-*  (5)              jobs, salary, outreach, inbox-scan, send-email
+├── agents/                        37 prompt files — one per tool
+│   ├── apply-*   (12)             reality-check, fit-score, bias-audit, rejection-analysis,
+│   │                              reference-prep, resume, cover-letter, ats-scan,
+│   │                              decode-jd, portfolio-brief, linkedin-audit, linkedin-scrape
+│   ├── search-*  (9)              jobs, salary, company-research, referral-finder,
+│   │                              follow-up, outreach, inbox-scan, send-email, tracker-update
 │   ├── interview-* (5)            prep, mock, research, question-bank, debrief
-│   ├── offer-*   (5)              negotiate, counteroffer, compare, schedule, thank-you
-│   └── career-*  (4)              promote, review, internal, network-message
+│   ├── offer-*   (6)              negotiate, counteroffer, deadline-manager,
+│   │                              compare, schedule, thankyou
+│   └── career-*  (5)              promote, review, internal, network-message, linkedin-content
 │
 ├── inputs/                        paste your stuff here (git-ignored)
 │   ├── my-resume.md
@@ -206,9 +210,10 @@ job-hunter/                        (main branch — open source)
     ├── CHANGELOG.md
     ├── CONTRIBUTING.md
     ├── SECURITY.md
+    ├── AUDIT.md
     ├── advanced-automation.md
     └── templates/
-        └── JOB-TRACKER.md        markdown pipeline tracker
+        └── JOB-TRACKER.md
 ```
 
 ```
@@ -222,15 +227,15 @@ job-hunter/                        (commercial branch — adds hosted layer)
 │
 ├── commercial/
 │   ├── server/
-│   │   ├── index.js               Clerk auth · Stripe billing · Postgres · API routes
+│   │   ├── index.js               Clerk auth · Stripe billing · Postgres · 20+ API routes
 │   │   ├── memory.js              Mem0 persistent memory layer
-│   │   └── inbox.js               Gmail polling · alert classification · draft responses
+│   │   └── inbox.js               Gmail polling · classification · draft responses
 │   ├── db/
-│   │   ├── schema.sql             users · credits · purchases · usage ·
-│   │   │                          profiles · sessions · inbox_alerts · tracked_companies
+│   │   ├── schema.sql             9 tables: users · credits · purchases · usage ·
+│   │   │                          profiles · sessions · inbox_alerts · tracked_companies · audit_log
 │   │   └── migrate.js
 │   ├── web/
-│   │   └── index.html             commercial UI — landing · dashboard · inbox monitor ·
+│   │   └── index.html             26-tool dashboard · landing · inbox monitor ·
 │   │                              purchase modal · memory panel
 │   └── .env.example
 │
