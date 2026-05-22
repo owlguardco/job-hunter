@@ -79,6 +79,15 @@ ${rules}`;
     promote:  'career-promote',
     review:   'career-review',
     internal: 'career-internal',
+    network:  'career-network-message',
+    // New tools
+    referrals:  'search-referral-finder',
+    'follow-up':'search-follow-up',
+    company:    'search-company-research',
+    counter:    'offer-counteroffer',
+    debrief:    'interview-debrief',
+    questions:  'interview-question-bank',
+    portfolio:  'apply-portfolio-brief',
   };
 
   const agentName = agentMap[toolType];

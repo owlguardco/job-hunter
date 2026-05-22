@@ -93,22 +93,29 @@ npm run mock            # practice with live grading
 | **Reality Check** | `npm run reality-check` | Honest assessment of where you stand — what roles you'll actually win |
 | | `npm run fit` | Score how competitive you are for a specific role before applying |
 | **Apply** | `npm run linkedin` | Audit your LinkedIn profile |
+| | `npm run portfolio` | Build a one-page project case study |
 | | `npm run decode` | Decode a JD — red flags, real pay, subtext |
 | | `npm run ats` | Scan resume for ATS issues before submitting |
 | | `npm run resume` | Tailor resume to a specific role |
 | | `npm run cover-letter` | Write a cover letter that sounds human |
 | **Search** | `npm run jobs` | Search Indeed, LinkedIn, Glassdoor |
 | | `npm run salary` | Research market comp |
+| | `npm run company` | Deep company due diligence before pursuing |
+| | `npm run referrals` | Find warm intro paths — who to contact and what to say |
+| | `npm run follow-up` | Follow-up message for any stage |
 | | `npm run outreach` | Cold message a recruiter |
 | | `npm run inbox` | Scan Gmail for recruiter emails — flag urgent, draft responses |
 | | `npm run send-email` | Send drafted responses via Gmail |
 | **Interview** | `npm run research` | One-page company + interviewer brief |
 | | `npm run interview` | Story bank + coached answers |
 | | `npm run mock` | Live mock interview with grading |
+| | `npm run questions` | 15 smart questions to ask — ranked by impact |
+| | `npm run debrief` | Grade yourself right after the interview |
 | **Offer** | `npm run negotiate` | Practice the negotiation conversation |
 | | `npm run compare` | Compare two offers side by side |
 | | `npm run send-thankyou` | Send thank-you via Gmail |
 | **Career** | `npm run promote` | Build your promotion case |
+| | `npm run network` | Stay warm with your network between searches |
 | | `npm run review` | Prep for your performance review |
 | | `npm run internal` | Apply for an internal role |
 
@@ -160,13 +167,13 @@ job-hunter/                        (main branch — open source)
 ├── CLAUDE.md                      project context for Claude Code sessions
 ├── README.md · LICENSE · server.js · package.json
 │
-├── agents/                        23 prompt files — one per tool
-│   ├── apply-*   (8)              reality-check, fit-score, resume, cover-letter,
-│   │                              ats-scan, decode-jd, linkedin-audit, linkedin-scrape
+├── agents/                        31 prompt files — one per tool
+│   ├── apply-*   (9)              reality-check, fit-score, resume, cover-letter,
+│   │                              ats-scan, decode-jd, linkedin-audit, linkedin-scrape, portfolio-brief
 │   ├── search-*  (5)              jobs, salary, outreach, inbox-scan, send-email
-│   ├── interview-* (3)            prep, mock, research
-│   ├── offer-*   (4)              negotiate, compare, schedule, thank-you
-│   └── career-*  (3)              promote, review, internal
+│   ├── interview-* (5)            prep, mock, research, question-bank, debrief
+│   ├── offer-*   (5)              negotiate, counteroffer, compare, schedule, thank-you
+│   └── career-*  (4)              promote, review, internal, network-message
 │
 ├── inputs/                        paste your stuff here (git-ignored)
 │   ├── my-resume.md
