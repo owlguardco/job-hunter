@@ -26,6 +26,7 @@ const path = require('path');
 const { Client } = require('pg');
 const memory = require('./memory');
 const { scanInbox, draftResponse } = require('./inbox');
+const { handleAdminRoute } = require('./admin');
 const { Webhook } = require('svix');
 
 const PORT = process.env.PORT || 3001;
@@ -1010,7 +1011,26 @@ const server = http.createServer(async (req, res) => {
     }
   }
 
+  // ── Admin routes (role-gated) ───────────────────────────
+  if (url.pathname.startsWith('/api/admin/')) {
+    const adminBody = req.method === 'POST' ? await body(req) : {};
+    const adminResult = await handleAdminRoute(url, req, db, userId, adminBody,
+      (_, status, data) => json(res, status, data)
+    );
+    if (adminResult !== null) return;
+  }
+
   // ── Legal routes ────────────────────────────────────────
+  // ── Admin UI ──────────────────────────────────────────────
+  if (url.pathname === '/admin' || url.pathname === '/admin/') {
+    const adminPath = path.join(COMMERCIAL_WEB, 'admin.html');
+    if (fs.existsSync(adminPath)) {
+      res.writeHead(200, { 'Content-Type': 'text/html' });
+      res.end(fs.readFileSync(adminPath));
+      return;
+    }
+  }
+
   const legalRoutes = {
     '/legal/privacy': 'docs/legal/privacy-policy.md',
     '/legal/terms':   'docs/legal/terms-of-service.md',

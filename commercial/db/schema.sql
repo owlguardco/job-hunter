@@ -137,3 +137,18 @@ CREATE TABLE IF NOT EXISTS audit_log (
 CREATE INDEX IF NOT EXISTS idx_audit_log_user_id ON audit_log(user_id);
 CREATE INDEX IF NOT EXISTS idx_audit_log_action ON audit_log(action);
 CREATE INDEX IF NOT EXISTS idx_audit_log_created_at ON audit_log(created_at);
+
+-- ── LinkedIn Drafts ───────────────────────────────────────
+-- Admin-only: stores drafted LinkedIn posts for Job Hunter promotion
+CREATE TABLE IF NOT EXISTS linkedin_drafts (
+  id          SERIAL PRIMARY KEY,
+  text        TEXT NOT NULL,
+  style       VARCHAR(50) DEFAULT 'contribution',
+  link        VARCHAR(500) DEFAULT 'https://jobhunter.ai',
+  created_by  VARCHAR(255),
+  posted_at   TIMESTAMPTZ,
+  post_id     VARCHAR(255),
+  created_at  TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_linkedin_drafts_created_at ON linkedin_drafts(created_at);

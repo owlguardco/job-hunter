@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Job Hunter — Admin</title>
+<script src="https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap');
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root {
+  --bg:#0e0c0a; --surface:#161412; --surface2:#1e1b18;
+  --border:#2a2520; --text:#f0ece6; --muted:#6b6058;
+  --orange:#e8722a; --orange-dim:#7a3a10;
+  --green:#3dba7e; --green-dim:#1a4a35;
+  --red:#e85252; --blue:#4a9eff;
+  --radius:10px; --radius-sm:6px;
+}
+
+body { font-family:'Syne',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; font-size:14px; }
+
+/* ── LAYOUT ── */
+.shell { display:flex; min-height:100vh; }
+.sidebar {
+  width:220px; flex-shrink:0; background:var(--surface);
+  border-right:1px solid var(--border); padding:1.5rem 0;
+  display:flex; flex-direction:column;
+}
+.main { flex:1; padding:2rem; overflow:auto; }
+
+/* ── SIDEBAR ── */
+.sidebar-logo { padding:0 1.25rem 1.5rem; border-bottom:1px solid var(--border); margin-bottom:1rem; }
+.sidebar-logo img { height:24px; }
+.admin-badge {
+  display:inline-block; margin-top:6px;
+  font-size:10px; font-weight:700; text-transform:uppercase;
+  letter-spacing:0.1em; color:var(--orange);
+  padding:2px 8px; background:var(--orange-dim); border-radius:99px;
+}
+.nav-item {
+  display:flex; align-items:center; gap:10px;
+  padding:10px 1.25rem; font-size:13px; font-weight:600;
+  color:var(--muted); cursor:pointer; border:none; background:none;
+  width:100%; text-align:left; transition:all 0.15s; border-radius:0;
+  font-family:'Syne',sans-serif;
+}
+.nav-item:hover { color:var(--text); background:var(--surface2); }
+.nav-item.active { color:var(--orange); background:var(--orange-dim); }
+.nav-icon { font-size:16px; width:20px; text-align:center; }
+.sidebar-footer { margin-top:auto; padding:1rem 1.25rem; border-top:1px solid var(--border); }
+#sidebar-user-btn { display:block; }
+
+/* ── HEADER ── */
+.page-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:2rem; }
+.page-title { font-size:1.4rem; font-weight:700; }
+.page-subtitle { font-size:12px; color:var(--muted); margin-top:2px; }
+
+/* ── STATS GRID ── */
+.stats-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--border); border-radius:var(--radius); overflow:hidden; margin-bottom:2rem; }
+.stat-card { background:var(--surface); padding:20px; }
+.stat-label { font-size:10px; text-transform:uppercase; letter-spacing:0.1em; color:var(--muted); margin-bottom:6px; }
+.stat-value { font-size:1.8rem; font-weight:800; font-family:'DM Mono',monospace; color:var(--orange); line-height:1.1; }
+.stat-sub { font-size:11px; color:var(--muted); margin-top:4px; }
+
+/* ── SECTIONS ── */
+.section { margin-bottom:2rem; }
+.section-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem; }
+.section-title { font-size:11px; text-transform:uppercase; letter-spacing:0.1em; color:var(--muted); font-weight:700; }
+
+/* ── CARD ── */
+.card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; }
+.card-header { padding:14px 18px; border-bottom:1px solid var(--border); background:var(--surface2); font-size:13px; font-weight:600; }
+.card-body { padding:18px; }
+
+/* ── TABLE ── */
+.table { width:100%; border-collapse:collapse; font-size:12px; }
+.table th { text-align:left; padding:8px 12px; font-size:10px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); border-bottom:1px solid var(--border); }
+.table td { padding:10px 12px; border-bottom:1px solid var(--border); color:var(--muted); }
+.table td:first-child { color:var(--text); }
+.table tr:last-child td { border-bottom:none; }
+.badge { display:inline-block; padding:2px 8px; border-radius:99px; font-size:10px; font-weight:700; font-family:'DM Mono',monospace; }
+.badge-green { background:var(--green-dim); color:var(--green); }
+.badge-orange { background:var(--orange-dim); color:var(--orange); }
+.badge-gray { background:var(--surface2); color:var(--muted); }
+
+/* ── LINKEDIN PANEL ── */
+.post-option { border:1.5px solid var(--border); border-radius:var(--radius); padding:16px; margin-bottom:12px; cursor:pointer; transition:all 0.15s; }
+.post-option:hover { border-color:var(--orange); }
+.post-option.selected { border-color:var(--orange); background:#1e1410; }
+.post-style { font-size:10px; text-transform:uppercase; letter-spacing:0.1em; color:var(--orange); font-weight:700; margin-bottom:8px; }
+.post-text { font-size:13px; line-height:1.7; color:var(--text); white-space:pre-wrap; font-family:'DM Mono',monospace; }
+.post-edit { width:100%; background:var(--bg); border:1px solid var(--border); border-radius:var(--radius-sm); padding:12px; font-family:'DM Mono',monospace; font-size:13px; color:var(--text); resize:vertical; outline:none; line-height:1.7; margin-top:10px; }
+.post-edit:focus { border-color:var(--orange); }
+
+/* ── BUTTONS ── */
+.btn { padding:8px 18px; border-radius:var(--radius-sm); font-family:'Syne',sans-serif; font-size:13px; font-weight:600; cursor:pointer; border:none; transition:all 0.15s; }
+.btn-primary { background:var(--orange); color:white; }
+.btn-primary:hover { background:#d4651f; }
+.btn-ghost { background:transparent; color:var(--muted); border:1px solid var(--border); }
+.btn-ghost:hover { color:var(--text); border-color:var(--muted); }
+.btn-sm { padding:5px 12px; font-size:11px; }
+.btn-green { background:var(--green-dim); color:var(--green); border:1px solid var(--green); }
+.btn-green:hover { background:var(--green); color:var(--bg); }
+.btn:disabled { opacity:0.5; cursor:not-allowed; }
+
+/* ── TOOL BAR CHART ── */
+.tool-bar { display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+.tool-name { width:130px; font-size:11px; color:var(--muted); text-align:right; flex-shrink:0; }
+.bar-track { flex:1; height:6px; background:var(--surface2); border-radius:99px; overflow:hidden; }
+.bar-fill { height:100%; background:var(--orange); border-radius:99px; transition:width 0.5s ease; }
+.tool-count { width:40px; font-size:11px; font-family:'DM Mono',monospace; color:var(--muted); }
+
+/* ── VIEWS ── */
+.view { display:none; }
+.view.active { display:block; }
+
+/* ── SPINNER ── */
+.spinner { width:16px; height:16px; border:2px solid rgba(255,255,255,0.2); border-top-color:white; border-radius:50%; animation:spin 0.7s linear infinite; display:inline-block; vertical-align:middle; margin-right:8px; }
+@keyframes spin { to { transform:rotate(360deg); } }
+
+/* ── STATUS ── */
+.status-msg { padding:10px 14px; border-radius:var(--radius-sm); font-size:13px; margin-top:12px; display:none; }
+.status-msg.visible { display:block; }
+.status-success { background:var(--green-dim); color:var(--green); border:1px solid var(--green); }
+.status-error { background:#4a1515; color:var(--red); border:1px solid var(--red); }
+</style>
+</head>
+<body>
+
+<div id="access-denied" style="display:none;max-width:400px;margin:20vh auto;text-align:center;padding:2rem;">
+  <div style="font-size:2rem;margin-bottom:1rem;">🔒</div>
+  <div style="font-size:1.2rem;font-weight:700;margin-bottom:8px;">Admin access only</div>
+  <div style="color:var(--muted);font-size:13px;">This dashboard is restricted.</div>
+</div>
+
+<div id="loading" style="display:flex;align-items:center;justify-content:center;height:100vh;color:var(--muted);font-size:13px;">
+  <div class="spinner"></div> Verifying access...
+</div>
+
+<div class="shell" id="admin-shell" style="display:none;">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-logo">
+      <img src="logo.svg" alt="Job Hunter" />
+      <div><span class="admin-badge">Admin</span></div>
+    </div>
+
+    <button class="nav-item active" onclick="switchView('overview')">
+      <span class="nav-icon">📊</span> Overview
+    </button>
+    <button class="nav-item" onclick="switchView('linkedin')">
+      <span class="nav-icon">💼</span> LinkedIn Posts
+    </button>
+    <button class="nav-item" onclick="switchView('users')">
+      <span class="nav-icon">👥</span> Users
+    </button>
+    <button class="nav-item" onclick="switchView('revenue')">
+      <span class="nav-icon">💰</span> Revenue
+    </button>
+
+    <div class="sidebar-footer">
+      <div id="sidebar-user-btn"></div>
+      <div style="margin-top:10px;">
+        <a href="/" style="font-size:11px;color:var(--muted);text-decoration:none;">← Public dashboard</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- OVERVIEW -->
+    <div class="view active" id="view-overview">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Overview</div>
+          <div class="page-subtitle" id="overview-updated">Loading...</div>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="loadStats()">Refresh</button>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Total Users</div>
+          <div class="stat-value" id="stat-users">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Total Revenue</div>
+          <div class="stat-value" id="stat-revenue">—</div>
+          <div class="stat-sub" id="stat-revenue-30d"></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Total Tool Runs</div>
+          <div class="stat-value" id="stat-runs">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Active Today</div>
+          <div class="stat-value" id="stat-active">—</div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-header">
+          <div class="section-title">Most Used Tools</div>
+        </div>
+        <div class="card">
+          <div class="card-body" id="tool-chart">
+            <div style="color:var(--muted);font-size:12px;">Loading...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LINKEDIN POSTS -->
+    <div class="view" id="view-linkedin">
+      <div class="page-header">
+        <div>
+          <div class="page-title">LinkedIn Posts</div>
+          <div class="page-subtitle">Generate and post Job Hunter content to your LinkedIn</div>
+        </div>
+      </div>
+
+      <!-- Generate new posts -->
+      <div class="card" style="margin-bottom:1.5rem;">
+        <div class="card-header">Generate 3 Post Options</div>
+        <div class="card-body">
+          <div style="margin-bottom:14px;">
+            <label style="display:block;font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:6px;">What angle? (optional)</label>
+            <input type="text" id="post-angle" placeholder='e.g. "ghost jobs" or "bias audit" or "rejection analysis"'
+              style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;color:var(--text);outline:none;font-family:'DM Mono',monospace;">
+          </div>
+          <button class="btn btn-primary" id="generate-btn" onclick="generatePosts()">
+            Generate 3 Options
+          </button>
+          <div id="generate-status" class="status-msg"></div>
+        </div>
+      </div>
+
+      <!-- Post options -->
+      <div id="post-options-section" style="display:none;">
+        <div class="section-title" style="margin-bottom:12px;">Select and edit a post</div>
+
+        <div id="post-option-1" class="post-option" onclick="selectPost(1)">
+          <div class="post-style">Option 1 — Contribution</div>
+          <div class="post-text" id="post-text-1"></div>
+        </div>
+        <div id="post-option-2" class="post-option" onclick="selectPost(2)">
+          <div class="post-style">Option 2 — Story</div>
+          <div class="post-text" id="post-text-2"></div>
+        </div>
+        <div id="post-option-3" class="post-option" onclick="selectPost(3)">
+          <div class="post-style">Option 3 — Resource</div>
+          <div class="post-text" id="post-text-3"></div>
+        </div>
+
+        <div id="selected-post-section" style="display:none;margin-top:1.5rem;">
+          <div class="section-title" style="margin-bottom:10px;">Edit before posting</div>
+          <textarea class="post-edit" id="post-edit-area" rows="8"></textarea>
+          <div style="margin-top:10px;display:flex;gap:10px;align-items:center;">
+            <button class="btn btn-green" id="post-btn" onclick="postToLinkedIn()">Post to LinkedIn</button>
+            <button class="btn btn-ghost btn-sm" onclick="saveAsDraft()">Save Draft</button>
+            <span style="font-size:11px;color:var(--muted);">Always includes link to jobhunter.ai</span>
+          </div>
+          <div id="post-status" class="status-msg"></div>
+        </div>
+      </div>
+
+      <!-- Past drafts -->
+      <div class="section" style="margin-top:2rem;">
+        <div class="section-header">
+          <div class="section-title">Past Drafts</div>
+        </div>
+        <div class="card">
+          <div class="card-body" id="drafts-container">
+            <div style="color:var(--muted);font-size:12px;">No drafts yet.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- USERS -->
+    <div class="view" id="view-users">
+      <div class="page-header">
+        <div class="page-title">Users</div>
+      </div>
+      <div class="card">
+        <div class="card-body">
+          <div style="display:flex;gap:10px;margin-bottom:14px;">
+            <input type="text" id="user-search" placeholder="Search by email..."
+              style="flex:1;padding:8px 12px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:12px;color:var(--text);outline:none;"
+              oninput="filterUsers()">
+          </div>
+          <div style="overflow-x:auto;">
+            <table class="table" id="users-table">
+              <thead>
+                <tr>
+                  <th>Email</th>
+                  <th>Credits</th>
+                  <th>Runs</th>
+                  <th>Spent</th>
+                  <th>Last active</th>
+                  <th>Joined</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="users-tbody">
+                <tr><td colspan="7" style="text-align:center;color:var(--muted);">Loading...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- REVENUE -->
+    <div class="view" id="view-revenue">
+      <div class="page-header">
+        <div class="page-title">Revenue</div>
+      </div>
+      <div class="card">
+        <div style="overflow-x:auto;">
+          <table class="table" id="revenue-table">
+            <thead>
+              <tr>
+                <th>Email</th>
+                <th>Pack</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody id="revenue-tbody">
+              <tr><td colspan="5" style="text-align:center;color:var(--muted);">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /shell -->
+
+<script>
+// ── State ─────────────────────────────────────────────────
+let clerkToken = null;
+let allUsers = [];
+let selectedPostNum = null;
+const posts = {};
+
+// ── Clerk init ────────────────────────────────────────────
+window.addEventListener('load', async () => {
+  const key = document.querySelector('meta[name="clerk-key"]')?.content;
+  if (!key) {
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('access-denied').style.display = 'block';
+    return;
+  }
+
+  const clerk = new Clerk(key);
+  await clerk.load();
+
+  clerk.addListener(async ({ user }) => {
+    if (!user) {
+      window.location.href = '/';
+      return;
+    }
+
+    // Get token and verify admin
+    const session = clerk.session;
+    clerkToken = await session.getToken();
+
+    const res = await fetch('/api/admin/stats', {
+      headers: { 'Authorization': `Bearer ${clerkToken}` }
+    });
+
+    document.getElementById('loading').style.display = 'none';
+
+    if (res.status === 403) {
+      document.getElementById('access-denied').style.display = 'block';
+      return;
+    }
+
+    // Admin confirmed — show shell
+    document.getElementById('admin-shell').style.display = 'flex';
+    clerk.mountUserButton(document.getElementById('sidebar-user-btn'));
+
+    // Load initial data
+    const stats = await res.json();
+    renderStats(stats);
+    loadUsers();
+    loadRevenue();
+    loadDrafts();
+  });
+
+  window._clerk = clerk;
+});
+
+// ── Navigation ────────────────────────────────────────────
+function switchView(name) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('view-' + name).classList.add('active');
+  event.target.closest('.nav-item').classList.add('active');
+}
+
+// ── Stats ─────────────────────────────────────────────────
+async function loadStats() {
+  const res = await api('/api/admin/stats');
+  renderStats(res);
+}
+
+function renderStats(data) {
+  document.getElementById('stat-users').textContent = data.users.toLocaleString();
+  document.getElementById('stat-revenue').textContent = '$' + data.revenue.total.toFixed(2);
+  document.getElementById('stat-revenue-30d').textContent = '$' + data.revenue.last30Days.toFixed(2) + ' last 30 days';
+  document.getElementById('stat-runs').textContent = data.usage.totalRuns.toLocaleString();
+  document.getElementById('stat-active').textContent = data.usage.activeToday.toLocaleString();
+  document.getElementById('overview-updated').textContent = 'Updated ' + new Date().toLocaleTimeString();
+
+  // Tool chart
+  const sorted = Object.entries(data.usage.byTool).sort((a,b) => b[1] - a[1]).slice(0, 12);
+  const max = sorted[0]?.[1] || 1;
+  const chart = document.getElementById('tool-chart');
+  chart.innerHTML = sorted.map(([tool, count]) => `
+    <div class="tool-bar">
+      <div class="tool-name">${tool}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${(count/max*100).toFixed(1)}%"></div></div>
+      <div class="tool-count">${count}</div>
+    </div>
+  `).join('') || '<div style="color:var(--muted);font-size:12px;">No runs yet.</div>';
+}
+
+// ── Users ─────────────────────────────────────────────────
+async function loadUsers() {
+  const res = await api('/api/admin/users');
+  allUsers = res.users || [];
+  renderUsers(allUsers);
+}
+
+function renderUsers(users) {
+  const tbody = document.getElementById('users-tbody');
+  if (!users.length) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--muted);">No users yet.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = users.map(u => {
+    const unlimited = u.unlimited_until && new Date(u.unlimited_until) > new Date();
+    const credits = unlimited ? '∞' : (u.balance || 0);
+    const badge = unlimited ? '<span class="badge badge-green">∞</span>' : `<span class="badge badge-orange">${credits}</span>`;
+    return `<tr>
+      <td>${u.email}</td>
+      <td>${badge}</td>
+      <td>${u.total_runs || 0}</td>
+      <td>$${parseFloat(u.total_spent || 0).toFixed(2)}</td>
+      <td>${u.last_run ? timeAgo(u.last_run) : 'never'}</td>
+      <td>${new Date(u.created_at).toLocaleDateString()}</td>
+      <td><button class="btn btn-ghost btn-sm" onclick="addCreditsPrompt('${u.id}','${u.email}')">+ Credits</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function filterUsers() {
+  const q = document.getElementById('user-search').value.toLowerCase();
+  renderUsers(allUsers.filter(u => u.email.toLowerCase().includes(q)));
+}
+
+async function addCreditsPrompt(userId, email) {
+  const n = prompt(`Add credits to ${email}:`);
+  if (!n || isNaN(parseInt(n))) return;
+  await api('/api/admin/user/credit', { targetUserId: userId, credits: parseInt(n) });
+  alert(`Added ${n} credits to ${email}`);
+  loadUsers();
+}
+
+// ── Revenue ───────────────────────────────────────────────
+async function loadRevenue() {
+  const res = await api('/api/admin/revenue');
+  const tbody = document.getElementById('revenue-tbody');
+  if (!res.purchases?.length) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--muted);">No purchases yet.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = res.purchases.map(p => `<tr>
+    <td>${p.email || '—'}</td>
+    <td><span class="badge badge-orange">${p.pack_type}</span></td>
+    <td>$${(p.amount_cents/100).toFixed(2)}</td>
+    <td><span class="badge ${p.status==='complete'?'badge-green':'badge-gray'}">${p.status}</span></td>
+    <td>${new Date(p.created_at).toLocaleDateString()}</td>
+  </tr>`).join('');
+}
+
+// ── LinkedIn Posts ────────────────────────────────────────
+async function generatePosts() {
+  const angle = document.getElementById('post-angle').value.trim();
+  const btn = document.getElementById('generate-btn');
+  const status = document.getElementById('generate-status');
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Generating...';
+  status.className = 'status-msg';
+
+  try {
+    // Call the AI to generate 3 post options
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${clerkToken}`,
+      },
+      body: JSON.stringify({ type: 'linkedin-post-admin', angle, generateThree: true })
+    });
+
+    // Actually call our own backend which calls Anthropic
+    const data = await api('/api/run', {
+      type: 'linkedin-post',
+      inputs: {
+        resume: 'Job Hunter founder — built the tool after a 6-month search that turned around in 2 months',
+        context: `Generate 3 LinkedIn posts promoting Job Hunter.
+${angle ? `Focus angle: ${angle}` : 'Pick the most compelling angle from the tool set.'}
+
+Post 1 — Contribution style: Lead with a specific insight about the job search problem. Mention Job Hunter naturally as context, not as an ad. End with jobhunter.ai.
+
+Post 2 — Story style: Open in the middle of a moment. Personal, specific. The lesson is one sentence. End with jobhunter.ai.
+
+Post 3 — Resource style: Name the specific problem. Name the specific tool that solves it. Direct and brief. End with jobhunter.ai.
+
+Rules: No em dashes. No "Hi". No "I'm excited to share". No bullet emojis. Sound like a person. 100-200 words each. Separate each post with ---POST---`
+      }
+    });
+
+    if (data.result) {
+      const parts = data.result.split(/---POST---/i).filter(p => p.trim());
+      [1,2,3].forEach((n, i) => {
+        posts[n] = (parts[i] || '').trim();
+        document.getElementById('post-text-' + n).textContent = posts[n];
+      });
+      document.getElementById('post-options-section').style.display = 'block';
+      document.getElementById('selected-post-section').style.display = 'none';
+      selectedPostNum = null;
+      [1,2,3].forEach(n => document.getElementById('post-option-' + n).classList.remove('selected'));
+    }
+  } catch (err) {
+    status.textContent = 'Generation failed: ' + err.message;
+    status.className = 'status-msg visible status-error';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Generate 3 Options';
+  }
+}
+
+function selectPost(n) {
+  selectedPostNum = n;
+  [1,2,3].forEach(i => document.getElementById('post-option-' + i).classList.toggle('selected', i===n));
+  document.getElementById('post-edit-area').value = posts[n] + '\n\nhttps://jobhunter.ai';
+  document.getElementById('selected-post-section').style.display = 'block';
+  document.getElementById('post-status').className = 'status-msg';
+}
+
+async function postToLinkedIn() {
+  const text = document.getElementById('post-edit-area').value.trim();
+  if (!text) return;
+
+  const btn = document.getElementById('post-btn');
+  const status = document.getElementById('post-status');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Posting...';
+
+  try {
+    const res = await api('/api/admin/linkedin/post', {
+      text,
+      link: 'https://jobhunter.ai'
+    });
+
+    if (res.success) {
+      status.textContent = '✓ Posted to LinkedIn';
+      status.className = 'status-msg visible status-success';
+      loadDrafts();
+    } else {
+      status.textContent = res.error || 'Post failed';
+      status.className = 'status-msg visible status-error';
+    }
+  } catch (err) {
+    status.textContent = err.message;
+    status.className = 'status-msg visible status-error';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Post to LinkedIn';
+  }
+}
+
+async function saveAsDraft() {
+  const text = document.getElementById('post-edit-area').value.trim();
+  if (!text) return;
+  await api('/api/admin/linkedin/draft', { text, style: 'option-' + selectedPostNum });
+  loadDrafts();
+  const status = document.getElementById('post-status');
+  status.textContent = '✓ Draft saved';
+  status.className = 'status-msg visible status-success';
+}
+
+async function loadDrafts() {
+  const res = await api('/api/admin/linkedin/drafts');
+  const container = document.getElementById('drafts-container');
+  if (!res.drafts?.length) {
+    container.innerHTML = '<div style="color:var(--muted);font-size:12px;">No drafts saved yet.</div>';
+    return;
+  }
+  container.innerHTML = res.drafts.map(d => `
+    <div style="padding:12px 0;border-bottom:1px solid var(--border);">
+      <div style="font-size:10px;color:var(--muted);margin-bottom:6px;">${new Date(d.created_at).toLocaleDateString()} · ${d.style}</div>
+      <div style="font-size:12px;color:var(--text);font-family:'DM Mono',monospace;line-height:1.6;white-space:pre-wrap;">${d.text.substring(0,200)}${d.text.length>200?'...':''}</div>
+      <div style="margin-top:8px;display:flex;gap:8px;">
+        <button class="btn btn-ghost btn-sm" onclick="loadDraftToEditor(${JSON.stringify(d.text).replace(/'/g,'\\'')})">Edit + Post</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function loadDraftToEditor(text) {
+  document.getElementById('post-options-section').style.display = 'block';
+  document.getElementById('selected-post-section').style.display = 'block';
+  document.getElementById('post-edit-area').value = text;
+  switchView('linkedin');
+}
+
+// ── Utilities ─────────────────────────────────────────────
+async function api(path, body) {
+  const opts = {
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${clerkToken}` }
+  };
+  if (body) { opts.method = 'POST'; opts.body = JSON.stringify(body); }
+  const res = await fetch(path, opts);
+  return res.json();
+}
+
+function timeAgo(dateStr) {
+  const d = Math.floor((Date.now() - new Date(dateStr)) / 86400000);
+  return d === 0 ? 'today' : d === 1 ? 'yesterday' : d + ' days ago';
+}
+</script>
+</body>
+</html>
