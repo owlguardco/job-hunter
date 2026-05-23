@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "builds": [
+    { "src": "web/index.html", "use": "@vercel/static" },
+    { "src": "web/logo.svg", "use": "@vercel/static" }
+  ],
+  "routes": [
+    { "src": "/logo.svg", "dest": "/web/logo.svg" },
+    { "src": "/(.*)", "dest": "/web/index.html" }
+  ]
+}
