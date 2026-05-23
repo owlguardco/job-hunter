@@ -527,10 +527,19 @@ const MIME = {
 const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, `http://localhost:${PORT}`);
 
-  const corsOrigin = process.env.NODE_ENV === 'production'
-    ? (process.env.APP_URL || 'https://jobhunter.ai')
-    : '*';
+  // Allow both the configured APP_URL and the Vercel preview URL
+  const allowedOrigins = [
+    process.env.APP_URL,
+    'https://job-hunter-psi-wine.vercel.app',
+    'http://localhost:3000',
+    'http://localhost:3001',
+  ].filter(Boolean);
+  const origin = req.headers.origin;
+  const corsOrigin = (process.env.NODE_ENV !== 'production' || allowedOrigins.includes(origin))
+    ? (origin || '*')
+    : allowedOrigins[0];
   res.setHeader('Access-Control-Allow-Origin', corsOrigin);
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
 
@@ -654,10 +663,12 @@ const server = http.createServer(async (req, res) => {
         'SELECT COUNT(*) as total, MAX(created_at) as last_used FROM usage WHERE user_id = $1',
         [userId]
       );
+      const freeMode = process.env.FREE_MODE === 'true';
       return json(res, 200, {
         userId,
-        credits: credits.balance,
-        unlimited: credits.unlimited,
+        credits: freeMode ? 999 : credits.balance,
+        unlimited: freeMode ? true : credits.unlimited,
+        freeMode,
         totalRuns: parseInt(usage.rows[0].total),
         lastUsed: usage.rows[0].last_used,
       });
@@ -908,14 +919,18 @@ const server = http.createServer(async (req, res) => {
     }
 
     try {
-      // Check credits first
-      const credits = await getCredits(userId);
-      if (!credits.unlimited && credits.balance < 1) {
-        return json(res, 402, {
-          error: 'No credits remaining',
-          code: 'INSUFFICIENT_CREDITS',
-          message: 'Purchase more credits to continue.',
-        });
+      // FREE_MODE: skip all credit checks — everyone gets unlimited access
+      const FREE_MODE = process.env.FREE_MODE === 'true';
+
+      if (!FREE_MODE) {
+        const credits = await getCredits(userId);
+        if (!credits.unlimited && credits.balance < 1) {
+          return json(res, 402, {
+            error: 'No credits remaining',
+            code: 'INSUFFICIENT_CREDITS',
+            message: 'Purchase more credits to continue.',
+          });
+        }
       }
 
       const { type, inputs, interviewMode, sessionId } = await body(req);

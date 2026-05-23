@@ -1,27 +1,14 @@
 {
   "version": 2,
-  "name": "job-hunter",
   "builds": [
-    {
-      "src": "commercial/web/index.html",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "commercial/web/admin.html",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "web/logo.svg",
-      "use": "@vercel/static"
-    }
+    { "src": "commercial/web/index.html", "use": "@vercel/static" },
+    { "src": "commercial/web/admin.html", "use": "@vercel/static" },
+    { "src": "web/logo.svg", "use": "@vercel/static" }
   ],
   "routes": [
     { "src": "/logo.svg", "dest": "/web/logo.svg" },
     { "src": "/admin", "dest": "/commercial/web/admin.html" },
     { "src": "/admin/", "dest": "/commercial/web/admin.html" },
-    { "src": "/", "dest": "/commercial/web/index.html" }
-  ],
-  "env": {
-    "NEXT_PUBLIC_API_URL": "@api_url"
-  }
+    { "src": "/(.*)", "dest": "/commercial/web/index.html" }
+  ]
 }

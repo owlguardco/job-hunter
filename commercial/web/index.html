@@ -1075,7 +1075,8 @@ let isUnlimited = false;
 let selectedPack = 'pro';
 let currentSessionId = null;   // in-session context threading
 let userProfile = null;        // saved resume/linkedin/target role
-const API = '';  // same origin
+// Auto-detect: use Railway in production, same origin in dev
+const API = window.location.hostname === 'localhost' ? '' : 'https://job-hunter-production-25c9.up.railway.app';
 
 // ── Clerk init ────────────────────────────────────────────
 window.addEventListener('load', async () => {
