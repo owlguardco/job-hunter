@@ -511,6 +511,7 @@ textarea.filled { border-color: var(--green-dim); }
       <button class="tool-tab" onclick="switchTool('review')">Review Prep</button>
       <button class="tool-tab" onclick="switchTool('network')">Network</button>
       <button class="tool-tab" onclick="switchTool('linkedin-post')">LinkedIn Content</button>
+      <button class="tool-tab" onclick="switchTool('linkedin-scan')">LinkedIn Scanner</button>
     </div>
 
     <!-- Tool Panels -->
@@ -954,6 +955,24 @@ textarea.filled { border-color: var(--green-dim); }
         </div>
       </div>
 
+
+      <!-- LINKEDIN SCANNER -->
+      <div class="tool-panel" id="panel-linkedin-scan">
+        <div class="tool-pane">
+          <div class="tool-pane-header"><div class="tool-pane-title">LinkedIn Post Scanner</div><div class="tool-pane-desc">Find posts worth commenting on. Draft comments. You approve before anything posts.</div></div>
+          <div class="tool-explainer">Scans for posts about job market struggles, ghost jobs, ATS frustration, recruiter behavior, and interview length. Scores each by relevance, reach, and comment window. Drafts 2 comment options per qualifying post. Nothing happens without your approval — this is a read-only scanner with a human-in-the-loop posting flow.</div>
+          <div class="tool-body">
+            <div class="input-group"><label class="input-label">Your LinkedIn URL</label><textarea id="linkedin-scan-url" rows="1" placeholder="https://www.linkedin.com/in/yourname/" oninput="markFilled(this)"></textarea></div>
+            <div class="input-group"><label class="input-label">Your One-Line Description of Job Hunter</label><textarea id="linkedin-scan-tagline" rows="2" placeholder='e.g. "Built a free open source job search toolkit — jobhunter.ai"' oninput="markFilled(this)"></textarea></div>
+            <div class="input-group"><label class="input-label">Topics to Avoid (optional)</label><textarea id="linkedin-scan-avoid" rows="2" placeholder="e.g. politics, specific companies, anything sensitive" oninput="markFilled(this)"></textarea></div>
+            <button class="run-btn" id="linkedin-scan-btn" onclick="runTool('linkedin-scan')"><span>Scan LinkedIn Feed — 1 credit</span></button>
+            <div class="no-credits-msg" id="linkedin-scan-no-credits"><p>You're out of credits.</p><button class="btn btn-primary" onclick="showPurchaseModal()">Buy Credits</button></div>
+            <div class="error-msg" id="linkedin-scan-error"></div>
+            <div class="output-wrap" id="linkedin-scan-output"><div class="output-header"><span class="output-title">✓ Posts Found + Drafted Comments</span><button class="copy-btn" id="linkedin-scan-copy" onclick="copyOutput('linkedin-scan-output-body','linkedin-scan-copy')">Copy</button></div><div class="output-body" id="linkedin-scan-output-body"></div></div>
+          </div>
+        </div>
+      </div>
+
     </div><!-- /tool-panels -->
 
     <div class="divider"></div>
@@ -1280,7 +1299,8 @@ function getBtnLabel(type) {
     counter:       'Build My Counter-Offer — 1 credit',
     deadline:      'Build Deadline Playbook — 1 credit',
     network:       'Write Network Message — 1 credit',
-    'linkedin-post':'Generate 5 Posts — 1 credit',
+    'linkedin-post': 'Generate 5 Posts — 1 credit',
+    'linkedin-scan': 'Scan LinkedIn Feed — 1 credit',
     reality:       'Get My Reality Check — 1 credit',
     fit: 'Score My Fit — 1 credit',
     ats: 'Scan My Resume — 1 credit',
@@ -1314,7 +1334,8 @@ function getInputs(type) {
     counter:   { resume: g('counter-resume'), context: g('counter-offer') },
     deadline:  { resume: g('deadline-resume'), context: g('deadline-situation') },
     network:   { resume: g('network-resume'), context: g('network-contact') },
-    'linkedin-post': { resume: g('linkedin-post-resume'), context: g('linkedin-post-angles') },
+    'linkedin-post':  { resume: g('linkedin-post-resume'), context: g('linkedin-post-angles') },
+    'linkedin-scan':  { context: g('linkedin-scan-url') + '\n' + g('linkedin-scan-tagline') + '\n' + g('linkedin-scan-avoid') },
     reality:   { resume: g('reality-resume'), jd: g('reality-jd') },
     fit:       { resume: g('fit-resume'), jd: g('fit-jd') },
     ats:       { resume: g('ats-resume'), jd: g('ats-jd') },
