@@ -82,6 +82,8 @@ npm start   # then use the web UI at http://localhost:3000
 | `career-review.md` | `npm run review` | Prep for performance review |
 | `career-internal.md` | `npm run internal` | Apply for an internal role |
 | `career-network-message.md` | `npm run network` | Stay warm with your network |
+| `career-linkedin-content.md` | `npm run linkedin-post` | 5 posts that build credibility — not hustle content |
+| `career-linkedin-scanner.md` | `npm run linkedin-scan` | Scan LinkedIn for posts worth commenting on — draft, approve, post |
 
 ---
 
