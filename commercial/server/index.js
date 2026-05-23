@@ -27,6 +27,7 @@ const { Client } = require('pg');
 const memory = require('./memory');
 const { scanInbox, draftResponse } = require('./inbox');
 const { handleAdminRoute } = require('./admin');
+const { handleWhopWebhook } = require('./whop');
 const { Webhook } = require('svix');
 
 const PORT = process.env.PORT || 3001;
@@ -548,7 +549,14 @@ const server = http.createServer(async (req, res) => {
   // ── Health ──────────────────────────────────────────────
   if (url.pathname === '/api/health') {
     const agents = fs.readdirSync(path.join(ROOT, 'agents')).filter(f => f.endsWith('.md'));
-    return json(res, 200, { status: 'ok', agents: agents.length, mode: 'commercial' });
+    return json(res, 200, {
+      status: 'ok',
+      agents: agents.length,
+      mode: 'commercial',
+      freeMode: process.env.FREE_MODE === 'true',
+      whop: !!process.env.WHOP_WEBHOOK_SECRET,
+      stripe: !!process.env.STRIPE_SECRET_KEY,
+    });
   }
 
   // ── Clerk webhook — sync users ──────────────────────────
@@ -647,6 +655,18 @@ const server = http.createServer(async (req, res) => {
       return json(res, 200, { received: true });
     } catch (err) {
       console.error('Stripe webhook error:', err);
+      return json(res, 400, { error: err.message });
+    }
+  }
+
+  // ── Whop webhook — fulfill purchases ─────────────────────
+  if (url.pathname === '/webhooks/whop' && req.method === 'POST') {
+    try {
+      const rawPayload = await rawBody(req);
+      const result = await handleWhopWebhook(rawPayload, req.headers, db);
+      return json(res, result.status, result.body);
+    } catch (err) {
+      console.error('Whop webhook error:', err);
       return json(res, 400, { error: err.message });
     }
   }
