@@ -3,7 +3,7 @@
   "version": "1.5.1",
   "description": "AI-powered job search toolkit \u2014 resume tailoring, ATS scanner, interview prep, offer negotiation, and career growth tools",
   "scripts": {
-    "start": "node start.js",
+    "start": "node server.js",
     "guide": "node scripts/guide.js",
     "linkedin": "node scripts/preflight.js linkedin && claude --print \"$(cat agents/apply-linkedin-audit.md)\"",
     "reality-check": "node scripts/preflight.js resume && claude --print \"$(cat agents/apply-reality-check.md)\"",

@@ -276,7 +276,7 @@ const server = http.createServer(async (req, res) => {
   }
 
   // ── API: health check ───────────────────────────────────
-  if (url.pathname === '/api/health') {
+  if (url.pathname === '/health' || url.pathname === '/api/health') {
     const agents = fs.readdirSync(path.join(ROOT, 'agents')).filter(f => f.endsWith('.md'));
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({
