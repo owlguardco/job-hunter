@@ -4,7 +4,7 @@
 
 <p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="MIT License" /></a>
-  <a href="docs/CHANGELOG.md"><img src="https://img.shields.io/badge/version-1.0.0-green.svg" alt="Version 1.0.0" /></a>
+  <a href="docs/CHANGELOG.md"><img src="https://img.shields.io/badge/version-1.6.1-green.svg" alt="Version 1.6.1" /></a>
   <a href="docs/CONTRIBUTING.md"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs Welcome" /></a>
 </p>
 
@@ -50,7 +50,7 @@ Job Hunter is a free AI toolkit that helps you:
 
 ## Just want to use it? No setup.
 
-A hosted version is coming. Star this repo to get notified when it launches.
+The hosted version is live at **[job-hunter-production-25c9.up.railway.app](https://job-hunter-production-25c9.up.railway.app)**. Open it, paste your Anthropic API key, start using it. Nothing to install.
 
 ---
 
